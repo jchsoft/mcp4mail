@@ -9,6 +9,11 @@ gem "propshaft"
 # The deploy sets FORCE_RUBY_PLATFORM=1 to compile them from source; dev and CI use the native gems.
 gem "pg", "~> 1.1", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
 gem "nokogiri", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
+
+# json 3.0 made JSON.parse options keyword-only; Rails 8.1.3 still calls JSON.parse(json, options), which breaks
+# ActiveSupport::JSON.decode (and with it Solid Queue process registration). Unpin once Rails ships the fix -
+# test/lib/json_compatibility_test.rb tells you when it is safe.
+gem "json", "< 3"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
