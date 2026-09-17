@@ -88,6 +88,7 @@ production:
   primary: &primary_production
     <<: *default
     database: mcp4mail_production
+    host: <%= ENV["MCP4MAIL_DATABASE_HOST"] %>
     username: mcp4mail
     password: <%= ENV["MCP4MAIL_DATABASE_PASSWORD"] %>
   cache:

@@ -4,7 +4,30 @@ Your mailbox as an [MCP](https://modelcontextprotocol.io) server. Connect an IMA
 assistant read and search your mail, authorized over OAuth 2.1. Hosted at
 [mcp4mail.online](https://mcp4mail.online), open source and self-hostable.
 
+**Run it yourself and your credentials never leave your machine.** A hosted mail connector necessarily keeps
+your IMAP password on someone else's server; with mcp4mail you can keep it in your own database instead. One
+`docker compose up` gets you there: see the [self-hosting guide](docs/self-hosting.md).
+
 > Early days: the MCP endpoint lists your connected accounts; reading and searching mail is next.
+
+## MCP tools
+
+| Tool | What it does |
+| --- | --- |
+| `list_mail_accounts` | Lists the mail accounts you connected, with the ids the other tools take. |
+| `get_mail_account` | Shows the connection details of one account (never its password). |
+
+That is the whole list today. Every tool is read-only, see [below](#mcp-endpoint-read-only-by-design).
+
+## Self-hosting
+
+```bash
+cp .env.example .env    # fill in the values
+docker compose up -d
+```
+
+Read [docs/self-hosting.md](docs/self-hosting.md) first: which environment variables matter, why
+`HITCH_RESOURCE_URI` must match your public URL exactly, TLS, and how mailbox passwords are stored.
 
 ## Stack
 
@@ -36,12 +59,22 @@ variables. Development and test derive throwaway keys from the per-machine `tmp/
 mcp4mail connects to your mailbox over plain IMAP with a username and password. **Use an app-specific
 password wherever your provider offers one** (Gmail, iCloud, Fastmail, Outlook.com, Yahoo and others do), so
 that what is stored in the database can be revoked on its own and is not the key to your whole account.
+How the password is stored and who can decrypt it is described in the
+[security notes of the self-hosting guide](docs/self-hosting.md#security-notes).
 
 ## MCP endpoint: read-only by design
 
 The first release only reads: no tool sends, moves, deletes or re-flags mail, and the tool registry refuses
 to boot with a tool that does not declare itself read-only. Write tools may come later, behind an explicit
 per-account opt-in.
+
+What read-only does and does not mean, plainly:
+
+- Nothing can change your mailbox. Folders are opened with IMAP `EXAMINE`, so even reading does not mark
+  messages as seen.
+- It does read your mail, whenever an AI client you connected asks. Connect only clients you trust with that.
+- It keeps a copy of message headers (sender, recipients, subject, date, flags, size) in its own database,
+  refreshed every 15 minutes, so searches do not hit your mail server each time.
 
 - **Scoping.** Every tool resolves data through the signed-in user's own mail accounts; an account id that is
   not theirs is refused before any tool code runs.
@@ -51,6 +84,10 @@ per-account opt-in.
   returned, duration. Arguments are not stored.
 - **Search guard.** Pages are capped at 50 results, and each account has a budget of searches (60 per
   10 minutes) and returned rows (1,000 an hour), so a runaway loop cannot walk a whole mailbox.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). `bin/ci` must pass.
 
 ## License
 
