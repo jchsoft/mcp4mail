@@ -25,6 +25,18 @@ PostgreSQL must be running locally; the default config connects over the local s
 This repository is public. Nothing secret is ever committed: `config/master.key`, `.env*` and
 `credentials.yml` are git-ignored, production secrets come from the environment.
 
+Mailbox passwords are encrypted at rest with Active Record Encryption. In production, generate keys with
+`bin/rails db:encryption:init` and provide them through the encrypted credentials
+(`active_record_encryption.*`) or the `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`,
+`ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` environment
+variables. Development and test derive throwaway keys from the per-machine `tmp/local_secret.txt`.
+
+## Mail accounts
+
+mcp4mail connects to your mailbox over plain IMAP with a username and password. **Use an app-specific
+password wherever your provider offers one** (Gmail, iCloud, Fastmail, Outlook.com, Yahoo and others do), so
+that what is stored in the database can be revoked on its own and is not the key to your whole account.
+
 ## License
 
 [MIT](LICENSE)

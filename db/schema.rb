@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_112035) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_112233) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -94,6 +94,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_112035) do
     t.check_constraint "token_endpoint_auth_method::text = ANY (ARRAY['none'::character varying, 'client_secret_basic'::character varying]::text[])", name: "hitch_device_grants_auth_method_check"
   end
 
+  create_table "mail_accounts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "default_folder", default: "INBOX", null: false
+    t.string "display_name"
+    t.string "host", null: false
+    t.text "password", null: false
+    t.integer "port", default: 993, null: false
+    t.boolean "ssl", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "username", null: false
+    t.index ["user_id"], name: "index_mail_accounts_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -112,5 +126,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_112035) do
   end
 
   add_foreign_key "hitch_client_redirect_uris", "hitch_clients", on_delete: :cascade
+  add_foreign_key "mail_accounts", "users"
   add_foreign_key "sessions", "users"
 end
