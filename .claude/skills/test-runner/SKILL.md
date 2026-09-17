@@ -1,0 +1,220 @@
+---
+name: test-runner
+description: Run this project's tests with intelligent timeout and structured output. Use when user says "run tests", "spusť testy", "pusť testy", "otestuj", "system tests", "all tests", or wants to execute any tests.
+allowed-tools: Skill, Read, Bash
+---
+
+# Test Runner
+
+Orchestrates `/test-start` + `/test-wait` to run this project's tests safely on a machine shared with other Claude agents. Preserves the global lock (`/tmp/claude_test_run.lock`) so two agents never run system tests at the same time.
+
+You (the main agent) drive the state machine directly. Do NOT poll logs yourself. Do NOT use Monitor. Do NOT read `latest_test-runner.log`. Your only tools are the two sub-skills below plus a tiny bit of Bash for reading the project's command declaration and duration cache, and for saving the new duration.
+
+## Step 0: Read the project's test commands
+
+This skill ships identically to every project and names no framework of its own. The commands come from the project, in `.claude/test-commands.json` at its root:
+
+```bash
+cat .claude/test-commands.json 2>/dev/null || true
+```
+
+```json
+{
+  "unit":      "go test ./...",
+  "all":       "go test ./...",
+  "file":      "go test ./{path}",
+  "durations": ".claude/test_durations.json"
+}
+```
+
+The keys are the type keys of Step 1. `{path}` and `{line}` are the only placeholders; substitute them and run the rest verbatim.
+
+**A key that is absent is an answer, not a gap** — it means this project has no such command. Name the missing key and stop; do not reach for a neighbouring one. Running the whole suite because no per-file command was declared is exactly the wrong kind of helpfulness.
+
+`durations` is where the adaptive-timeout cache lives. When that key is absent, use `.claude/test_durations.json`.
+
+### When the file is not there
+
+Detect the toolchain, and **say which one you recognised and which command you chose** before running anything:
+
+| Marker in the project root | Test command |
+|----------------------------|--------------|
+| `go.mod` | `go test ./...` |
+| `Gemfile` **and** `bin/rails` | `bin/rails test` |
+| `package.json` with a `test` script | `npm test` |
+| `manage.py` | `python manage.py test` |
+| `pyproject.toml` | `pytest` |
+| `Package.swift` | `swift test` |
+
+First match wins, in that order — a project carrying two markers is the earlier one.
+
+**Recognising nothing is not a licence to guess.** Report exactly which markers you looked for, tell the user to write `.claude/test-commands.json` (or re-run `mcptask_runner init`, which writes it), and STOP. Do not try `make test`, do not find a test directory and infer a runner from it, do not run anything. A command invented here fails later, more quietly, and somewhere other than where it was invented.
+
+## Step 1: Pick command + test type
+
+**Default**: if the user did not specify, run the `unit` command. Never ask for clarification.
+
+| User intent          | Command from | Type key      | Adaptive? |
+|----------------------|--------------|---------------|-----------|
+| all unit tests       | `unit`       | `unit`        | yes       |
+| system tests         | `system`     | `system`      | yes       |
+| all tests            | `all`        | `all`         | yes       |
+| specific file        | `file`       | `file`        | no        |
+| a system-test file   | `file`       | `system_file` | no        |
+| specific line        | `line`       | `line`        | no        |
+
+`system_file` is the `file` command pointed at a system test — a separate type key only because it gets a longer fixed timeout, not a separate command.
+
+## Step 2: Compute expected_sec
+
+For full-suite types (`unit`/`system`/`all`): read the duration cache once via `cat <durations> 2>/dev/null || true`, where `<durations>` is the path from Step 0.
+
+**Always recompute `expected_sec` from the `data[TYPE]` entry matching THIS command's type key** (Step 1). Never carry over a value from a prior run in the same session — running `unit` then `system` must read `data['system']`, not reuse the `unit` number.
+
+If JSON has `data[TYPE]`:
+- `expected_sec = max(last_duration_ms, max_duration_ms) * 1.5 / 1000` (seconds)
+- Clamp: `unit` min 120s; `system`/`all` min 300s; max 2400s for all.
+
+If no entry, defaults: `unit`=240, `system`=480, `all`=600.
+
+For non-adaptive types: fixed defaults `file`=120, `system_file`=180, `line`=60.
+
+## Step 3: Drive the state machine
+
+Each sub-skill runs in a **fork**. After it returns, the harness prints a line like
+`Skill "test-start" completed (forked execution)` — that is a normal wrapper notice, NOT an
+error and NOT "empty output". The structured block printed **above** it (`TEST_STARTED` /
+`TEST_LOG=` / `NEXT=`, or `NOT_FINISHED`, `FINISHED_SELF`, …) IS the sub-skill's result — parse
+that block and follow the state machine. If a block looks truncated or confusing, re-invoke the
+same sub-skill; **never** abandon the state machine and run the test command yourself.
+
+```
+outer_iterations = 0
+while outer_iterations < 10:
+  outer_iterations += 1
+
+  result = Skill(test-start, args="<expected_sec> <command>")
+  parse result
+
+  if result starts with "TEST_LOCKED":
+    # Another agent holds lock. Wait for THEIR run, then retry test-start.
+    inner = 0
+    while inner < 8:                       # 8 × 9min = 72min cap
+      inner += 1
+      w = Skill(test-wait, args="other <OTHER_LOG>")
+      if w starts with "NOT_FINISHED":
+        continue
+      if w starts with "FINISHED_OTHER":
+        break                              # other agent done, retry test-start
+      if w starts with "FAILED_EXTERNAL":
+        report w to user, STOP
+    else:
+      report "Other agent's run did not finish after 72 min. Run ~/.claude/bin/test_lock status to inspect."
+      STOP
+    continue                               # back to outer loop, retry test-start
+
+  if result starts with "TEST_STARTED":
+    # EXPECTED_SEC is ONLY a wait-cycle hint (floor 6 ≈ 54min below). If it looks
+    # absurdly small (e.g. 42s for a system suite), IGNORE it — do NOT re-derive it
+    # mid-run and NEVER replace /test-wait with a Bash lock-poll loop. The floor
+    # guarantees enough cycles regardless of a bad estimate.
+    max_waits = max(6, min(8, ceil(EXPECTED_SEC / 540) + 2))  # floor 6 → ≥54min; browser suites run 30min+
+    waits = 0
+    while waits < max_waits:
+      waits += 1
+      w = Skill(test-wait, args="self <TEST_LOG>")
+      if w starts with "NOT_FINISHED":
+        continue
+      if w starts with "FINISHED_SELF":
+        parse the ---BEGIN_LOG_TAIL---...---END_LOG_TAIL--- block and EXIT_CODE
+        produce structured report (see "Report format")
+        save duration if eligible (see "After run")
+        STOP — DONE
+      if w starts with "FAILED_EXTERNAL":
+        report w, STOP
+    report "Tests did not finish after max_waits cycles. Log at TEST_LOG. Run ~/.claude/bin/test_lock kill to clean up."
+    STOP
+
+  if result starts with "TEST_ERROR":
+    report the error and STOP
+
+report "test-start did not succeed after 10 outer iterations" and STOP
+```
+
+The 10-outer-iterations cap prevents infinite loops if the lock is pathologically stuck. Outer loop normally runs once (our run) or twice (wait for other, then ours).
+
+## Report format (FINISHED_SELF)
+
+`EXIT_CODE` is the test process's exit code. On success, `/test-wait` emits `ALL_OK` plus a small summary block — whatever counts and timing lines the project's own test runner printed at the end of its output. On failure, a `---BEGIN_LOG_TAIL---...---END_LOG_TAIL---` block follows containing a filtered tail.
+
+### EXIT_CODE=0
+```
+✅ Tests passed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<the runner's own summary line, verbatim>
+```
+
+Quote what the runner printed rather than reformatting it into counts it may not have produced. If the summary block is empty, say that — "the run was green; its output carried no summary lines this skill recognised" — instead of reporting numbers you did not read.
+
+### EXIT_CODE != 0
+
+Parse failed test entries from the log tail. For each failure extract: the file and line the runner named, the test name, the error message.
+
+```
+❌ Tests failed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<the runner's own counts line, if it printed one>
+
+Failed tests:
+1. <path>:<line> - <test name>
+   Error: <message>
+2. ...
+```
+
+Be specific: file paths, line numbers, the actual failing assertion. Group similar errors. For compilation/syntax errors, surface them up front instead of the failure list.
+
+### Abnormal exit (137 SIGKILL, etc.)
+
+Report the exit code + log path. Skip the duration save.
+
+## After run (save duration)
+
+Save ONLY when ALL of:
+- `EXIT_CODE` is 0 or a normal test failure (NOT 137/143/etc.).
+- Test type is a full suite: `unit`, `system`, or `all`. **Never** for `file`/`system_file`/`line`.
+- The runner printed a total elapsed time you can read. If it did not, skip the save rather than timing the wrapper — a made-up duration silently distorts every future timeout.
+
+`duration_ms` is that elapsed time in milliseconds.
+
+```bash
+ruby -e "
+require 'json'
+require 'fileutils'
+path = 'REPLACE_DURATIONS'
+FileUtils.mkdir_p(File.dirname(path))
+data = File.exist?(path) ? JSON.parse(File.read(path)) : {}
+entry = data['REPLACE_TYPE'] || {}
+old_max = entry['max_duration_ms'] || 0
+data['REPLACE_TYPE'] = { 'last_duration_ms' => REPLACE_MS, 'max_duration_ms' => [old_max, REPLACE_MS].max, 'last_run' => 'REPLACE_DATE' }
+File.write(path, JSON.pretty_generate(data))
+"
+```
+
+Substitute: `REPLACE_DURATIONS` (the path from Step 0), `REPLACE_TYPE` (`unit`/`system`/`all`), `REPLACE_MS` (integer ms), `REPLACE_DATE` (`YYYY-MM-DD`).
+
+## Lock cleanup
+
+`run_with_log` auto-releases the lock when the test process exits, via its on-exit hook (`test_lock release_if_owner test-runner`). You do NOT need to call `test_lock release`.
+
+Only call `~/.claude/bin/test_lock kill` if the waiter loop exhausted its iteration cap (runaway run). Never bypass a lock held by another agent.
+
+## Important
+
+- **Never** poll the log file directly. Only `/test-wait` does that, via `~/.claude/bin/ci_wait`.
+- **Never** substitute a Bash loop (e.g. `until [ ! -f lock ]; do sleep 30; done; tail LOG`) for `/test-wait`. Lock-absence is not the completion signal — `/test-wait` waits on the `Exit code: N` footer and returns the structured `FINISHED_SELF`/`EXIT_CODE`/log-tail you need for the report and duration save.
+- **Never** invoke Monitor for waits.
+- **Never** read `latest_test-runner.log` — `/test-start` returns the correct path; use it.
+- **Never** hunt for the log yourself (e.g. `ls /tmp/test-runner*`). The run's log lives under `~/.claude/logs/projects/<hash>/`, and `/test-start` already handed you its exact path in `TEST_LOG=`. If you didn't capture it, re-invoke `/test-start`.
+- **Never** fall back to running the test command directly because a sub-skill "looked like it didn't work". These sub-skills are Bash-only forks and DO work — the fork-unreliability caveat is about MCP-backed skills, not these. A confusing return means retry the state machine, not bypass it. A raw run also skips the shared lock and can collide with another agent's system tests.
+- **Never** invent a command the project did not declare and you could not detect. Stop and say so.
+- If you see `TEST_LOCKED`, never kill the other agent's lock. Wait it out via `/test-wait other`.

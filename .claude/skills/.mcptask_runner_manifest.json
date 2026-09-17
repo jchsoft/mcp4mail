@@ -1,0 +1,14 @@
+{
+  "ci-runner": "48b429111207e868ea3a5a187462747f",
+  "ci-start": "01259a60d5943a2971a39aa57ec9cfd3",
+  "ci-wait": "88445f20e83c3c5cad510628eb91b169",
+  "wait-unlock": "a0c949310946f5d9a4e40a17fa6410c4",
+  "test-runner": "d3560441b6d61e934a46edbf53e8592c",
+  "test-start": "ba5181e8cda97806b76ce33a4f0328a3",
+  "test-wait": "9efa172be59aef806e4edd5bf22dab03",
+  "discover": "1bc903b98e6d6b6ab6668aff376df285",
+  "memory-search": "5f2ac3060f4be7d7e70e40f4eadb4391",
+  "mcptask-read": "712dba657be0e92322bc668771159cd5",
+  "mcptask-write": "53385dd3abf2372551063b4e4c68a2aa",
+  "pr": "dca92ddb561868ec73a3562cbb09e505"
+}

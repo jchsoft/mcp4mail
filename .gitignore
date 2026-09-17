@@ -47,3 +47,13 @@
 # Local secrets - this repository is public, nothing secret may ever be committed
 /credentials.yml
 /config/*.local.yml
+
+# mcptask runner - local, per-machine configuration
+/config/mcptask_runner.yml
+/bin/mcptask_runner
+/config/mcptask.yml
+
+# Claude Code - per-machine MCP servers and runtime state
+/.mcp.json
+/.claude/test_durations.json
+/.claude/scheduled_tasks.lock

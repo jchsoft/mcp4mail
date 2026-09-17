@@ -26,7 +26,10 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
+
+# OAuth 2.1 authorization server + authenticated /mcp endpoint for AI connectors; pre-1.0, upgrade via its docs/upgrading/*
+gem "hitch-rails", "~> 0.5.0"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -62,6 +65,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Runs mcptask.online tasks with a coding CLI [https://github.com/jchsoft/mcptask-rails-runner]
+  gem "mcptask-rails-runner"
 end
 
 group :test do

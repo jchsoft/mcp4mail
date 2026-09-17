@@ -1,0 +1,8 @@
+{
+  "unit": "bin/rails test",
+  "system": "bin/rails test:system",
+  "all": "bin/rails test:all",
+  "file": "bin/rails test {path}",
+  "line": "bin/rails test {path}:{line}",
+  "durations": ".claude/test_durations.json"
+}
