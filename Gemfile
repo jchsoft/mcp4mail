@@ -62,6 +62,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Runs mcptask.online tasks with a coding CLI [https://github.com/jchsoft/mcptask-rails-runner]
+  gem "mcptask-rails-runner"
 end
 
 group :test do
