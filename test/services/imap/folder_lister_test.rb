@@ -27,6 +27,7 @@ class Imap::FolderListerTest < ActiveSupport::TestCase
     assert_equal :sent, by_name["Sent"].special_use
     assert_equal :trash, by_name["Trash"].special_use
     assert_nil by_name["Notes"].special_use
+    assert by_name["Notes"].selectable
   ensure
     server&.stop
   end
@@ -68,6 +69,23 @@ class Imap::FolderListerTest < ActiveSupport::TestCase
 
     assert_equal :inbox, by_name["INBOX"].special_use
     assert_nil by_name["Archive"].special_use
+  ensure
+    server&.stop
+  end
+
+  test "marks \\Noselect folders as not selectable" do
+    server = FakeImapServer.new(
+      folders: [
+        { name: "INBOX", attrs: %w[HasNoChildren] },
+        { name: "[Gmail]", attrs: %w[HasChildren Noselect] }
+      ]
+    ).start
+    account = build_account(port: server.port)
+
+    by_name = Imap::FolderLister.call(account).index_by(&:name)
+
+    assert by_name["INBOX"].selectable
+    assert_not by_name["[Gmail]"].selectable
   ensure
     server&.stop
   end

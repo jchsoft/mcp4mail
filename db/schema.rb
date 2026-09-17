@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_150001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "hitch_access_tokens", force: :cascade do |t|
     t.string "authorization_code_digest"
@@ -110,6 +111,47 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
     t.index ["user_id"], name: "index_mail_accounts_on_user_id"
   end
 
+  create_table "mail_folders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "delimiter"
+    t.text "last_error"
+    t.datetime "last_synced_at"
+    t.bigint "last_synced_uid", default: 0, null: false
+    t.bigint "mail_account_id", null: false
+    t.string "name", null: false
+    t.string "special_use"
+    t.bigint "uidvalidity"
+    t.datetime "updated_at", null: false
+    t.index ["mail_account_id", "name"], name: "index_mail_folders_on_mail_account_id_and_name", unique: true
+  end
+
+  create_table "mail_messages", force: :cascade do |t|
+    t.jsonb "attachments", default: [], null: false
+    t.jsonb "cc_addresses", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "date"
+    t.string "flags", default: [], null: false, array: true
+    t.string "from_address"
+    t.string "from_name"
+    t.boolean "has_attachments", default: false, null: false
+    t.text "in_reply_to"
+    t.datetime "internal_date"
+    t.bigint "mail_account_id", null: false
+    t.bigint "mail_folder_id", null: false
+    t.string "message_id"
+    t.text "search_text", default: "", null: false
+    t.bigint "size"
+    t.text "subject"
+    t.jsonb "to_addresses", default: [], null: false
+    t.bigint "uid", null: false
+    t.bigint "uidvalidity", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mail_account_id", "date"], name: "index_mail_messages_on_mail_account_id_and_date"
+    t.index ["mail_folder_id", "uidvalidity", "uid"], name: "index_mail_messages_on_mail_folder_id_and_uidvalidity_and_uid", unique: true
+    t.index ["message_id"], name: "index_mail_messages_on_message_id"
+    t.index ["search_text"], name: "index_mail_messages_on_search_text", opclass: :gin_trgm_ops, using: :gin
+  end
+
   create_table "mcp_audit_events", force: :cascade do |t|
     t.string "client_id", null: false
     t.datetime "created_at", null: false
@@ -143,6 +185,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
 
   add_foreign_key "hitch_client_redirect_uris", "hitch_clients", on_delete: :cascade
   add_foreign_key "mail_accounts", "users"
+  add_foreign_key "mail_folders", "mail_accounts", on_delete: :cascade
+  add_foreign_key "mail_messages", "mail_accounts", on_delete: :cascade
+  add_foreign_key "mail_messages", "mail_folders", on_delete: :cascade
   add_foreign_key "mcp_audit_events", "users", on_delete: :cascade
   add_foreign_key "sessions", "users"
 end

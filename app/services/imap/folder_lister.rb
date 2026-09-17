@@ -4,7 +4,10 @@ module Imap
   # RFC 6154 SPECIAL-USE, the older Gmail XLIST extension, or neither - so this detects
   # capabilities instead of assuming one.
   class FolderLister
-    Folder = Struct.new(:name, :delimiter, :special_use, keyword_init: true)
+    Folder = Struct.new(:name, :delimiter, :special_use, :selectable, keyword_init: true)
+
+    # Folders that only exist as a node in the hierarchy and cannot be opened.
+    UNSELECTABLE = %i[Noselect Nonexistent].freeze
 
     # RFC 6154 SPECIAL-USE attributes, and the older Gmail XLIST attributes they replaced,
     # normalized to a shared vocabulary.
@@ -28,21 +31,28 @@ module Imap
       Connection.open(mail_account) { |imap| list(imap) }
     end
 
-    private
-
-    attr_reader :mail_account
-
+    # Lists the folders over an already open connection, for callers that need to do more
+    # with the same session (e.g. syncing each folder).
     def list(imap)
       mailboxes = use_xlist?(imap.capability) ? imap.xlist("", "*") : imap.list("", "*")
       mailboxes.map { |mailbox| build_folder(mailbox) }
     end
+
+    private
+
+    attr_reader :mail_account
 
     def use_xlist?(capabilities)
       capabilities.include?("XLIST") && !capabilities.include?("SPECIAL-USE")
     end
 
     def build_folder(mailbox)
-      Folder.new(name: mailbox.name, delimiter: mailbox.delim, special_use: special_use_for(mailbox))
+      Folder.new(
+        name: mailbox.name,
+        delimiter: mailbox.delim,
+        special_use: special_use_for(mailbox),
+        selectable: !mailbox.attr.intersect?(UNSELECTABLE)
+      )
     end
 
     def special_use_for(mailbox)
