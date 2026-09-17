@@ -1,0 +1,22 @@
+<header class="border-b border-gray-200">
+  <nav class="container mx-auto px-5 py-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+    <%= link_to "mcp4mail", main_app.root_path, class: "font-bold text-lg mr-auto" %>
+    <%= link_to t("nav.connect_ai"), main_app.connect_ai_path, class: "text-gray-700 hover:text-gray-900" %>
+    <% if authenticated? %>
+      <%= link_to t("nav.mailboxes"), main_app.mail_accounts_path, class: "text-gray-700 hover:text-gray-900" %>
+      <%= button_to t("nav.sign_out"), main_app.session_path, method: :delete, class: "text-gray-700 hover:text-gray-900 cursor-pointer" %>
+    <% else %>
+      <%= link_to t("nav.sign_in"), main_app.new_session_path, class: "text-gray-700 hover:text-gray-900" %>
+      <%= link_to t("nav.sign_up"), main_app.new_registration_path, class: "rounded-md px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+    <% end %>
+    <span class="text-sm text-gray-500" id="language-switcher">
+      <% I18n.available_locales.each do |locale| %>
+        <% if locale == I18n.locale %>
+          <span class="font-semibold text-gray-900"><%= locale.upcase %></span>
+        <% else %>
+          <%= link_to locale.upcase, url_for(locale: locale), class: "hover:text-gray-900", lang: locale %>
+        <% end %>
+      <% end %>
+    </span>
+  </nav>
+</header>

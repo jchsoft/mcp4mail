@@ -1,0 +1,179 @@
+cs:
+  nav:
+    connect_ai: "Propojit s AI"
+    mailboxes: "Schránky"
+    sign_in: "Přihlásit se"
+    sign_up: "Registrovat"
+    sign_out: "Odhlásit se"
+  flash:
+    try_again_later: "Zkuste to prosím za chvíli."
+
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "je povinná položka"
+      taken: "už je použitý"
+      invalid: "není platný"
+      too_short: "je příliš krátké (minimálně %{count} znaků)"
+      too_long: "je příliš dlouhé (maximálně %{count} znaků)"
+      confirmation: "se neshoduje s položkou %{attribute}"
+      not_a_number: "není číslo"
+      not_an_integer: "musí být celé číslo"
+      in: "musí být v rozsahu %{count}"
+      password_too_long: "je příliš dlouhé"
+      required: "musí existovat"
+
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "Validace je neúspěšná: %{errors}"
+    attributes:
+      user:
+        email_address: "E-mailová adresa"
+        password: "Heslo"
+        password_confirmation: "Heslo znovu"
+      mail_account:
+        display_name: "Název (nepovinné)"
+        host: "IMAP server"
+        port: "Port"
+        ssl: "SSL/TLS"
+        username: "Uživatelské jméno"
+        password: "Heslo"
+
+  pages:
+    home:
+      title: "mcp4mail – vaše schránka jako MCP server"
+      tagline: "Vaše e-mailová schránka jako MCP server. Připojte IMAP účet a nechte svého AI asistenta číst a prohledávat poštu – přes OAuth 2.1, open source, provozovatelné i na vlastním serveru."
+      get_started: "Začít"
+      mailboxes: "Vaše schránky"
+      connect_ai: "Propojit s AI"
+      source: "Zdrojový kód na GitHubu"
+
+  sessions:
+    new:
+      title: "Přihlášení"
+      email_placeholder: "Zadejte e-mailovou adresu"
+      password_placeholder: "Zadejte heslo"
+      submit: "Přihlásit se"
+      forgot_password: "Zapomněli jste heslo?"
+      sign_up: "Vytvořit účet"
+    create:
+      failure: "Zkuste jinou e-mailovou adresu nebo heslo."
+
+  passwords:
+    invalid_token: "Odkaz pro obnovení hesla je neplatný nebo vypršel."
+    new:
+      title: "Zapomněli jste heslo?"
+      submit: "Poslat pokyny k obnovení"
+    create:
+      success: "Pokyny k obnovení hesla jsme poslali (pokud účet s touto adresou existuje)."
+    edit:
+      title: "Nastavte nové heslo"
+      password_placeholder: "Zadejte nové heslo"
+      password_confirmation_placeholder: "Zopakujte nové heslo"
+      submit: "Uložit"
+    update:
+      success: "Heslo bylo změněno."
+      mismatch: "Hesla se neshodují."
+
+  registrations:
+    new:
+      title: "Vytvořit účet"
+      intro: "Pak přidáte schránku a propojíte svou AI aplikaci. Zabere to pár minut."
+      submit: "Vytvořit účet"
+      sign_in: "Už máte účet? Přihlaste se"
+    create:
+      success: "Vítejte v mcp4mail. Teď přidejte svou první schránku."
+
+  mail_accounts:
+    index:
+      title: "Schránky"
+      add: "Přidat schránku"
+      empty: "Zatím nemáte přidanou žádnou schránku. Přidejte ji a pak propojte svou AI aplikaci."
+      last_error: "Poslední připojení selhalo: %{error}"
+      remove: "Odebrat"
+      remove_confirm: "Odebrat schránku %{name}? mcp4mail zapomene její heslo i index zpráv; pošta na serveru zůstane beze změny."
+      connect_ai: "Dál: propojte svou AI aplikaci →"
+    new:
+      title: "Přidat schránku"
+      intro: "mcp4mail čte poštu přes IMAP. Vyberte poskytovatele a nastavení serveru se vyplní samo."
+      provider: "Poskytovatel"
+      provider_other: "Jiný – server zadám sám"
+      username_placeholder: "Obvykle celá e-mailová adresa"
+      password_hint: "Kde to poskytovatel umožňuje, použijte heslo pro aplikace: dá se zrušit samostatně a neotevírá celý váš účet. Ukládáme ho šifrovaně."
+      display_name_placeholder: "např. Práce"
+      submit: "Otestovat připojení a přidat"
+      submitting: "Testuji připojení…"
+      submit_hint: "Nejdřív se k serveru přihlásíme a schránku uložíme, jen když se to podaří."
+      outcomes:
+        auth_failed:
+          title: "Server odmítl uživatelské jméno nebo heslo."
+          hint: "Zkontrolujte uživatelské jméno (obvykle celá e-mailová adresa) a heslo. Mnoho poskytovatelů vyžaduje heslo pro aplikace a zapnutý přístup přes IMAP v nastavení schránky."
+        tls_problem:
+          title: "Zabezpečené spojení se serverem se nepodařilo navázat."
+          hint: "Zkontrolujte, že port a SSL/TLS odpovídají: obvyklá volba je 993 se SSL/TLS. Certifikát serveru také nemusí odpovídat názvu – zkuste název serveru z nápovědy poskytovatele."
+        unreachable:
+          title: "Server se nepodařilo zastihnout."
+          hint: "Zkontrolujte název serveru a port. Pokud poskytovatel provozuje IMAP na jiném serveru než web, najdete ho v jeho nápovědě."
+    create:
+      success: "Schránka %{name} je přidaná. Zprávy se indexují na pozadí."
+    destroy:
+      success: "Schránka %{name} je odebraná."
+    providers:
+      seznam: "V nastavení Seznam Emailu zapněte přístup přes IMAP (Nastavení → POP3/IMAP). Máte-li dvoufázové ověření, vytvořte heslo pro aplikace."
+      gmail: "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace (Účet Google → Zabezpečení → Hesla aplikací). Běžné heslo k Googlu nebude fungovat."
+      outlook: "Použijte celou adresu Outlooku. Máte-li dvoufázové ověření, vytvořte heslo pro aplikace. Některé organizace v Microsoft 365 přihlášení heslem přes IMAP vypínají."
+      icloud: "Použijte adresu iCloudu a heslo pro konkrétní aplikaci z account.apple.com."
+      yahoo: "V zabezpečení účtu Yahoo vytvořte heslo pro aplikace; běžné heslo nebude fungovat."
+      centrum: "Nejdřív v nastavení pošty Centrum zapněte přístup přes IMAP."
+      volny: "Nejdřív v nastavení pošty Volný zapněte přístup přes IMAP."
+      forpsi: "Jako uživatelské jméno použijte celou e-mailovou adresu a heslo schránky z administrace Forpsi."
+      active24: "Jako uživatelské jméno použijte celou e-mailovou adresu a heslo schránky ze zákaznického centra Active24."
+      cpanel: "Zadejte IMAP server, který hosting ukazuje u schránky, obvykle mail.vase-domena.cz. Jako uživatelské jméno použijte celou e-mailovou adresu."
+
+  connect_ai:
+    show:
+      title: "Propojit s AI"
+      intro: "Přidejte mcp4mail do své AI aplikace jako vlastní konektor (MCP server). Aplikace vás pak pošle sem přihlásit se a potvrdit přístup, a potom může číst a prohledávat schránky, které jste přidali."
+      no_mailbox: "Zatím nemáte žádnou schránku, AI aplikace by tedy neměla co číst."
+      add_mailbox: "Nejdřív přidejte schránku."
+      url_title: "Adresa serveru"
+      url_hint: "Tuto adresu vložte do AI aplikace. API klíč nepotřebujete: aplikace vás místo toho požádá o přihlášení do mcp4mail."
+      copy: "Kopírovat"
+      copied: "Zkopírováno"
+      consent:
+        title: "Na co se zeptá potvrzovací obrazovka"
+        description: "Po přidání konektoru aplikace otevře mcp4mail. Přihlaste se a uvidíte „Authorize <aplikace>: <aplikace> is requesting access to your mcp4mail account“ s oprávněním mcp. Klikněte na Approve."
+        points:
+          - "Potvrzením aplikaci povolíte vaším jménem vypsat vaše schránky, prohledávat je a číst zprávy."
+          - "Přístup je jen pro čtení: nikdy žádnou zprávu neodešle, nepřesune, nesmaže ani nezmění její příznaky."
+          - "Každý dotaz se zapíše do auditního záznamu. Propojení zrušíte odebráním konektoru v AI aplikaci."
+          - "Pokud obrazovka varuje, že aplikace běží na vašem počítači, je to u desktopových aplikací jako Cursor v pořádku. Potvrďte jen tehdy, když jste ji sami spustili."
+      clients:
+        claude:
+          title: "Claude"
+          steps:
+            - "Otevřete claude.ai → Nastavení → Konektory a klikněte na Přidat vlastní konektor."
+            - "Pojmenujte ho mcp4mail, vložte adresu serveru a klikněte na Přidat."
+            - "Klikněte na Připojit. Přihlaste se do mcp4mail a klikněte na Approve."
+            - "V chatu zapněte konektor mcp4mail v nabídce nástrojů a ptejte se třeba „Co mi minulý týden poslala účetní?“."
+        chatgpt:
+          title: "ChatGPT"
+          steps:
+            - "V Settings → Apps & Connectors → Advanced settings zapněte Developer mode (Plus, Pro, Business nebo Enterprise)."
+            - "Zpět v Apps & Connectors klikněte na Create. Pojmenujte konektor mcp4mail, vložte adresu serveru a jako ověření zvolte OAuth."
+            - "Potvrďte, že aplikaci důvěřujete, a klikněte na Create. Přihlaste se do mcp4mail a klikněte na Approve."
+            - "V novém chatu zvolte v nabídce + Developer mode a konektor mcp4mail."
+        grok:
+          title: "Grok"
+          steps:
+            - "Otevřete grok.com/connectors a zvolte New → Custom."
+            - "Vložte adresu serveru a uložte."
+            - "Povolte vyskakovací okna pro grok.com – přihlášení se otevírá v novém okně. Safari je blokuje a Grok pak hlásí chybu, i když se přihlášení podařilo: v Safari → Nastavení → Webové stránky → Vyskakovací okna nastavte grok.com na Povolit."
+            - "Přihlaste se do mcp4mail a klikněte na Approve."
+        cursor:
+          title: "Cursor"
+          steps:
+            - "Otevřete Cursor Settings → Tools & MCP a klikněte na New MCP Server. Cursor otevře váš mcp.json (~/.cursor/mcp.json pro všechny projekty)."
+            - "Přidejte níže uvedený záznam mcp4mail a soubor uložte."
+            - "Zpět v Tools & MCP klikněte u mcp4mail na Connect. Otevře se prohlížeč: přihlaste se do mcp4mail a klikněte na Approve."

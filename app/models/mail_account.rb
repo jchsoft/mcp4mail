@@ -20,6 +20,10 @@ class MailAccount < ApplicationRecord
   validates :password, presence: true
   validates :default_folder, presence: true
 
+  def label
+    display_name.presence || username
+  end
+
   def serializable_hash(options = nil)
     super.except("password")
   end
