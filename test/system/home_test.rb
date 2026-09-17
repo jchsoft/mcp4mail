@@ -6,5 +6,6 @@ class HomeTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: "mcp4mail"
     assert_link "Source on GitHub"
+    assert_link "Connect AI"
   end
 end

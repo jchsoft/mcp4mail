@@ -5,7 +5,8 @@ module Imap
   # Opens an IMAP session for a MailAccount and guarantees it is closed again, even on
   # exception. Every attempt updates the account's last_connected_at / last_error, since
   # that bookkeeping matters no matter which service (folder listing, connection test, ...)
-  # triggered the connection.
+  # triggered the connection. An account that is not saved yet (the pre-save test on the
+  # "add mailbox" form) has nowhere to record it, so it is skipped.
   class Connection
     # net-imap's own open_timeout only bounds the TCP connect + TLS handshake, not LOGIN
     # or any later command, so a server that stops responding after that would otherwise
@@ -69,10 +70,14 @@ module Imap
     end
 
     def record_success
+      return unless mail_account.persisted?
+
       mail_account.update_columns(last_connected_at: Time.current, last_error: nil)
     end
 
     def record_failure(error)
+      return unless mail_account.persisted?
+
       mail_account.update_columns(last_error: error.message)
     end
   end

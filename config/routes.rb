@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   mount Hitch::Engine => "/"
 
   resource :session
+  resource :registration, only: %i[ new create ]
+  resources :mail_accounts, only: %i[ index new create destroy ]
+  get "connect-ai", to: "connect_ai#show", as: :connect_ai
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

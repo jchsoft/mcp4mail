@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <title><%= content_for(:title) || "mcp4mail" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -24,8 +24,13 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
+    <%= render "shared/nav" %>
+
+    <main class="container mx-auto mt-12 px-5 flex">
+      <div class="w-full">
+        <%= render "shared/flash" %>
+        <%= yield %>
+      </div>
     </main>
   </body>
 </html>
