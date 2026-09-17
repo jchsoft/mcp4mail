@@ -1,0 +1,88 @@
+---
+name: ci-wait
+description: Internal helper for /ci-runner. Polls a CI log file once a minute for up to 9 minutes, looking for the "Exit code:" footer. Not meant for direct user invocation — use /ci-runner instead.
+context: fork
+allowed-tools: Bash
+---
+
+# ci-wait
+
+Internal helper skill invoked by `/ci-runner`. Runs a single shell script and returns its output verbatim.
+
+## Args
+
+The `args` string must contain two whitespace-separated tokens:
+
+```
+<mode> <log_path>
+```
+
+- `mode` — `self` (we launched this CI, parse result) or `other` (another agent's CI, just wait for completion).
+- `log_path` — absolute path to the log file (from `/ci-start` output or the lockfile).
+
+## Task
+
+1. Parse `mode` and `log_path` from args (first token = mode, rest = log path).
+2. Run via Bash tool: `~/.claude/bin/ci_wait "$log_path" "$mode" 540`
+   - **MUST** pass `timeout: 570000` to the Bash tool (script can run up to 540s; default 120s timeout kills it early).
+   - **MUST NOT** use `run_in_background: true`. Run foreground, wait for stdout.
+3. Return the stdout of that command as your entire reply, unchanged. No summary, no prose, no paraphrase.
+
+The script always exits 0 (non-zero only on invalid args). If Bash times out or errors, return the raw error text — do NOT invent output.
+
+## Output contract
+
+The orchestrator parses one of:
+
+```
+NOT_FINISHED
+LAST=<last non-empty log line>
+```
+
+When `LAST=` is empty (log produced nothing), two diagnostic lines follow so the
+caller knows whether CI is silently alive or dead — no need to inspect the
+process/log by hand:
+
+```
+NOT_FINISHED
+LAST=
+DIAG=empty_log bytes=<n> last_write_age=<s>s
+PROC=alive pid=<n> (…)   |   PROC=dead pid=<n> (…)   |   PROC=no_lockfile (…)
+```
+
+```
+FINISHED_SELF
+EXIT_CODE=0
+ALL_OK
+<the run’s own step record — a CI SUMMARY listing with one OK/FAIL/SKIP line per
+ step plus the closing verdict, or one `✅ <step> passed in <time>` /
+ `❌ <step> failed in <time>` line per step where bin/ci prints no block at all>
+```
+
+(success — full log tail omitted; the few summary lines suffice for stats / duration save)
+
+When the log carries no step record this script recognises, the marker
+`NO_SUMMARY_RECOGNISED` leads the block and the tail of the run follows it. That
+is deliberately not silence: an orchestrator that receives nothing cannot tell a
+quiet CI from a parser that did not understand the output, and must not report
+the one as the other.
+
+```
+FINISHED_SELF
+EXIT_CODE=<non-zero N>
+---BEGIN_LOG_TAIL---
+<filtered tail — signal lines only, asset/progress/deprecation noise stripped via _ci_filter_tail>
+---END_LOG_TAIL---
+```
+
+```
+FINISHED_OTHER
+```
+
+```
+FAILED_EXTERNAL
+REASON=<short identifier>
+<diagnostic tail, if any>
+```
+
+Return exactly what the script prints. Do not format, summarize, or add commentary.

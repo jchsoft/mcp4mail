@@ -4,7 +4,7 @@ class MailAccountTest < ActiveSupport::TestCase
   SECRET = "s3cret-app-password-do-not-leak"
 
   def build_account(**attributes)
-    users(:bob).mail_accounts.new(host: "imap.example.org", username: "bob", password: SECRET, **attributes)
+    users(:two).mail_accounts.new(host: "imap.example.org", username: "bob", password: SECRET, **attributes)
   end
 
   test "defaults to IMAPS on port 993 and the INBOX" do
@@ -49,7 +49,7 @@ class MailAccountTest < ActiveSupport::TestCase
   end
 
   test "reads fixture passwords through encryption" do
-    assert_equal "fixture-app-password", mail_accounts(:alice_work).password
+    assert_equal "fixture-app-password", mail_accounts(:work).password
   end
 
   test "never exposes the password through inspect, serializers or errors" do
@@ -60,7 +60,7 @@ class MailAccountTest < ActiveSupport::TestCase
     assert_not_includes account.to_json, SECRET
     assert_not account.as_json.key?("password")
     assert_not account.serializable_hash(only: [ :password ]).key?("password")
-    assert_not_includes users(:bob).to_json(include: :mail_accounts), SECRET
+    assert_not_includes users(:two).to_json(include: :mail_accounts), SECRET
 
     account.host = ""
     error = assert_raises(ActiveRecord::RecordInvalid) { account.save! }
