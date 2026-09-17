@@ -63,7 +63,7 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
     )
 
     assert_response :success
-    assert_equal [], response.parsed_body.dig("result", "tools")
+    assert_includes response.parsed_body.dig("result", "tools").map { |tool| tool["name"] }, "list_mail_accounts"
   end
 
   test "legacy tools/call without _meta reaches the real dispatch layer" do
@@ -81,7 +81,7 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
     response = post_mcp(method: "tools/list", token: @token)
 
     assert_response :success
-    assert_equal [], response.parsed_body.dig("result", "tools")
+    assert_includes response.parsed_body.dig("result", "tools").map { |tool| tool["name"] }, "list_mail_accounts"
   end
 
   private

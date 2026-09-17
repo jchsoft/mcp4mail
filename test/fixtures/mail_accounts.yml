@@ -7,3 +7,13 @@ work:
   username: one@example.com
   password: fixture-app-password
   default_folder: INBOX
+
+personal:
+  user: two
+  display_name: Personal
+  host: imap.example.net
+  port: 993
+  ssl: true
+  username: two@example.net
+  password: other-fixture-app-password
+  default_folder: INBOX
