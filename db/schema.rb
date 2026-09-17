@@ -110,6 +110,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
     t.index ["user_id"], name: "index_mail_accounts_on_user_id"
   end
 
+  create_table "mcp_audit_events", force: :cascade do |t|
+    t.string "client_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "duration_ms"
+    t.bigint "mail_account_id"
+    t.string "outcome", null: false
+    t.string "remote_ip"
+    t.integer "rows_returned", default: 0, null: false
+    t.string "tool_name", null: false
+    t.bigint "user_id", null: false
+    t.index ["mail_account_id"], name: "index_mcp_audit_events_on_mail_account_id"
+    t.index ["user_id", "created_at"], name: "index_mcp_audit_events_on_user_id_and_created_at"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -129,5 +143,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
 
   add_foreign_key "hitch_client_redirect_uris", "hitch_clients", on_delete: :cascade
   add_foreign_key "mail_accounts", "users"
+  add_foreign_key "mcp_audit_events", "users", on_delete: :cascade
   add_foreign_key "sessions", "users"
 end

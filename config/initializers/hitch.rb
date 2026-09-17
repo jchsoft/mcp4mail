@@ -34,7 +34,15 @@ Hitch.configure do |config|
 
   config.mcp.enabled = true
   config.mcp.registry = "McpToolRegistry"
-  config.mcp.server_info = { "name" => "mcp4mail", "version" => "1.0.0" }
+  config.mcp.server_info = {
+    "name" => "mcp4mail",
+    "version" => "1.0.0",
+    "instructions" => "mcp4mail is read-only: it lists, searches and reads mail in the accounts the user " \
+      "connected, and never sends, moves, deletes or changes flags on any message."
+  }
+
+  # Per user + client. McpTools::ApplicationTool adds a per-user quota across all clients.
+  config.mcp.request_limit = { to: 120, within: 1.minute }
 end
 
 # /oauth/authorize has no account-scoped URL, so Hitch screens (consent,

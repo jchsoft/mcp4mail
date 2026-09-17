@@ -57,7 +57,7 @@ class HitchOauthTest < ActionDispatch::IntegrationTest
     post_mcp method: "tools/list", token: mint_mcp_token(principal: users(:one))
 
     assert_response :success
-    assert_equal [], response.parsed_body.dig("result", "tools")
+    assert_includes response.parsed_body.dig("result", "tools").map { |tool| tool["name"] }, "list_mail_accounts"
   end
 
   private
