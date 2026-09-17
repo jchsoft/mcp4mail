@@ -5,7 +5,10 @@ gem "rails", "~> 8.1.3", ">= 8.1.3.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+# The production server (CentOS 8) has glibc 2.28; precompiled native gems need 2.29+.
+# The deploy sets FORCE_RUBY_PLATFORM=1 to compile them from source; dev and CI use the native gems.
+gem "pg", "~> 1.1", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
+gem "nokogiri", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
