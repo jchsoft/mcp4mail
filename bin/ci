@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Fix macOS fork() crash with parallel tests + Selenium threads
+# Must be set BEFORE Ruby starts — setting inside Ruby process is too late
+if [[ "$(uname)" == "Darwin" ]]; then
+  export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+fi
+
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+exec ruby -e "
+Dir.chdir('$DIR')
+require '$DIR/config/boot'
+require 'active_support/continuous_integration'
+
+CI = ActiveSupport::ContinuousIntegration
+require '$DIR/config/ci.rb'
+" "$@"
