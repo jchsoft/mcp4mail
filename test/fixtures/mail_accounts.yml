@@ -1,0 +1,9 @@
+alice_work:
+  user: alice
+  display_name: Work
+  host: imap.example.com
+  port: 993
+  ssl: true
+  username: alice@example.com
+  password: fixture-app-password
+  default_folder: INBOX
