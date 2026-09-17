@@ -1,4 +1,5 @@
 require "test_helper"
+require "net/imap"
 
 class Imap::ConnectionTest < ActiveSupport::TestCase
   def build_account(port:, ssl: false, password: "fixture-app-password")
