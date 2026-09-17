@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_112233) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_112233) do
     t.index ["client_id"], name: "index_hitch_clients_on_client_id", unique: true
     t.check_constraint "operator_registered = false OR token_endpoint_auth_method::text = 'client_secret_basic'::text", name: "hitch_clients_operator_registration_check"
     t.check_constraint "token_endpoint_auth_method::text = 'none'::text AND client_secret_digest IS NULL AND client_secret_issued_at IS NULL AND client_secret_rotated_at IS NULL OR token_endpoint_auth_method::text = 'client_secret_basic'::text AND client_secret_digest IS NOT NULL AND client_secret_issued_at IS NOT NULL", name: "hitch_clients_secret_consistency_check"
-    t.check_constraint "token_endpoint_auth_method::text = ANY (ARRAY['none'::character varying, 'client_secret_basic'::character varying]::text[])", name: "hitch_clients_auth_method_check"
+    t.check_constraint "token_endpoint_auth_method::text = ANY (ARRAY['none'::character varying::text, 'client_secret_basic'::character varying::text])", name: "hitch_clients_auth_method_check"
   end
 
   create_table "hitch_device_grants", force: :cascade do |t|
@@ -91,7 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_112233) do
     t.check_constraint "NOT (approved_at IS NOT NULL AND denied_at IS NOT NULL)", name: "hitch_device_grants_decision_check"
     t.check_constraint "approved_at IS NULL AND principal_type IS NULL AND principal_id IS NULL OR approved_at IS NOT NULL AND principal_type IS NOT NULL AND principal_id IS NOT NULL", name: "hitch_device_grants_principal_check"
     t.check_constraint "consumed_at IS NULL OR approved_at IS NOT NULL", name: "hitch_device_grants_consumption_check"
-    t.check_constraint "token_endpoint_auth_method::text = ANY (ARRAY['none'::character varying, 'client_secret_basic'::character varying]::text[])", name: "hitch_device_grants_auth_method_check"
+    t.check_constraint "token_endpoint_auth_method::text = ANY (ARRAY['none'::character varying::text, 'client_secret_basic'::character varying::text])", name: "hitch_device_grants_auth_method_check"
   end
 
   create_table "mail_accounts", force: :cascade do |t|
@@ -99,6 +99,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_112233) do
     t.string "default_folder", default: "INBOX", null: false
     t.string "display_name"
     t.string "host", null: false
+    t.datetime "last_connected_at"
+    t.text "last_error"
     t.text "password", null: false
     t.integer "port", default: 993, null: false
     t.boolean "ssl", default: true, null: false
