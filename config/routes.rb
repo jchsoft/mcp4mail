@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  # MCP endpoint (hitch-rails); must precede the engine mount
+  match "/mcp", to: "mcp#handle", via: :all
+  # OAuth 2.1 (/oauth/*) and discovery (/.well-known/*)
+  mount Hitch::Engine => "/"
+
+  resource :session
+  resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
