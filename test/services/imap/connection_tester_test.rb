@@ -57,4 +57,18 @@ class Imap::ConnectionTesterTest < ActiveSupport::TestCase
 
     assert_equal :unreachable, result.outcome
   end
+
+  test "tests an account that is not saved yet without trying to record the outcome" do
+    server = FakeImapServer.new.start
+    account = users(:one).mail_accounts.build(
+      host: "127.0.0.1", port: server.port, ssl: false, username: "bob", password: "fixture-app-password"
+    )
+
+    result = Imap::ConnectionTester.call(account)
+
+    assert result.reachable?
+    assert account.new_record?
+  ensure
+    server&.stop
+  end
 end
