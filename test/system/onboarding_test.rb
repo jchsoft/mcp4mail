@@ -47,7 +47,9 @@ class OnboardingTest < ApplicationSystemTestCase
     visit new_session_url
     fill_in placeholder: "Enter your email address", with: user.email_address
     fill_in placeholder: "Enter your password", with: "password"
-    click_on "Sign in"
+    click_button "Sign in"
+    # Wait for the sign-in redirect, or the next visit races the session cookie.
+    assert_current_path root_path
 
     visit new_mail_account_url
     fill_in "IMAP server", with: "127.0.0.1"
