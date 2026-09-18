@@ -100,3 +100,44 @@ The conversion was mechanical apart from the hover states. For the record:
   inline styles directly, so the question never came up there.
 
 [story #12693]: https://mcptask.online/jchsoft/pieces/12693
+
+## The Open Graph card
+
+`og-image.html` is the source of `public/og-image.png` — the 1200×630 card link
+previews show. It is the same kind of file as `landing-v2.html`: plain HTML with no
+build step, openable straight from the filesystem. It sets the hero line in the repo's
+own self-hosted Bricolage Grotesque (referenced relatively out of
+`app/assets/fonts/`), so the card and the page it previews are set in the same type.
+
+The body is exactly 1200×630 with no margin. Render it with the Chrome that
+`selenium-webdriver` already downloaded — screenshot a **taller** window and crop the
+top 1200×630, because a window sized exactly to the content clips the last element:
+
+```sh
+CHROME="$HOME/.cache/selenium/chrome/mac-arm64/$(ls -1 "$HOME/.cache/selenium/chrome/mac-arm64" | tail -1)/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+"$CHROME" --headless --disable-gpu --hide-scrollbars --allow-file-access-from-files \
+  --force-device-scale-factor=1 --window-size=1200,900 \
+  --screenshot=/tmp/og.png "file://$PWD/docs/design/og-image.html"
+magick /tmp/og.png -crop 1200x630+0+0 +repage \
+  -background '#fbf8f3' -alpha remove -alpha off -strip public/og-image.png
+```
+
+The `-alpha remove` keeps the file opaque: a transparent PNG goes black behind the
+dark-mode preview panes of some chat clients.
+
+## The favicon set
+
+`public/icon.svg` is the source of the other three icons — the envelope of the first
+branded set, recoloured to the v2 pair (orange `#f26b1d` ground, ink `#1f2430`
+strokes). Regenerate them from it:
+
+```sh
+rsvg-convert -w 512 -h 512 public/icon.svg -o public/icon.png
+rsvg-convert -w 180 -h 180 public/icon.svg -o /tmp/apple.png
+magick /tmp/apple.png -background '#f26b1d' -alpha remove -alpha off public/apple-touch-icon.png
+for s in 16 32 48; do rsvg-convert -w $s -h $s public/icon.svg -o /tmp/ico-$s.png; done
+magick /tmp/ico-16.png /tmp/ico-32.png /tmp/ico-48.png public/favicon.ico
+```
+
+`apple-touch-icon.png` is flattened onto the orange because iOS composites it over
+white and would otherwise show a white ring inside the rounded mask.

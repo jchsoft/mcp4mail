@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>mcp4mail — Open Graph card source</title>
+<!--
+  Source of public/og-image.png. Dependency-free, like landing-v2.html next to it:
+  open it in a browser to see the card, or render it with the command in README.md.
+
+  The fonts are the repo's own self-hosted subsets, referenced relatively, so the
+  card is set in the same Bricolage Grotesque as the page it previews. The body is
+  exactly 1200x630 with no margin, which is what lets a headless screenshot at that
+  window size come out pixel-exact.
+-->
+<style>
+  @font-face {
+    font-family: "Bricolage Grotesque";
+    font-weight: 500 800;
+    src: url("../../app/assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Instrument Sans";
+    font-weight: 400 600;
+    src: url("../../app/assets/fonts/instrument-sans-latin.woff2") format("woff2");
+  }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    box-sizing: border-box;
+    padding: 64px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fbf8f3;
+    color: #1f2430;
+    font-family: "Instrument Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The header lockup of the landing, scaled up: orange tile, ink glyph. */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+  }
+
+  .brand .tile {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: #f26b1d;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: 116px;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  /* A gradient rather than a border, so it sits behind the descenders — the same
+     trick the hero uses. */
+  h1 .mark {
+    background: linear-gradient(transparent 62%, #ffd166 62%);
+  }
+
+  .badge {
+    align-self: flex-start;
+    border-radius: 999px;
+    background: #dff3ec;
+    padding: 12px 22px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #15654f;
+  }
+</style>
+</head>
+<body>
+  <div class="brand"><span class="tile">@</span>mcp4mail</div>
+
+  <h1>Your mail,<br><span class="mark">readable</span> by your AI.</h1>
+
+  <div class="badge">Open source · MIT · free to self‑host</div>
+</body>
+</html>
