@@ -9,9 +9,13 @@
     <p class="mt-5 max-w-[60ch] text-[18px] leading-[1.6] text-ink-soft"><%= t("pages.home.why.lede") %></p>
   </div>
 
-  <%# auto-fit keeps the reflow free of breakpoints: three across on a desktop,
-      two on a tablet, one on a 375px phone. %>
-  <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+  <%# One column or three, never two. This was an auto-fit track on a 280px
+      floor until the responsive pass of task #12707: at 768px it put two cards in
+      the first row and left the third alone in the second, which reads as a
+      mistake rather than as a choice. Three cards do not divide into two columns,
+      so the counts are named instead of derived: a tablet gets three full-width
+      cards, a laptop the row of three the design draws. %>
+  <div class="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3">
     <% t("pages.home.why.cards").each do |card| %>
       <%# A quoted utterance with a gloss: figure/blockquote/figcaption says that,
           two paragraphs in a div do not. No heading inside — the cards sit under
