@@ -112,8 +112,8 @@ en:
       built:
         kicker: "How this project is built"
         heading: "Written by AI developers. Briefed by people."
-        body_html: "mcp4mail is a real open‑source product and, at the same time, a public demonstration. Tasks are written by people in <a href=\"%{mcptask_url}\">mcptask.online</a>; runners pick them up — Claude Code driven by the mcptask runner, on our own machines — and every change follows the same path: task → branch → pull request → tests → merge → deploy. Nobody, person or runner, pushes to <code>main</code> directly."
-        body_2: "People still decide what gets built and what ships. Want to help? Issues and pull requests are welcome."
+        body_html: "mcp4mail is a real open‑source product and, at the same time, a public demonstration. Tasks are written by people in <a href=\"%{mcptask_url}\">mcptask.online</a>; runners pick them up — Claude Code driven by the mcptask runner, on our own machines — and every change follows the same path: task → branch → pull request → tests → merge. Nobody, person or runner, pushes to <code>main</code> directly."
+        body_2: "A merge is not a release: the site runs from a separate branch that a person promotes when the work is ready. People still decide what gets built and what ships. Want to help? Issues and pull requests are welcome."
         cta_live: "Watch it live"
         cta_contribute: "Contribute"
         image_alt: "The mcptask.online live board with an mcp4mail task in flight: a runner at the \"writing code\" step, with pull request, tests and merge still ahead of it."
