@@ -93,22 +93,20 @@ class BuiltSectionTest < ApplicationSystemTestCase
         const section = document.querySelector("#built");
         const [copy, frame] = section.children;
         return {
-          columns: getComputedStyle(section).gridTemplateColumns.split(" ").length,
           imageBelow: frame.getBoundingClientRect().top > copy.getBoundingClientRect().top,
           overflow: Math.round(frame.getBoundingClientRect().right) - document.documentElement.clientWidth
         };
       })()
     JS
 
-    assert_equal 1, stacked["columns"], "the section should stack into one column at 375px"
+    assert_equal 1, filled_columns, "the section should stack into one column at 375px"
     assert stacked["imageBelow"], "the screenshot should sit below the copy when stacked"
     assert_operator stacked["overflow"], :<=, 0
 
     resize_window_to 1440, 900
     visit root_url
 
-    assert_equal 2, page.evaluate_script(%(getComputedStyle(document.querySelector("#built")).gridTemplateColumns.split(" ").length)),
-      "the section should be two columns at 1440px"
+    assert_equal 2, filled_columns, "the section should be two columns at 1440px"
   ensure
     resize_window_to 1400, 1400
   end
@@ -116,5 +114,18 @@ class BuiltSectionTest < ApplicationSystemTestCase
   private
     def resize_window_to(width, height)
       page.current_window.resize_to(width, height)
+    end
+
+    # Three 300px tracks fit the 1160px shell at 1440px, and auto-fit collapses
+    # the one the section has no child for — so the computed value still lists
+    # that track, at 0px. The tracks carrying width are the columns a visitor
+    # actually sees.
+    def filled_columns
+      page.evaluate_script(<<~JS)
+        getComputedStyle(document.querySelector("#built")).gridTemplateColumns
+          .split(" ")
+          .filter((track) => parseFloat(track) > 0)
+          .length
+      JS
     end
 end
