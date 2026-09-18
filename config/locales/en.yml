@@ -116,7 +116,7 @@ en:
         body_2: "People still decide what gets built and what ships. Want to help? Issues and pull requests are welcome."
         cta_live: "Watch it live"
         cta_contribute: "Contribute"
-        live_image_alt: "Screenshot of mcptask.online/live"
+        image_alt: "The mcptask.online live board with an mcp4mail task in flight: a runner at the \"writing code\" step, with pull request, tests and merge still ahead of it."
       faq:
         kicker: "Questions"
         items:

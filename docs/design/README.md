@@ -89,8 +89,10 @@ The conversion was mechanical apart from the hover states. For the record:
   `<section lang="en">`; the `onClick="{{ setCs }}"` / `{{ setEn }}` language links
   became plain `href="#"`.
 - The two `<image-slot>` elements became plain `<img>` tags on the local
-  `placeholder-live.svg`; `image-slot.js` is gone. The real screenshot asset is
-  produced by task #12697.
+  `placeholder-live.svg`; `image-slot.js` is gone. The real screenshot asset now
+  lives at `app/assets/images/mcptask-live.webp` and is rendered by
+  `app/views/pages/_built_live_image.html.erb`; the capture recipe is in task #12697.
+  The placeholder stays here so this reference page keeps rendering on its own.
 - The 24 `style-hover="…"` attributes became six generated `.hv-N:hover` rules in a
   `<style>` block, one per distinct declaration. They are marked `!important`: the
   design styles every element with an inline `style="…"`, which would otherwise win on
