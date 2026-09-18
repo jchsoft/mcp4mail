@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mcp4mail — approved landing design (v2)</title>
+<!--
+  Approved v2 landing design, vendored from the Design Compiler prototype
+  "mcp4mail Landing v2.dc.html" (sha256 9be2a9909405267b8bf27bfbc8da59e10fbb5f95e78002d41b6e5c1a24022a68).
+  Static reference only: the prototype runtime is gone, the CS/EN switch is
+  inert and both language blocks are rendered one after the other.
+  See README.md in this directory.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #fbf8f3; color: #1f2430; font-family: 'Instrument Sans', system-ui, sans-serif; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+  a { color: #1f8a70; text-decoration-thickness: 1.5px; text-underline-offset: 0.18em; }
+  a:hover { color: #15654f; }
+  *:focus-visible { outline: 3px solid #f26b1d; outline-offset: 3px; border-radius: 6px; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary { list-style: none; }
+  details[open] .faq-mark { transform: rotate(45deg); }
+  .faq-mark { display: inline-flex; transition: transform .2s ease; }
+  ::selection { background: #ffd166; }
+</style>
+<style>
+    /* Hover states, converted from the prototype's style-hover="..." attributes. */
+    .hv-1:hover { color:#c94a12; }
+    .hv-2:hover { background:#343b4a; }
+    .hv-3:hover { background:#e35f14; }
+    .hv-4:hover { background:#f1ebe1; }
+    .hv-5:hover { background:#15654f; }
+    .hv-6:hover { background:#fff; }
+  section[lang] + section[lang] { border-top: 1px dashed #ebe4d8; }
+</style>
+</head>
+<body>
+
+<!-- ===================== ČESKY ===================== -->
+<section lang="cs">
+<header style="max-width:1160px;margin:0 auto;padding:22px clamp(20px,5vw,48px);display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+  <a href="#" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.02em;margin-right:auto"><span style="width:34px;height:34px;border-radius:10px;background:#f26b1d;display:inline-grid;place-items:center;color:#1f2430;font-size:15px;font-weight:800">@</span>mcp4mail</a>
+  <nav style="display:flex;gap:24px;flex-wrap:wrap;font-weight:500;font-size:15px">
+    <a class="hv-1" href="#proc" style="color:#1f2430;text-decoration:none">K čemu</a>
+    <a class="hv-1" href="#jak" style="color:#1f2430;text-decoration:none">Jak na to</a>
+    <a class="hv-1" href="#bezpecnost" style="color:#1f2430;text-decoration:none">Bezpečnost</a>
+    <a class="hv-1" href="#vznik" style="color:#1f2430;text-decoration:none">Jak vzniká</a>
+    <a class="hv-1" href="#faq" style="color:#1f2430;text-decoration:none">Otázky</a>
+  </nav>
+  <span style="display:inline-flex;background:#f1ebe1;border-radius:999px;padding:3px;font-size:13px;font-weight:600">
+    <a href="#" style="padding:5px 12px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none">CS</a>
+    <a href="#" style="padding:5px 12px;border-radius:999px;color:#1f2430;text-decoration:none">EN</a>
+  </span>
+  <a class="hv-2" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:11px 20px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none;font-weight:600;font-size:15px">Připojit schránku</a>
+</header>
+
+<main style="max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,48px)">
+
+  <section data-screen-label="Hero" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px clamp(32px,5vw,80px);align-items:center;padding:72px 0 96px">
+    <div>
+      <span style="display:inline-flex;align-items:center;gap:8px;background:#dff3ec;color:#15654f;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600">Open source · MIT · zdarma k provozování</span>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(42px,5.6vw,72px);line-height:1.02;letter-spacing:-0.03em;margin:22px 0 0">Vaše pošta, <span style="background:linear-gradient(transparent 62%,#ffd166 62%)">srozumitelná</span> pro vaši AI.</h1>
+      <p style="font-size:19px;line-height:1.55;color:#4a515f;margin:24px 0 0;max-width:34em">Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
+        <a class="hv-3" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;background:#f26b1d;color:#1f2430;text-decoration:none;font-weight:700;font-size:16px">Připojit schránku</a>
+        <a class="hv-4" href="https://github.com/jchsoft/mcp4mail" style="display:inline-flex;align-items:center;gap:8px;padding:15px 26px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600;font-size:16px">Kód na GitHubu</a>
+      </div>
+      <p style="margin:20px 0 0;font-size:14px;color:#6b7280">Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP.</p>
+    </div>
+    <div aria-label="Ukázka otázky a odpovědi" style="display:flex;flex-direction:column;gap:14px;max-width:460px;justify-self:end;width:100%">
+      <div style="align-self:flex-end;background:#1f2430;color:#fff;border-radius:22px 22px 6px 22px;padding:16px 20px;font-size:16px;line-height:1.5;max-width:85%">Co mi letos psali z pojišťovny? Shrň to do pár bodů.</div>
+      <div style="background:#fff;border:1px solid #ebe4d8;border-radius:22px 22px 22px 6px;padding:20px 22px;font-size:15px;line-height:1.55;box-shadow:0 8px 30px rgba(31,36,48,.06)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#15654f;margin-bottom:10px"><span style="width:8px;height:8px;border-radius:50%;background:#1f8a70"></span>Přečteno ze schránky · 4 zprávy</div>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:#1f2430">
+          <li><strong>Leden</strong> — roční vyúčtování, přeplatek 1 240 Kč.</li>
+          <li><strong>Duben</strong> — nová smlouva k podpisu, čekají na odpověď.</li>
+          <li><strong>Srpen</strong> — připomínka: nahlásit stav tachometru do 15. 9.</li>
+        </ul>
+      </div>
+      <div style="font-size:13px;color:#6b7280;padding-left:6px">Ilustrační ukázka. Ve schránce se nic nezměnilo — ani stav „přečteno“.</div>
+    </div>
+  </section>
+
+  <section id="proc" data-screen-label="K čemu" style="padding:64px 0">
+    <div style="max-width:720px">
+      <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">K čemu to je</span>
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Zeptáte se své pošty jako člověka. Ne jako programátor.</h2>
+      <p style="font-size:18px;line-height:1.6;color:#4a515f;margin:20px 0 0">Nemusíte vědět, co je IMAP, MCP ani server. Stačí, že máte e‑mail a používáte Claude, ChatGPT nebo Grok. Po propojení jim položíte otázku — a oni si odpověď najdou ve vaší schránce.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:48px">
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">„Na které maily z minulého týdne jsem ještě neodpověděl?“</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">Přehled o tom, co čeká — bez ručního procházení schránky.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">„Najdi potvrzení objednávky bot a řekni mi, kdy dorazí.“</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">Konkrétní zpráva, konkrétní odpověď. Hledá podle odesílatele, předmětu i data.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">„Shrň mi celé vlákno o rekonstrukci a co z toho pro mě plyne.“</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">Dlouhé konverzace v pár větách — i napříč složkami.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="jak" data-screen-label="Jak na to" style="padding:64px 0">
+    <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">Jak na to</span>
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Tři kroky. Žádná instalace.</h2>
+    <ol style="list-style:none;margin:48px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px clamp(24px,4vw,56px)">
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#f26b1d;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">1</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Přidejte schránku</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">Přihlaste se na mcp4mail.online a zadejte e‑mailovou adresu a <strong style="color:#1f2430">heslo aplikace</strong> — zvláštní heslo jen pro tento účel, které vám Gmail, iCloud, Outlook i Seznam vygenerují v nastavení. Hlavní heslo nikdy nezadáváte.</p>
+      </li>
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#ffd166;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">2</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Propojte svou AI</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">V Claude, ChatGPT nebo Groku otevřete nastavení konektorů a vložte jednu adresu: <code style="font-family:ui-monospace,monospace;background:#f1ebe1;padding:2px 8px;border-radius:6px;font-size:14px;color:#1f2430">mcp4mail.online/mcp</code>. Přihlásíte se, potvrdíte přístup — hotovo. Jako když povolíte přihlášení přes Google.</p>
+      </li>
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#1f8a70;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">3</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Zeptejte se</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">Napište otázku, jak byste ji řekli kolegovi. AI si přečte, co potřebuje, a odpoví. Vidí jen schránky, které jste připojili, a nemůže v nich nic změnit — ani označit zprávu jako přečtenou.</p>
+      </li>
+    </ol>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:48px;align-items:center">
+      <span style="font-size:14px;font-weight:600;color:#6b7280;margin-right:6px">Funguje s</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Claude Desktop</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Claude Cowork</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">ChatGPT</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Grok</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">cokoli s MCP</span>
+    </div>
+  </section>
+
+  <section id="bezpecnost" data-screen-label="Bezpečnost" style="padding:64px 0">
+    <div style="background:#1f2430;color:#fff;border-radius:32px;padding:clamp(32px,5vw,64px)">
+      <div style="max-width:680px">
+        <span style="display:block;font-size:14px;font-weight:700;color:#ffd166;letter-spacing:.04em;text-transform:uppercase">Bezpečnost</span>
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Čte. Nikdy nepíše.</h2>
+        <p style="font-size:18px;line-height:1.6;color:#cfd3dc;margin:20px 0 0">Do schránky se dostane jen to, co jí dovolíte, a nic v ní nemůže změnit. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:36px 32px;margin-top:48px">
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Jen čtení, zabudované</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">Žádný nástroj neodesílá, nepřesouvá, nemaže ani nepřeznačuje zprávy. Server se odmítne spustit s nástrojem, který nedeklaruje, že je jen pro čtení.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Heslo aplikace, šifrované</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">Zadáváte heslo aplikace, ne heslo k účtu — kdykoli ho zrušíte. V databázi leží šifrované a AI klient ho nikdy neuvidí; přístup dostává přes OAuth 2.1.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Nebo úplně u vás</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">Jeden <code style="font-family:ui-monospace,monospace;background:#343b4a;padding:2px 8px;border-radius:6px;font-size:14px">docker compose up</code> a přihlašovací údaje nikdy neopustí váš počítač. <a href="https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md" style="color:#ffd166">Návod k self‑hostingu</a>.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Limity a záznam</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">Každé volání se zapíše: kdo, jaký klient, jaký nástroj, s jakým výsledkem. Hledání má rozpočet, aby žádná smyčka neprošla celou schránku.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vznik" data-screen-label="Jak vzniká" style="padding:64px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px clamp(32px,5vw,80px);align-items:center">
+    <div>
+      <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">Jak tento projekt vzniká</span>
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Píší ho AI vývojáři. Zadání píší lidé.</h2>
+      <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:20px 0 0">mcp4mail je skutečný open‑source produkt a zároveň veřejná ukázka. Úkoly zadávají lidé v <a href="https://mcptask.online">mcptask.online</a>; vyzvednou je runnery — Claude Code řízený mcptask runnerem na našich strojích — a každá změna jde stejnou cestou: úkol → větev → pull request → testy → merge → nasazení. Nikdo, člověk ani runner, nepíše do <code style="font-family:ui-monospace,monospace;background:#f1ebe1;padding:2px 8px;border-radius:6px;font-size:14px">main</code> přímo.</p>
+      <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:14px 0 0">Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px">
+        <a class="hv-5" href="https://mcptask.online/live" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:#1f8a70;color:#fff;text-decoration:none;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:#ffd166"></span>Sledovat živě</a>
+        <a class="hv-4" href="https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md" style="display:inline-flex;align-items:center;padding:13px 22px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600">Přispět</a>
+      </div>
+    </div>
+    <div style="border-radius:24px;overflow:hidden;border:1px solid #ebe4d8;background:#fff;aspect-ratio:4/3;box-shadow:0 12px 40px rgba(31,36,48,.08)">
+      <img id="live-v2-cs" src="./placeholder-live.svg" alt="Snímek stránky mcptask.online/live" style="display:block;width:100%;height:100%;object-fit:cover">
+    </div>
+  </section>
+
+  <section id="faq" data-screen-label="Otázky" style="padding:64px 0">
+    <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">Časté otázky</span>
+    <div style="max-width:760px;display:flex;flex-direction:column;gap:12px;margin-top:24px">
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Musím něco instalovat?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">Ne. Hostovaná verze běží na mcp4mail.online; stačí přidat schránku a v AI klientovi vložit adresu konektoru. Instalace (docker compose) je jen pro ty, kdo si chtějí server provozovat sami.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Co je heslo aplikace a kde ho najdu?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">Zvláštní heslo, které vygenerujete v nastavení zabezpečení své pošty (Gmail, iCloud, Outlook.com, Yahoo, Fastmail a další). Funguje jen pro přihlášení k poště, dá se kdykoli zrušit a nikdy neotevře celý váš účet.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Může AI něco poslat nebo smazat?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">Ne. Žádný nástroj to neumí a server takový nástroj ani nespustí. Zápis může přijít později, ale jen jako výslovné zapnutí pro konkrétní schránku.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Co si mcp4mail ukládá?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">Kopii hlaviček zpráv — odesílatel, příjemci, předmět, datum, příznaky, velikost — obnovovanou každých 15 minut, aby hledání nezatěžovalo váš poštovní server. Obsah dotazů se do záznamu neukládá.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Kolik to stojí?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">Kód je open source pod licencí MIT — provozovat si ho můžete zdarma. Podmínky hostované verze najdete na mcp4mail.online.</p>
+      </details>
+    </div>
+  </section>
+
+  <section data-screen-label="Závěr" style="padding:64px 0 32px">
+    <div style="background:#fde9dc;border-radius:32px;padding:clamp(32px,5vw,64px);display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between">
+      <div style="max-width:560px">
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-0.025em;margin:0">Vaše schránka už čeká na první otázku.</h2>
+        <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:14px 0 0">Tři kroky, pět minut, nic k instalaci.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="hv-2" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none;font-weight:700;font-size:16px">Připojit schránku</a>
+        <a class="hv-6" href="https://github.com/jchsoft/mcp4mail" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600;font-size:16px">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:32px 0 48px;font-size:14px;color:#6b7280;display:flex;flex-wrap:wrap;gap:8px 28px">
+    <span>mcp4mail · MIT</span>
+    <a href="https://github.com/jchsoft/mcp4mail">GitHub</a>
+    <a href="https://mcptask.online/live">Vzniká živě na mcptask.online</a>
+    <span>JCHSoft</span>
+  </footer>
+</main>
+</section>
+
+<!-- ===================== ENGLISH ===================== -->
+<section lang="en">
+<header style="max-width:1160px;margin:0 auto;padding:22px clamp(20px,5vw,48px);display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+  <a href="#" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.02em;margin-right:auto"><span style="width:34px;height:34px;border-radius:10px;background:#f26b1d;display:inline-grid;place-items:center;color:#1f2430;font-size:15px;font-weight:800">@</span>mcp4mail</a>
+  <nav style="display:flex;gap:24px;flex-wrap:wrap;font-weight:500;font-size:15px">
+    <a class="hv-1" href="#why" style="color:#1f2430;text-decoration:none">Why</a>
+    <a class="hv-1" href="#how" style="color:#1f2430;text-decoration:none">How</a>
+    <a class="hv-1" href="#security" style="color:#1f2430;text-decoration:none">Security</a>
+    <a class="hv-1" href="#built" style="color:#1f2430;text-decoration:none">How it's built</a>
+    <a class="hv-1" href="#faq-en" style="color:#1f2430;text-decoration:none">FAQ</a>
+  </nav>
+  <span style="display:inline-flex;background:#f1ebe1;border-radius:999px;padding:3px;font-size:13px;font-weight:600">
+    <a href="#" style="padding:5px 12px;border-radius:999px;color:#1f2430;text-decoration:none">CS</a>
+    <a href="#" style="padding:5px 12px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none">EN</a>
+  </span>
+  <a class="hv-2" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:11px 20px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none;font-weight:600;font-size:15px">Connect a mailbox</a>
+</header>
+
+<main style="max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,48px)">
+
+  <section data-screen-label="Hero" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px clamp(32px,5vw,80px);align-items:center;padding:72px 0 96px">
+    <div>
+      <span style="display:inline-flex;align-items:center;gap:8px;background:#dff3ec;color:#15654f;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600">Open source · MIT · free to self‑host</span>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(42px,5.6vw,72px);line-height:1.02;letter-spacing:-0.03em;margin:22px 0 0">Your mail, <span style="background:linear-gradient(transparent 62%,#ffd166 62%)">readable</span> by your AI.</h1>
+      <p style="font-size:19px;line-height:1.55;color:#4a515f;margin:24px 0 0;max-width:34em">Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
+        <a class="hv-3" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;background:#f26b1d;color:#1f2430;text-decoration:none;font-weight:700;font-size:16px">Connect a mailbox</a>
+        <a class="hv-4" href="https://github.com/jchsoft/mcp4mail" style="display:inline-flex;align-items:center;gap:8px;padding:15px 26px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600;font-size:16px">Source on GitHub</a>
+      </div>
+      <p style="margin:20px 0 0;font-size:14px;color:#6b7280">Works with Claude Desktop and Cowork, ChatGPT, Grok and anything that speaks MCP.</p>
+    </div>
+    <div aria-label="Example question and answer" style="display:flex;flex-direction:column;gap:14px;max-width:460px;justify-self:end;width:100%">
+      <div style="align-self:flex-end;background:#1f2430;color:#fff;border-radius:22px 22px 6px 22px;padding:16px 20px;font-size:16px;line-height:1.5;max-width:85%">What did my insurer write this year? A few bullet points.</div>
+      <div style="background:#fff;border:1px solid #ebe4d8;border-radius:22px 22px 22px 6px;padding:20px 22px;font-size:15px;line-height:1.55;box-shadow:0 8px 30px rgba(31,36,48,.06)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#15654f;margin-bottom:10px"><span style="width:8px;height:8px;border-radius:50%;background:#1f8a70"></span>Read from your mailbox · 4 messages</div>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:#1f2430">
+          <li><strong>January</strong> — annual statement, €48 refund.</li>
+          <li><strong>April</strong> — new contract to sign, awaiting your reply.</li>
+          <li><strong>August</strong> — reminder: report mileage by 15 Sept.</li>
+        </ul>
+      </div>
+      <div style="font-size:13px;color:#6b7280;padding-left:6px">Illustrative. Nothing in the mailbox changed — not even the “read” flag.</div>
+    </div>
+  </section>
+
+  <section id="why" data-screen-label="Why" style="padding:64px 0">
+    <div style="max-width:720px">
+      <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">What it's for</span>
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Ask your mail like a person. Not like a programmer.</h2>
+      <p style="font-size:18px;line-height:1.6;color:#4a515f;margin:20px 0 0">You don't need to know what IMAP, MCP or a server is. You have an email address and you use Claude, ChatGPT or Grok — that's enough. Once connected, you ask, and they find the answer in your mailbox.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:48px">
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">“Which mails from last week haven't I replied to yet?”</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">See what's waiting — without scrolling through the inbox yourself.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">“Find the order confirmation for the shoes and tell me when they arrive.”</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">One message, one answer. Search by sender, subject and date.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:28px;border:1px solid #ebe4d8">
+        <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.25;letter-spacing:-0.015em;margin:0">“Summarize the whole renovation thread and what it means for me.”</p>
+        <p style="margin:14px 0 0;color:#4a515f;line-height:1.55">Long conversations in a few sentences — across folders.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" data-screen-label="How" style="padding:64px 0">
+    <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">How it works</span>
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Three steps. Nothing to install.</h2>
+    <ol style="list-style:none;margin:48px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px clamp(24px,4vw,56px)">
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#f26b1d;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">1</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Add a mailbox</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">Sign in at mcp4mail.online and enter your email address and an <strong style="color:#1f2430">app password</strong> — a separate password just for this, which Gmail, iCloud, Outlook and others generate in their settings. You never type your main password.</p>
+      </li>
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#ffd166;color:#1f2430;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">2</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Connect your AI</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">In Claude, ChatGPT or Grok, open the connector settings and paste one address: <code style="font-family:ui-monospace,monospace;background:#f1ebe1;padding:2px 8px;border-radius:6px;font-size:14px;color:#1f2430">mcp4mail.online/mcp</code>. Sign in, approve access — done. It works like “Sign in with Google”.</p>
+      </li>
+      <li>
+        <span style="display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#1f8a70;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">3</span>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.015em;margin:20px 0 0">Ask</h3>
+        <p style="margin:12px 0 0;line-height:1.6;color:#4a515f">Type the question the way you'd say it to a colleague. The AI reads what it needs and answers. It sees only the mailboxes you connected and can't change anything — not even mark a message as read.</p>
+      </li>
+    </ol>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:48px;align-items:center">
+      <span style="font-size:14px;font-weight:600;color:#6b7280;margin-right:6px">Works with</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Claude Desktop</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Claude Cowork</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">ChatGPT</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">Grok</span>
+      <span style="background:#fff;border:1px solid #ebe4d8;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px">anything with MCP</span>
+    </div>
+  </section>
+
+  <section id="security" data-screen-label="Security" style="padding:64px 0">
+    <div style="background:#1f2430;color:#fff;border-radius:32px;padding:clamp(32px,5vw,64px)">
+      <div style="max-width:680px">
+        <span style="display:block;font-size:14px;font-weight:700;color:#ffd166;letter-spacing:.04em;text-transform:uppercase">Security</span>
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">It reads. It never writes.</h2>
+        <p style="font-size:18px;line-height:1.6;color:#cfd3dc;margin:20px 0 0">It only reaches what you allow, and it can't change anything in your mailbox. And if you don't want your password on someone else's server, run mcp4mail yourself.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:36px 32px;margin-top:48px">
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Read‑only, built in</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">No tool sends, moves, deletes or re‑flags mail. The server refuses to boot with a tool that doesn't declare itself read‑only.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">App password, encrypted</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">You enter an app password, not your account password — revoke it any time. It's stored encrypted and your AI client never sees it: access goes through OAuth 2.1.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Or entirely on your machine</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">One <code style="font-family:ui-monospace,monospace;background:#343b4a;padding:2px 8px;border-radius:6px;font-size:14px">docker compose up</code> and your credentials never leave your computer. <a href="https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md" style="color:#ffd166">Self‑hosting guide</a>.</p>
+        </div>
+        <div>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff">Limits and an audit log</h3>
+          <p style="margin:10px 0 0;line-height:1.6;color:#cfd3dc">Every call is written down: who, which client, which tool, with what outcome. Searches have a budget, so a runaway loop can't walk a whole mailbox.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="built" data-screen-label="How it's built" style="padding:64px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px clamp(32px,5vw,80px);align-items:center">
+    <div>
+      <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">How this project is built</span>
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-0.025em;margin:14px 0 0">Written by AI developers. Briefed by people.</h2>
+      <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:20px 0 0">mcp4mail is a real open‑source product and, at the same time, a public demonstration. Tasks are written by people in <a href="https://mcptask.online">mcptask.online</a>; runners pick them up — Claude Code driven by the mcptask runner, on our own machines — and every change follows the same path: task → branch → pull request → tests → merge → deploy. Nobody, person or runner, pushes to <code style="font-family:ui-monospace,monospace;background:#f1ebe1;padding:2px 8px;border-radius:6px;font-size:14px">main</code> directly.</p>
+      <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:14px 0 0">People still decide what gets built and what ships. Want to help? Issues and pull requests are welcome.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px">
+        <a class="hv-5" href="https://mcptask.online/live" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:#1f8a70;color:#fff;text-decoration:none;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:#ffd166"></span>Watch it live</a>
+        <a class="hv-4" href="https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md" style="display:inline-flex;align-items:center;padding:13px 22px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600">Contribute</a>
+      </div>
+    </div>
+    <div style="border-radius:24px;overflow:hidden;border:1px solid #ebe4d8;background:#fff;aspect-ratio:4/3;box-shadow:0 12px 40px rgba(31,36,48,.08)">
+      <img id="live-v2-en" src="./placeholder-live.svg" alt="Screenshot of mcptask.online/live" style="display:block;width:100%;height:100%;object-fit:cover">
+    </div>
+  </section>
+
+  <section id="faq-en" data-screen-label="FAQ" style="padding:64px 0">
+    <span style="display:block;font-size:14px;font-weight:700;color:#c94a12;letter-spacing:.04em;text-transform:uppercase">Questions</span>
+    <div style="max-width:760px;display:flex;flex-direction:column;gap:12px;margin-top:24px">
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Do I have to install anything?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">No. The hosted version runs at mcp4mail.online; add a mailbox and paste the connector address into your AI client. Installing (docker compose) is only for people who want to run the server themselves.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>What is an app password and where do I get one?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">A separate password you generate in your mail provider's security settings (Gmail, iCloud, Outlook.com, Yahoo, Fastmail and others). It only works for signing in to mail, can be revoked any time, and never opens your whole account.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>Can the AI send or delete anything?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">No. No tool can, and the server won't even start with one that could. Write tools may come later — only as an explicit opt‑in for a specific mailbox.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>What does mcp4mail store?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">A copy of message headers — sender, recipients, subject, date, flags, size — refreshed every 15 minutes so searches don't hit your mail server each time. The content of your questions isn't logged.</p>
+      </details>
+      <details style="background:#fff;border:1px solid #ebe4d8;border-radius:16px;padding:18px 22px">
+        <summary style="cursor:pointer;display:flex;gap:14px;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px"><span class="faq-mark" style="width:26px;height:26px;border-radius:50%;background:#fde9dc;color:#c94a12;align-items:center;justify-content:center;font-size:18px;flex:none">+</span>What does it cost?</summary>
+        <p style="margin:12px 0 0 40px;line-height:1.6;color:#4a515f">The code is open source under the MIT license — running it yourself is free. Terms of the hosted version are on mcp4mail.online.</p>
+      </details>
+    </div>
+  </section>
+
+  <section data-screen-label="Close" style="padding:64px 0 32px">
+    <div style="background:#fde9dc;border-radius:32px;padding:clamp(32px,5vw,64px);display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between">
+      <div style="max-width:560px">
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-0.025em;margin:0">Your mailbox is waiting for its first question.</h2>
+        <p style="font-size:17px;line-height:1.6;color:#4a515f;margin:14px 0 0">Three steps, five minutes, nothing to install.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="hv-2" href="https://mcp4mail.online" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;background:#1f2430;color:#fff;text-decoration:none;font-weight:700;font-size:16px">Connect a mailbox</a>
+        <a class="hv-6" href="https://github.com/jchsoft/mcp4mail" style="display:inline-flex;align-items:center;padding:15px 26px;border-radius:999px;border:2px solid #1f2430;color:#1f2430;text-decoration:none;font-weight:600;font-size:16px">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:32px 0 48px;font-size:14px;color:#6b7280;display:flex;flex-wrap:wrap;gap:8px 28px">
+    <span>mcp4mail · MIT</span>
+    <a href="https://github.com/jchsoft/mcp4mail">GitHub</a>
+    <a href="https://mcptask.online/live">Built live on mcptask.online</a>
+    <span>JCHSoft</span>
+  </footer>
+</main>
+</section>
+</body>
+</html>
