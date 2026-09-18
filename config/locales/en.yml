@@ -4,6 +4,7 @@ en:
   nav:
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
+    account: "Account"
     sign_in: "Sign in"
     sign_up: "Sign up"
     sign_out: "Sign out"
@@ -175,6 +176,26 @@ en:
     update:
       success: "Password has been reset."
       mismatch: "Passwords did not match."
+
+  accounts:
+    show:
+      title: "Your account"
+      email: "Email address"
+      member_since: "Account created"
+      mailboxes: "Mailboxes connected"
+      messages: "Messages indexed"
+      audit_events: "AI calls recorded"
+      export_title: "Download my data"
+      export_body: "A single JSON file with everything mcp4mail holds about you: your account, the mailboxes you connected (without their passwords), the AI clients you granted access to, the record of their calls, and the message headers we index. Message bodies are never stored, so they are not in it."
+      export: "Download my data"
+      delete_title: "Delete my account"
+      delete_body: "Immediate and permanent. Your mail on your provider's servers is not touched — only what mcp4mail holds."
+      delete: "Delete my account"
+      delete_confirm: "Delete your account? This removes your mailboxes and their stored passwords, the message header index, the record of AI calls, every AI client's access, and your account itself. It happens at once and cannot be undone. Your mail on the server is not touched."
+    export:
+      queued: "Your data is being packed up. We will email a download link to %{email}; it works for 24 hours."
+    destroy:
+      success: "Your account and everything we held about it are gone."
 
   registrations:
     new:

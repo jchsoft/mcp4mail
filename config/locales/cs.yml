@@ -4,6 +4,7 @@ cs:
   nav:
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
+    account: "Účet"
     sign_in: "Přihlásit se"
     sign_up: "Registrovat"
     sign_out: "Odhlásit se"
@@ -221,6 +222,26 @@ cs:
     update:
       success: "Heslo bylo změněno."
       mismatch: "Hesla se neshodují."
+
+  accounts:
+    show:
+      title: "Váš účet"
+      email: "E-mailová adresa"
+      member_since: "Účet založen"
+      mailboxes: "Připojené schránky"
+      messages: "Zaindexované zprávy"
+      audit_events: "Zaznamenaná volání AI"
+      export_title: "Stáhnout moje data"
+      export_body: "Jeden soubor JSON se vším, co o vás mcp4mail drží: váš účet, připojené schránky (bez hesel), AI klienti, kterým jste dali přístup, záznam jejich volání a hlavičky zpráv, které indexujeme. Obsah zpráv neukládáme, takže v souboru není."
+      export: "Stáhnout moje data"
+      delete_title: "Smazat můj účet"
+      delete_body: "Okamžitě a nevratně. Pošty u vašeho poskytovatele se to nedotkne — smaže se jen to, co drží mcp4mail."
+      delete: "Smazat můj účet"
+      delete_confirm: "Smazat váš účet? Zmizí schránky i jejich uložená hesla, index hlaviček zpráv, záznam volání AI, přístup všech AI klientů i samotný účet. Stane se to hned a nejde to vrátit. Pošta na serveru zůstane beze změny."
+    export:
+      queued: "Vaše data balíme. Odkaz ke stažení pošleme na %{email}; platí 24 hodin."
+    destroy:
+      success: "Váš účet i všechno, co jsme o něm drželi, je pryč."
 
   registrations:
     new:

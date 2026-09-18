@@ -10,11 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
   enable_extension "unaccent"
+
+  create_table "account_export_files", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.text "payload"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["token_digest"], name: "index_account_export_files_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_account_export_files_on_user_id"
+  end
 
   create_table "hitch_access_tokens", force: :cascade do |t|
     t.string "authorization_code_digest"
@@ -184,6 +195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_160000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "account_export_files", "users", on_delete: :cascade
   add_foreign_key "hitch_client_redirect_uris", "hitch_clients", on_delete: :cascade
   add_foreign_key "mail_accounts", "users"
   add_foreign_key "mail_folders", "mail_accounts", on_delete: :cascade
