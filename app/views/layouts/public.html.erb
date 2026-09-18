@@ -41,11 +41,18 @@
   </head>
 
   <body>
+    <%# First thing in the tab order, hidden until it takes focus. The header
+        carries five anchor links, a language switcher and a call to action, so
+        without this a keyboard visitor tabs through the whole nav on every page
+        they land on. tabindex="-1" on the target is what makes the jump actually
+        move focus rather than only the scroll position. %>
+    <%= link_to t("layouts.skip_to_content"), "#main", class: "skip-link" %>
+
     <%= render "shared/marketing_header" %>
 
     <%# The 1160px content column of docs/design/landing-v2.html. No top margin:
         each section carries its own vertical rhythm, starting with the hero. %>
-    <main class="landing-shell">
+    <main id="main" tabindex="-1" class="landing-shell">
       <%= render "shared/flash" %>
       <%= yield %>
     </main>
