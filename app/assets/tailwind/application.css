@@ -139,4 +139,22 @@
   details summary::-webkit-details-marker {
     display: none;
   }
+
+  /* The FAQ draws a + that turns into an × when its item opens. The rotation
+     lives here rather than on the span so every disclosure on the page shares
+     one marker behaviour, and so the reduced-motion opt-out is a single media
+     query instead of one per call site. */
+  .faq-mark {
+    transition: transform 0.2s ease;
+  }
+
+  details[open] .faq-mark {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-mark {
+      transition: none;
+    }
+  }
 }
