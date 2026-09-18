@@ -17,17 +17,7 @@
     <% end %>
   </nav>
 
-  <span class="inline-flex rounded-full bg-surface-hover p-[3px] text-[13px] font-semibold">
-    <% I18n.available_locales.each do |locale| %>
-      <% current = locale == I18n.locale %>
-      <%= link_to t("pages.home.nav.locale_#{locale}"),
-                  url_for(locale: locale),
-                  lang: locale,
-                  aria: { current: ("page" if current) },
-                  class: class_names("rounded-full px-3 py-[5px] no-underline",
-                                     current ? "bg-ink text-white" : "text-ink") %>
-    <% end %>
-  </span>
+  <%= render "shared/locale_switcher" %>
 
   <%= link_to t("pages.home.nav.cta"),
               authenticated? ? main_app.mail_accounts_path : main_app.new_registration_path,

@@ -46,6 +46,7 @@ en:
         cta: "Connect a mailbox"
         locale_cs: "CS"
         locale_en: "EN"
+        locale_label: "Language"
       hero:
         badge: "Open source · MIT · free to self‑host"
         # The H1 is three keys because the middle word carries the highlight span.
@@ -138,6 +139,7 @@ en:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        self_hosting: "Self‑hosting guide"
         live: "Built live on mcptask.online"
         company: "JCHSoft"
 

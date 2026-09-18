@@ -24,7 +24,8 @@ class LandingHeaderTest < ApplicationSystemTestCase
     visit root_url
     assert_selector "html[lang=en]"
 
-    click_link "CS"
+    # The footer carries the same switcher, so aim at the header's copy.
+    within("header") { click_link "CS" }
     assert_selector "html[lang=cs]"
     assert_link "Bezpečnost"
 

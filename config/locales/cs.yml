@@ -64,6 +64,7 @@ cs:
         cta: "Připojit schránku"
         locale_cs: "CS"
         locale_en: "EN"
+        locale_label: "Jazyk"
       hero:
         badge: "Open source · MIT · zdarma k provozování"
         # The H1 is three keys because the middle word carries the highlight span.
@@ -156,6 +157,7 @@ cs:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        self_hosting: "Návod k self‑hostingu"
         live: "Vzniká živě na mcptask.online"
         company: "JCHSoft"
 
