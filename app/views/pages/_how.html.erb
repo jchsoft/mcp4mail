@@ -1,0 +1,54 @@
+<%# The data-screen-label="How" block of docs/design/landing-v2.html. The id is
+    the English one in both locales so the header's anchor survives a language
+    switch, and the steps and client names come from the locale arrays rather
+    than the markup. %>
+<%# The design tints each numeral differently, and the three are a fixed part of
+    the design rather than of the copy, so they are indexed here instead of
+    travelling through the locale files. Full class names, so Tailwind's scanner
+    can see them. %>
+<% badges = ["bg-brand text-ink", "bg-highlight text-ink", "bg-green text-white"] %>
+
+<section id="how" class="py-16">
+  <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase"><%= t("pages.home.how.kicker") %></span>
+  <h2 class="mt-3.5 font-heading text-h2 font-extrabold"><%= t("pages.home.how.heading") %></h2>
+
+  <%# A real <ol>: the steps are a sequence, and "step 2 of 3" is information a
+      screen reader should get from the markup rather than from the drawn
+      numeral. list-style:none costs an <ol> its list semantics in Safari and
+      VoiceOver, so role="list" puts them back; the badge that replaces the
+      marker is aria-hidden, or the count would be read twice. %>
+  <ol role="list" class="mt-12 grid list-none grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-x-[clamp(24px,4vw,56px)] gap-y-10 p-0">
+    <% t("pages.home.how.steps", deep_interpolation: true, connector_url: connector_address).each_with_index do |step, index| %>
+      <li>
+        <span aria-hidden="true"
+              class="<%= badges[index] %> inline-grid size-[52px] place-items-center rounded-2xl font-heading text-2xl font-extrabold">
+          <%= index + 1 %>
+        </span>
+
+        <h3 class="mt-5 font-heading text-2xl font-bold tracking-[-0.015em]"><%= step[:title] %></h3>
+
+        <%# The copy carries a <strong> and a <code> chip; both take their
+            styling here rather than in the translation, which keeps markup out
+            of the translator's way. The design only styles the chip on the dark
+            panel, so the light ground gets the surface-hover tint from the same
+            token set. sanitize, not raw: the strings are ours, but nothing in
+            the view should be the only thing standing between a locale file and
+            the page. %>
+        <p class="mt-3 leading-[1.6] text-ink-soft
+                  [&_strong]:text-ink
+                  [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:text-ink">
+          <%= sanitize step[:body_html] %>
+        </p>
+      </li>
+    <% end %>
+  </ol>
+
+  <%# Names of clients, not links: none of them is a destination this page can
+      usefully send a visitor to. %>
+  <div class="mt-12 flex flex-wrap items-center gap-2.5">
+    <span class="mr-1.5 text-sm font-semibold text-ink-muted"><%= t("pages.home.how.works_with_label") %></span>
+    <% t("pages.home.how.clients").each do |client| %>
+      <span class="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold"><%= client %></span>
+    <% end %>
+  </div>
+</section>
