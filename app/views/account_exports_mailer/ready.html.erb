@@ -1,0 +1,9 @@
+<p>
+  Your mcp4mail data export is ready:
+  <%= link_to "download it here", @url %>.
+</p>
+
+<p>
+  The link works for <%= distance_of_time_in_words(0, @expires_in) %> and then the export is
+  deleted from our servers.
+</p>
