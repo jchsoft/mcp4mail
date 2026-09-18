@@ -19,7 +19,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     tools = response.parsed_body.dig("result", "tools")
-    assert_equal %w[get_attachment get_mail_account get_message list_mail_accounts search_messages], tools.map { |tool| tool["name"] }
+    assert_equal %w[get_attachment get_mail_account get_message list_mail_accounts search_contacts search_messages], tools.map { |tool| tool["name"] }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
@@ -173,6 +173,70 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "search_limited", 0 ], McpAuditEvent.sole.values_at(:outcome, :rows_returned)
   end
 
+  test "search_contacts finds a person by exact name, partial name and address fragment" do
+    index_contact_message(uid: 1, from_name: "Marie Novák", from_address: "marie@example.com",
+      date: Time.zone.parse("2026-09-01 10:00"))
+    index_contact_message(uid: 2, from_name: "Marie Novák", from_address: "marie@example.com",
+      date: Time.zone.parse("2026-09-10 10:00"))
+    index_contact_message(uid: 3, from_name: "Petr Svoboda", from_address: "petr@example.org")
+
+    exact = contacts(query: "Marie Novák")
+    assert_equal [ [ "Marie Novák", "marie@example.com", 2, "from" ] ],
+      exact.map { |c| c.values_at("name", "address", "messages_count", "direction") }
+    assert_equal Time.zone.parse("2026-09-10 10:00"), Time.zone.parse(exact.sole["last_seen_at"])
+    assert_equal [ "marie@example.com" ], contacts(query: "mari").map { |c| c["address"] }
+    assert_equal [ "petr@example.org" ], contacts(query: "example.org").map { |c| c["address"] }
+    assert_equal [ "search_contacts", "ok", 1 ], McpAuditEvent.last.values_at(:tool_name, :outcome, :rows_returned)
+  end
+
+  test "search_contacts ignores accents and case, in both directions" do
+    index_contact_message(uid: 1, from_name: "Marie Novák", from_address: "marie@example.com")
+
+    assert_equal [ "marie@example.com" ], contacts(query: "NOVAK").map { |c| c["address"] }
+    index_contact_message(uid: 2, from_name: "Zdeněk", from_address: "z@example.com")
+    assert_equal [ "z@example.com" ], contacts(query: "Zdenek").map { |c| c["address"] }
+  end
+
+  test "search_contacts merges recipients, reports direction and orders by message count" do
+    index_contact_message(uid: 1, from_name: "Me", from_address: "one@example.com",
+      to: [ { "name" => "Marie Novák", "address" => "marie@example.com" }, { "name" => nil, "address" => "bob@example.com" } ])
+    index_contact_message(uid: 2, from_name: "Marie Novák", from_address: "marie@example.com")
+    index_contact_message(uid: 3, from_name: "Me", from_address: "one@example.com",
+      to: [ { "name" => "Marie Novák", "address" => "Marie@Example.com" } ], cc: [ { "name" => "Bob", "address" => "bob@example.com" } ])
+
+    all = contacts(query: "example.com")
+
+    assert_equal [ [ "marie@example.com", 3, "both" ], [ "bob@example.com", 2, "to" ], [ "one@example.com", 2, "from" ] ],
+      all.map { |c| c.values_at("address", "messages_count", "direction") }
+    assert_equal 1, contacts(query: "example.com", limit: 1).size
+  end
+
+  test "search_contacts never reaches another user's mail and refuses their account id" do
+    index_contact_message(uid: 1, from_name: "Marie Novák", from_address: "marie@example.com", account: mail_accounts(:personal))
+
+    assert_empty contacts(query: "marie")
+    result = call_tool("search_contacts", account_id: mail_accounts(:personal).id, query: "marie")
+    assert result["isError"]
+    assert_not_includes result.to_json, "marie@example.com"
+    assert_equal "denied", McpAuditEvent.last.outcome
+  end
+
+  test "search_contacts counts as one search against the search budget" do
+    McpSearchGuard::SEARCHES.consume(mail_accounts(:work), McpSearchGuard::SEARCHES.to)
+
+    result = call_tool("search_contacts", account_id: mail_accounts(:work).id, query: "marie")
+
+    assert result["isError"]
+    assert_equal "search_limited", McpAuditEvent.last.outcome
+  end
+
+  test "search_contacts asks for something to look for" do
+    result = call_tool("search_contacts", account_id: mail_accounts(:work).id, query: "  ")
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "name or an address"
+  end
+
   test "get_message returns headers and the plain text body, and audits one row" do
     server, account = start_fake_account
     message = index_body_message(account, uid: 1, body: plain_body("Ahoj, jak se máš?"),
@@ -302,6 +366,22 @@ class McpToolsTest < ActionDispatch::IntegrationTest
   end
 
   private
+    def contacts(**arguments)
+      result = call_tool("search_contacts", account_id: mail_accounts(:work).id, **arguments)
+
+      assert_not result["isError"], result.to_json
+      JSON.parse(result.dig("content", 0, "text")).fetch("contacts")
+    end
+
+    def index_contact_message(uid:, from_name:, from_address:, to: [], cc: [], date: Time.current, account: mail_accounts(:work))
+      folder = account.mail_folders.find_or_create_by!(name: "INBOX") { |new_folder| new_folder.uidvalidity = 1 }
+      account.mail_messages.create!(
+        mail_folder: folder, uidvalidity: 1, uid:, subject: "Hi", date:, from_name:, from_address:,
+        to_addresses: to, cc_addresses: cc,
+        search_text: MailMessage.build_search_text(subject: "Hi", from_name:, from_address:, to_addresses: to, cc_addresses: cc)
+      )
+    end
+
     def search(**arguments)
       result = call_tool("search_messages", **arguments)
 
