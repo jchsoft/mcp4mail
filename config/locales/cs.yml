@@ -64,6 +64,7 @@ cs:
         cta: "Připojit schránku"
         locale_cs: "CS"
         locale_en: "EN"
+        locale_label: "Jazyk"
       hero:
         badge: "Open source · MIT · zdarma k provozování"
         # The H1 is three keys because the middle word carries the highlight span.
@@ -130,8 +131,8 @@ cs:
       built:
         kicker: "Jak tento projekt vzniká"
         heading: "Píší ho AI vývojáři. Zadání píší lidé."
-        body_html: "mcp4mail je skutečný open‑source produkt a zároveň veřejná ukázka. Úkoly zadávají lidé v <a href=\"%{mcptask_url}\">mcptask.online</a>; vyzvednou je runnery — Claude Code řízený mcptask runnerem na našich strojích — a každá změna jde stejnou cestou: úkol → větev → pull request → testy → merge → nasazení. Nikdo, člověk ani runner, nepíše do <code>main</code> přímo."
-        body_2: "Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané."
+        body_html: "mcp4mail je skutečný open‑source produkt a zároveň veřejná ukázka. Úkoly zadávají lidé v <a href=\"%{mcptask_url}\">mcptask.online</a>; vyzvednou je runnery — Claude Code řízený mcptask runnerem na našich strojích — a každá změna jde stejnou cestou: úkol → větev → pull request → testy → merge. Nikdo, člověk ani runner, nepíše do <code>main</code> přímo."
+        body_2: "Merge není vydání: web běží z oddělené větve, kterou člověk povýší, až je práce hotová. Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané."
         cta_live: "Sledovat živě"
         cta_contribute: "Přispět"
         image_alt: "Živý přehled na mcptask.online s rozpracovaným úkolem mcp4mailu: runner je ve fázi „píše kód“, před ním je ještě pull request, testy a sloučení."
@@ -156,6 +157,7 @@ cs:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        self_hosting: "Návod k self‑hostingu"
         live: "Vzniká živě na mcptask.online"
         company: "JCHSoft"
 

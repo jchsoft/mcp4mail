@@ -1,0 +1,52 @@
+# What we know about mail providers, keyed by a short id. Consumed by Imap::ConnectionProblem.
+#
+#   name     - shown in the copy
+#   domains  - exact email domains
+#   messages - Imap::Autodetect reason => key under imap_problems in the locale file;
+#              "any" answers every reason not listed
+#   guide    - slug of the "Show me how" guide, filled in once the guides exist
+icloud:
+  name: iCloud
+  domains: [icloud.com, me.com, mac.com]
+  messages: { auth_failed: app_password }
+  guide:
+fastmail:
+  name: Fastmail
+  domains: [fastmail.com, fastmail.fm]
+  messages: { auth_failed: app_password }
+  guide:
+zoho:
+  name: Zoho
+  domains: [zoho.com, zohomail.com, zoho.eu]
+  messages: { auth_failed: app_password }
+  guide:
+yahoo:
+  name: Yahoo
+  domains: [yahoo.com, ymail.com, rocketmail.com]
+  messages: { auth_failed: app_password }
+  guide:
+yandex:
+  name: Yandex
+  domains: [yandex.com, yandex.ru, ya.ru]
+  messages: { auth_failed: app_password }
+  guide:
+seznam:
+  name: Seznam
+  domains: [seznam.cz, email.cz, post.cz]
+  messages: { auth_failed: seznam_imap_off, imap_disabled: seznam_imap_off }
+  guide:
+proton:
+  name: ProtonMail
+  domains: [proton.me, protonmail.com, protonmail.ch, pm.me]
+  messages: { no_server_found: bridge_required }
+  guide:
+gmail:
+  name: Gmail
+  domains: [gmail.com, googlemail.com]
+  messages: { any: native_connector }
+  guide:
+outlook:
+  name: Outlook
+  domains: [outlook.com, hotmail.com, live.com, msn.com]
+  messages: { any: native_connector }
+  guide:
