@@ -24,6 +24,17 @@ en:
         username: "Username"
         password: "Password"
 
+  imap_problems:
+    app_password: "%{provider} does not accept your normal password here. Create an app-specific password in your %{provider} account settings and use that."
+    app_password_generic: "Your provider does not accept your normal password here. Create an app-specific password in your account settings and use that."
+    seznam_imap_off: "IMAP is switched off by default in Seznam. Turn it on under Settings, Email clients, then try again."
+    bridge_required: "ProtonMail needs Proton Bridge running on your own computer; the hosted mcp4mail cannot reach it. Self-host mcp4mail next to Bridge, or use another mailbox."
+    native_connector: "%{provider} already has a native connector in Claude and ChatGPT; you do not need mcp4mail for it."
+    wrong_password: "The server was found but refused that email and password. Check both and try again."
+    imap_disabled: "The server says IMAP access is switched off for this mailbox. Turn IMAP on in your mail settings and try again."
+    unknown_host: "We could not find a mail server for this address. Check the address, or enter the IMAP server yourself."
+    timeout: "The mail server did not answer in time. Try again in a minute, or enter the IMAP server yourself."
+
   pages:
     home:
       title: "mcp4mail - your mail, readable by your AI"
