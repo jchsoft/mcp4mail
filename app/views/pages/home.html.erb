@@ -1,9 +1,14 @@
 <% content_for :title, t(".title") %>
 
 <%# Hero, from the data-screen-label="Hero" block of docs/design/landing-v2.html.
-    auto-fit + minmax(320px) collapses the two columns to one on its own around
-    700px, so there is deliberately no breakpoint here. %>
-<section class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] pt-[72px] pb-24">
+    auto-fit + minmax(360px) collapses the two columns to one on its own, with
+    no breakpoint here. The floor was 320px until the responsive pass of task
+    #12707: 320 left the hero in two 326px columns at 768px, where neither the h1
+    nor the chat mock had the width the design draws them at. 360 moves the switch
+    to ~830px, so a tablet portrait gets the stacked hero. The min(100%,360px) is
+    not decoration: a bare 360px floor is wider than the 335px content column of a
+    375px phone, and the track would hold its floor and push the page sideways. %>
+<section class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] pt-[72px] pb-24">
   <div>
     <span class="inline-flex items-center gap-2 rounded-full bg-green-tint px-3.5 py-1.5 text-[13px] font-semibold text-green-deep">
       <%= t(".hero.badge") %>
@@ -80,9 +85,12 @@
       <p class="mt-5 text-[18px] leading-[1.6] text-ink-on-dark"><%= t(".security.lede") %></p>
     </div>
 
-    <%# Same auto-fit as the hero: four columns at 1440px, one at 375px, with no
-        breakpoint of our own. %>
-    <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-x-8 gap-y-9">
+    <%# Four columns at 1440px, two on a tablet, one on a phone. This was an
+        auto-fit track on a 240px floor until task #12707 measured it: inside the
+        panel padding, 1440px leaves 936px, which auto-fit spends on three columns
+        and an orphan rather than on the four the design draws. The counts are
+        named outright so the reference width gets the row it was designed for. %>
+    <div class="mt-12 grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 xl:grid-cols-4">
       <% t(".security.points", deep_interpolation: true,
            self_hosting_url: "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md").each do |point| %>
         <div>
@@ -94,7 +102,7 @@
               strings are ours, but nothing in the view should be the only thing
               standing between a locale file and the page. %>
           <p class="mt-2.5 leading-[1.6] text-ink-on-dark
-                    [&_code]:rounded-md [&_code]:bg-code-chip [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm
+                    [&_code]:rounded-md [&_code]:bg-code-chip [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:[overflow-wrap:anywhere]
                     [&_a]:text-highlight [&_a]:underline [&_a]:hover:no-underline">
             <%= sanitize point[:body_html] %>
           </p>
@@ -105,8 +113,10 @@
 </section>
 
 <%# How it's built, from the data-screen-label="How it's built" block of
-    docs/design/landing-v2.html. The same auto-fit as the hero, on a 300px floor,
-    so the image drops below the copy without a breakpoint of our own.
+    docs/design/landing-v2.html. The same auto-fit as the hero, on a 360px floor,
+    so the image drops below the copy without a breakpoint of our own. The floor
+    was 300px until task #12707: it put a 326px-wide screenshot beside 326px of
+    copy at 768px, too small to read either.
 
     The claims in this section were checked against the repository rather than
     copied from the design: the "main protection" ruleset on jchsoft/mcp4mail
@@ -115,7 +125,7 @@
     is literally true. A merge is not a release, though — the site runs from the
     `production` branch, which trails main — so the path the copy names stops at
     the merge and the second paragraph says who promotes. %>
-<section id="built" class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] py-16">
+<section id="built" class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] py-16">
   <div>
     <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
       <%= t(".built.kicker") %>
@@ -127,7 +137,7 @@
         around main; the view styles them here so the translation stays prose.
         sanitize, not raw, on the same reasoning as the security panel. %>
     <p class="mt-5 text-[17px] leading-[1.6] text-ink-soft
-              [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm
+              [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:[overflow-wrap:anywhere]
               [&_a]:text-green-deep [&_a]:underline [&_a]:hover:no-underline">
       <%= sanitize t(".built.body_html", mcptask_url: "https://mcptask.online") %>
     </p>
@@ -175,7 +185,7 @@
   <div class="mt-6 flex max-w-[760px] flex-col gap-3">
     <% t(".faq.items").each do |item| %>
       <details class="rounded-2xl border border-line bg-surface px-[22px] py-[18px]">
-        <summary class="flex cursor-pointer items-center gap-3.5 font-heading text-[19px] font-bold">
+        <summary class="flex cursor-pointer items-center gap-3.5 font-heading text-[19px] font-bold max-lg:min-h-11">
           <%# The + rotates into an × on open; .faq-mark carries that transform,
               and its reduced-motion opt-out, from the base layer. %>
           <span aria-hidden="true"

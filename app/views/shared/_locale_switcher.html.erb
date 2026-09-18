@@ -13,7 +13,8 @@
                 url_for(locale: locale),
                 lang: locale,
                 aria: { current: ("page" if current) },
-                class: class_names("rounded-full px-3 py-[5px] no-underline",
+                class: class_names("inline-flex items-center justify-center rounded-full px-3 py-[5px] no-underline",
+                                   "max-lg:min-h-11 max-lg:min-w-11",
                                    current ? "bg-ink text-white" : "text-ink") %>
   <% end %>
 </span>

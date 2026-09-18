@@ -17,7 +17,10 @@
       numeral. list-style:none costs an <ol> its list semantics in Safari and
       VoiceOver, so role="list" puts them back; the badge that replaces the
       marker is aria-hidden, or the count would be read twice. %>
-  <ol role="list" class="mt-12 grid list-none grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-x-[clamp(24px,4vw,56px)] gap-y-10 p-0">
+  <%# One column or three, never two: the same 768px orphan task #12707 fixed
+      in the why cards, and worse here, because a sequence that wraps 2 + 1 reads
+      as two steps and an afterthought. %>
+  <ol role="list" class="mt-12 grid list-none grid-cols-1 gap-x-[clamp(24px,4vw,56px)] gap-y-10 p-0 lg:grid-cols-3">
     <% t("pages.home.how.steps", deep_interpolation: true, connector_url: connector_address).each_with_index do |step, index| %>
       <li>
         <span aria-hidden="true"
