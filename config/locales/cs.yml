@@ -1,6 +1,6 @@
 cs:
   meta:
-    description: "Vaše e-mailová schránka jako MCP server. Připojte IMAP účet a nechte svého AI asistenta číst a prohledávat poštu – přes OAuth 2.1, open source, provozovatelné i na vlastním serveru."
+    description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
   nav:
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
@@ -44,12 +44,119 @@ cs:
 
   pages:
     home:
-      title: "mcp4mail – vaše schránka jako MCP server"
+      title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
+      meta_description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+      # Keys of the old placeholder page, still rendered by app/views/pages/home.html.erb.
+      # The landing cleanup subtask removes them once the sections below are in the view.
       tagline: "Vaše e-mailová schránka jako MCP server. Připojte IMAP účet a nechte svého AI asistenta číst a prohledávat poštu – přes OAuth 2.1, open source, provozovatelné i na vlastním serveru."
       get_started: "Začít"
       mailboxes: "Vaše schránky"
       connect_ai: "Propojit s AI"
       source: "Zdrojový kód na GitHubu"
+      nav:
+        brand: "mcp4mail"
+        why: "K čemu"
+        how: "Jak na to"
+        security: "Bezpečnost"
+        built: "Jak vzniká"
+        faq: "Otázky"
+        cta: "Připojit schránku"
+        locale_cs: "CS"
+        locale_en: "EN"
+      hero:
+        badge: "Open source · MIT · zdarma k provozování"
+        # The H1 is three keys because the middle word carries the highlight span.
+        heading_before: "Vaše pošta,"
+        heading_highlight: "srozumitelná"
+        heading_after: "pro vaši AI."
+        lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+        cta_primary: "Připojit schránku"
+        cta_secondary: "Kód na GitHubu"
+        works_with: "Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP."
+        demo:
+          label: "Ukázka otázky a odpovědi"
+          question: "Co mi letos psali z pojišťovny? Shrň to do pár bodů."
+          source: "Přečteno ze schránky · 4 zprávy"
+          items:
+            - label: "Leden"
+              body: "roční vyúčtování, přeplatek 1 240 Kč."
+            - label: "Duben"
+              body: "nová smlouva k podpisu, čekají na odpověď."
+            - label: "Srpen"
+              body: "připomínka: nahlásit stav tachometru do 15. 9."
+          disclaimer: "Ilustrační ukázka. Ve schránce se nic nezměnilo — ani stav „přečteno“."
+      why:
+        kicker: "K čemu to je"
+        heading: "Zeptáte se své pošty jako člověka. Ne jako programátor."
+        lede: "Nemusíte vědět, co je IMAP, MCP ani server. Stačí, že máte e‑mail a používáte Claude, ChatGPT nebo Grok. Po propojení jim položíte otázku — a oni si odpověď najdou ve vaší schránce."
+        cards:
+          - quote: "„Na které maily z minulého týdne jsem ještě neodpověděl?“"
+            note: "Přehled o tom, co čeká — bez ručního procházení schránky."
+          - quote: "„Najdi potvrzení objednávky bot a řekni mi, kdy dorazí.“"
+            note: "Konkrétní zpráva, konkrétní odpověď. Hledá podle odesílatele, předmětu i data."
+          - quote: "„Shrň mi celé vlákno o rekonstrukci a co z toho pro mě plyne.“"
+            note: "Dlouhé konverzace v pár větách — i napříč složkami."
+      how:
+        kicker: "Jak na to"
+        heading: "Tři kroky. Žádná instalace."
+        steps:
+          - title: "Přidejte schránku"
+            body_html: "Přihlaste se na mcp4mail.online a zadejte e‑mailovou adresu a <strong>heslo aplikace</strong> — zvláštní heslo jen pro tento účel, které vám Gmail, iCloud, Outlook i Seznam vygenerují v nastavení. Hlavní heslo nikdy nezadáváte."
+          - title: "Propojte svou AI"
+            body_html: "V Claude, ChatGPT nebo Groku otevřete nastavení konektorů a vložte jednu adresu: <code>%{connector_url}</code>. Přihlásíte se, potvrdíte přístup — hotovo. Jako když povolíte přihlášení přes Google."
+          - title: "Zeptejte se"
+            body_html: "Napište otázku, jak byste ji řekli kolegovi. AI si přečte, co potřebuje, a odpoví. Vidí jen schránky, které jste připojili, a nemůže v nich nic změnit — ani označit zprávu jako přečtenou."
+        works_with_label: "Funguje s"
+        clients:
+          - "Claude Desktop"
+          - "Claude Cowork"
+          - "ChatGPT"
+          - "Grok"
+          - "cokoli s MCP"
+      security:
+        kicker: "Bezpečnost"
+        heading: "Čte. Nikdy nepíše."
+        lede: "Do schránky se dostane jen to, co jí dovolíte, a nic v ní nemůže změnit. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami."
+        points:
+          - title: "Jen čtení, zabudované"
+            body_html: "Žádný nástroj neodesílá, nepřesouvá, nemaže ani nepřeznačuje zprávy. Server se odmítne spustit s nástrojem, který nedeklaruje, že je jen pro čtení."
+          - title: "Heslo aplikace, šifrované"
+            body_html: "Zadáváte heslo aplikace, ne heslo k účtu — kdykoli ho zrušíte. V databázi leží šifrované a AI klient ho nikdy neuvidí; přístup dostává přes OAuth 2.1."
+          - title: "Nebo úplně u vás"
+            body_html: "Jeden <code>docker compose up</code> a přihlašovací údaje nikdy neopustí váš počítač. <a href=\"%{self_hosting_url}\">Návod k self‑hostingu</a>."
+          - title: "Limity a záznam"
+            body_html: "Každé volání se zapíše: kdo, jaký klient, jaký nástroj, s jakým výsledkem. Hledání má rozpočet, aby žádná smyčka neprošla celou schránku."
+      built:
+        kicker: "Jak tento projekt vzniká"
+        heading: "Píší ho AI vývojáři. Zadání píší lidé."
+        body_html: "mcp4mail je skutečný open‑source produkt a zároveň veřejná ukázka. Úkoly zadávají lidé v <a href=\"%{mcptask_url}\">mcptask.online</a>; vyzvednou je runnery — Claude Code řízený mcptask runnerem na našich strojích — a každá změna jde stejnou cestou: úkol → větev → pull request → testy → merge → nasazení. Nikdo, člověk ani runner, nepíše do <code>main</code> přímo."
+        body_2: "Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané."
+        cta_live: "Sledovat živě"
+        cta_contribute: "Přispět"
+        live_image_alt: "Snímek stránky mcptask.online/live"
+      faq:
+        kicker: "Časté otázky"
+        items:
+          - question: "Musím něco instalovat?"
+            answer: "Ne. Hostovaná verze běží na mcp4mail.online; stačí přidat schránku a v AI klientovi vložit adresu konektoru. Instalace (docker compose) je jen pro ty, kdo si chtějí server provozovat sami."
+          - question: "Co je heslo aplikace a kde ho najdu?"
+            answer: "Zvláštní heslo, které vygenerujete v nastavení zabezpečení své pošty (Gmail, iCloud, Outlook.com, Yahoo, Fastmail a další). Funguje jen pro přihlášení k poště, dá se kdykoli zrušit a nikdy neotevře celý váš účet."
+          - question: "Může AI něco poslat nebo smazat?"
+            answer: "Ne. Žádný nástroj to neumí a server takový nástroj ani nespustí. Zápis může přijít později, ale jen jako výslovné zapnutí pro konkrétní schránku."
+          - question: "Co si mcp4mail ukládá?"
+            answer: "Kopii hlaviček zpráv — odesílatel, příjemci, předmět, datum, příznaky, velikost — obnovovanou každých 15 minut, aby hledání nezatěžovalo váš poštovní server. Obsah dotazů se do záznamu neukládá."
+          - question: "Kolik to stojí?"
+            answer: "Kód je open source pod licencí MIT — provozovat si ho můžete zdarma. Podmínky hostované verze najdete na mcp4mail.online."
+      close:
+        heading: "Vaše schránka už čeká na první otázku."
+        lede: "Tři kroky, pět minut, nic k instalaci."
+        cta_primary: "Připojit schránku"
+        cta_secondary: "GitHub"
+      footer:
+        license: "mcp4mail · MIT"
+        github: "GitHub"
+        live: "Vzniká živě na mcptask.online"
+        company: "JCHSoft"
 
   sessions:
     new:

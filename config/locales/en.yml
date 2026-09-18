@@ -1,6 +1,6 @@
 en:
   meta:
-    description: "Your mailbox as an MCP server. Connect an IMAP account and let your AI assistant read and search your mail - over OAuth 2.1, open source, self-hostable."
+    description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
   nav:
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
@@ -26,12 +26,119 @@ en:
 
   pages:
     home:
-      title: "mcp4mail - your mailbox as an MCP server"
+      title: "mcp4mail - your mail, readable by your AI"
+      meta_description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+      # Keys of the old placeholder page, still rendered by app/views/pages/home.html.erb.
+      # The landing cleanup subtask removes them once the sections below are in the view.
       tagline: "Your mailbox as an MCP server. Connect an IMAP account and let your AI assistant read and search your mail - over OAuth 2.1, open source, self-hostable."
       get_started: "Get started"
       mailboxes: "Your mailboxes"
       connect_ai: "Connect AI"
       source: "Source on GitHub"
+      nav:
+        brand: "mcp4mail"
+        why: "Why"
+        how: "How"
+        security: "Security"
+        built: "How it's built"
+        faq: "FAQ"
+        cta: "Connect a mailbox"
+        locale_cs: "CS"
+        locale_en: "EN"
+      hero:
+        badge: "Open source · MIT · free to self‑host"
+        # The H1 is three keys because the middle word carries the highlight span.
+        heading_before: "Your mail,"
+        heading_highlight: "readable"
+        heading_after: "by your AI."
+        lede: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+        cta_primary: "Connect a mailbox"
+        cta_secondary: "Source on GitHub"
+        works_with: "Works with Claude Desktop and Cowork, ChatGPT, Grok and anything that speaks MCP."
+        demo:
+          label: "Example question and answer"
+          question: "What did my insurer write this year? A few bullet points."
+          source: "Read from your mailbox · 4 messages"
+          items:
+            - label: "January"
+              body: "annual statement, €48 refund."
+            - label: "April"
+              body: "new contract to sign, awaiting your reply."
+            - label: "August"
+              body: "reminder: report mileage by 15 Sept."
+          disclaimer: "Illustrative. Nothing in the mailbox changed — not even the “read” flag."
+      why:
+        kicker: "What it's for"
+        heading: "Ask your mail like a person. Not like a programmer."
+        lede: "You don't need to know what IMAP, MCP or a server is. You have an email address and you use Claude, ChatGPT or Grok — that's enough. Once connected, you ask, and they find the answer in your mailbox."
+        cards:
+          - quote: "“Which mails from last week haven't I replied to yet?”"
+            note: "See what's waiting — without scrolling through the inbox yourself."
+          - quote: "“Find the order confirmation for the shoes and tell me when they arrive.”"
+            note: "One message, one answer. Search by sender, subject and date."
+          - quote: "“Summarize the whole renovation thread and what it means for me.”"
+            note: "Long conversations in a few sentences — across folders."
+      how:
+        kicker: "How it works"
+        heading: "Three steps. Nothing to install."
+        steps:
+          - title: "Add a mailbox"
+            body_html: "Sign in at mcp4mail.online and enter your email address and an <strong>app password</strong> — a separate password just for this, which Gmail, iCloud, Outlook and others generate in their settings. You never type your main password."
+          - title: "Connect your AI"
+            body_html: "In Claude, ChatGPT or Grok, open the connector settings and paste one address: <code>%{connector_url}</code>. Sign in, approve access — done. It works like “Sign in with Google”."
+          - title: "Ask"
+            body_html: "Type the question the way you'd say it to a colleague. The AI reads what it needs and answers. It sees only the mailboxes you connected and can't change anything — not even mark a message as read."
+        works_with_label: "Works with"
+        clients:
+          - "Claude Desktop"
+          - "Claude Cowork"
+          - "ChatGPT"
+          - "Grok"
+          - "anything with MCP"
+      security:
+        kicker: "Security"
+        heading: "It reads. It never writes."
+        lede: "It only reaches what you allow, and it can't change anything in your mailbox. And if you don't want your password on someone else's server, run mcp4mail yourself."
+        points:
+          - title: "Read‑only, built in"
+            body_html: "No tool sends, moves, deletes or re‑flags mail. The server refuses to boot with a tool that doesn't declare itself read‑only."
+          - title: "App password, encrypted"
+            body_html: "You enter an app password, not your account password — revoke it any time. It's stored encrypted and your AI client never sees it: access goes through OAuth 2.1."
+          - title: "Or entirely on your machine"
+            body_html: "One <code>docker compose up</code> and your credentials never leave your computer. <a href=\"%{self_hosting_url}\">Self‑hosting guide</a>."
+          - title: "Limits and an audit log"
+            body_html: "Every call is written down: who, which client, which tool, with what outcome. Searches have a budget, so a runaway loop can't walk a whole mailbox."
+      built:
+        kicker: "How this project is built"
+        heading: "Written by AI developers. Briefed by people."
+        body_html: "mcp4mail is a real open‑source product and, at the same time, a public demonstration. Tasks are written by people in <a href=\"%{mcptask_url}\">mcptask.online</a>; runners pick them up — Claude Code driven by the mcptask runner, on our own machines — and every change follows the same path: task → branch → pull request → tests → merge → deploy. Nobody, person or runner, pushes to <code>main</code> directly."
+        body_2: "People still decide what gets built and what ships. Want to help? Issues and pull requests are welcome."
+        cta_live: "Watch it live"
+        cta_contribute: "Contribute"
+        live_image_alt: "Screenshot of mcptask.online/live"
+      faq:
+        kicker: "Questions"
+        items:
+          - question: "Do I have to install anything?"
+            answer: "No. The hosted version runs at mcp4mail.online; add a mailbox and paste the connector address into your AI client. Installing (docker compose) is only for people who want to run the server themselves."
+          - question: "What is an app password and where do I get one?"
+            answer: "A separate password you generate in your mail provider's security settings (Gmail, iCloud, Outlook.com, Yahoo, Fastmail and others). It only works for signing in to mail, can be revoked any time, and never opens your whole account."
+          - question: "Can the AI send or delete anything?"
+            answer: "No. No tool can, and the server won't even start with one that could. Write tools may come later — only as an explicit opt‑in for a specific mailbox."
+          - question: "What does mcp4mail store?"
+            answer: "A copy of message headers — sender, recipients, subject, date, flags, size — refreshed every 15 minutes so searches don't hit your mail server each time. The content of your questions isn't logged."
+          - question: "What does it cost?"
+            answer: "The code is open source under the MIT license — running it yourself is free. Terms of the hosted version are on mcp4mail.online."
+      close:
+        heading: "Your mailbox is waiting for its first question."
+        lede: "Three steps, five minutes, nothing to install."
+        cta_primary: "Connect a mailbox"
+        cta_secondary: "GitHub"
+      footer:
+        license: "mcp4mail · MIT"
+        github: "GitHub"
+        live: "Built live on mcptask.online"
+        company: "JCHSoft"
 
   sessions:
     new:
