@@ -82,19 +82,12 @@ module McpTools
           account_id: message.mail_account_id,
           folder: message.mail_folder.name,
           date: message.date&.iso8601,
-          from: sender(message),
+          from: message.from_display,
           subject: message.subject,
           has_attachments: message.has_attachments
         }.tap do |row|
           row[:attachments] = attachments(message) if message.has_attachments
         end
-      end
-
-      def sender(message)
-        return message.from_address if message.from_name.blank?
-        return message.from_name if message.from_address.blank?
-
-        "#{message.from_name} <#{message.from_address}>"
       end
 
       def attachments(message)

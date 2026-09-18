@@ -15,6 +15,7 @@ class McpToolRegistry < Hitch::MCP::Registry
   end
 
   register McpTools::GetMailAccount, scopes: [ "mcp" ]
+  register McpTools::GetMessage, scopes: [ "mcp" ]
   register McpTools::ListMailAccounts, scopes: [ "mcp" ]
   register McpTools::SearchMessages, scopes: [ "mcp" ]
 end
