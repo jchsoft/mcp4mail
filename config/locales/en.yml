@@ -239,46 +239,24 @@ en:
   connect_ai:
     show:
       title: "Connect AI"
-      intro: "Add mcp4mail to your AI app as a custom connector (MCP server). The app then sends you here to sign in and approve access, and can read and search the mailboxes you added."
+      intro: "Paste this address into your AI app as a custom connector (MCP server). It can then search and read the mailboxes you added, and nothing else."
       no_mailbox: "You have no mailbox yet, so your AI app would find nothing to read."
-      add_mailbox: "Add a mailbox first."
+      add_mailbox: "Add a mailbox."
       url_title: "Server URL"
-      url_hint: "Paste this URL into your AI app. You do not need an API key: the app asks you to sign in to mcp4mail instead."
       copy: "Copy"
       copied: "Copied"
-      consent:
-        title: "What the approval screen asks"
-        description: "After you add the connector, the app opens mcp4mail. Sign in, and you will see “Authorize <app>: <app> is requesting access to your mcp4mail account”, with the access scope mcp. Click Approve."
-        points:
-          - "Approving lets the app list your mailboxes, search them and read messages, in your name."
-          - "Access is read-only: it never sends, moves, deletes or re-flags any message."
-          - "Every request is written to your audit log. To disconnect, remove the connector in the AI app."
-          - "If the screen warns that the app runs on your own computer, that is expected for desktop apps such as Cursor. Approve only if you started it yourself."
+      authorization: "Authorization happens in your browser when the client first connects; mcp4mail never asks you for a token."
+      clients_label: "Instructions per AI client"
       clients:
         claude:
           title: "Claude"
-          steps:
-            - "Open claude.ai → Settings → Connectors and click Add custom connector."
-            - "Name it mcp4mail, paste the server URL and click Add."
-            - "Click Connect. Sign in to mcp4mail and click Approve."
-            - "In a chat, turn the mcp4mail connector on in the tools menu and ask, e.g. “What did the accountant send me last week?”."
+          steps: "In claude.ai or Claude Desktop open Settings, Connectors, Add custom connector, and paste the URL. Click Connect, then approve access in the window that opens."
         chatgpt:
           title: "ChatGPT"
-          steps:
-            - "In Settings → Apps & Connectors → Advanced settings turn on Developer mode (Plus, Pro, Business or Enterprise)."
-            - "Back in Apps & Connectors, click Create. Name it mcp4mail, paste the server URL and choose OAuth as authentication."
-            - "Confirm that you trust the application and click Create. Sign in to mcp4mail and click Approve."
-            - "In a new chat, pick Developer mode and the mcp4mail connector from the + menu."
-        grok:
-          title: "Grok"
-          steps:
-            - "Open grok.com/connectors and choose New → Custom."
-            - "Paste the server URL and save."
-            - "Allow pop-ups for grok.com – sign-in opens in a new window. Safari blocks it and Grok then reports a failure even though sign-in succeeded: in Safari → Settings → Websites → Pop-up Windows set grok.com to Allow."
-            - "Sign in to mcp4mail and click Approve."
+          steps: "In Settings, Apps & Connectors, Advanced settings turn on Developer mode, then go back and click Create, paste the URL and choose OAuth. Confirm, then approve access in the window that opens."
         cursor:
           title: "Cursor"
-          steps:
-            - "Open Cursor Settings → Tools & MCP and click New MCP Server. Cursor opens your mcp.json (~/.cursor/mcp.json for all projects)."
-            - "Add the mcp4mail entry below and save the file."
-            - "Back in Tools & MCP, click Connect next to mcp4mail. Your browser opens: sign in to mcp4mail and click Approve."
+          steps: "Open Cursor Settings, Tools & MCP, New MCP Server, and add mcp4mail with this URL to the mcp.json that opens. Back in Tools & MCP click Connect, then approve access in your browser."
+        other:
+          title: "Other MCP client"
+          steps: "Add mcp4mail as a remote MCP server over HTTP with the URL above; there is no command or package to install. If the client asks for an authentication method, choose OAuth."

@@ -72,6 +72,6 @@ class OnboardingTest < ApplicationSystemTestCase
     within("#language-switcher") { click_on "CS" }
 
     assert_selector "h1", text: "Propojit s AI"
-    assert_selector "#client-grok", text: "Povolte vyskakovací okna pro grok.com"
+    assert_selector "#client-claude", text: "V claude.ai nebo Claude Desktop"
   end
 end
