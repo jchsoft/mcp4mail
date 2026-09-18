@@ -74,7 +74,7 @@ class TailwindThemeTest < ActiveSupport::TestCase
     Dir.children(Rails.root.join("app/assets/fonts")).each do |file|
       asset = Rails.application.assets.load_path.find(file)
       assert asset, "#{file} is not on the asset load path"
-      assert_match(/-[0-9a-f]{8}\.woff2\z/, asset.digested_path)
+      assert_match(/-[0-9a-f]{8}\.woff2\z/, asset.digested_path.to_s)
     end
   end
 
