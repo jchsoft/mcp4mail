@@ -133,7 +133,7 @@ cs:
         body_2: "Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané."
         cta_live: "Sledovat živě"
         cta_contribute: "Přispět"
-        live_image_alt: "Snímek stránky mcptask.online/live"
+        image_alt: "Živý přehled na mcptask.online s rozpracovaným úkolem mcp4mailu: runner je ve fázi „píše kód“, před ním je ještě pull request, testy a sloučení."
       faq:
         kicker: "Časté otázky"
         items:
