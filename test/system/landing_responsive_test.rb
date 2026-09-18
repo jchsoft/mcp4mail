@@ -27,9 +27,12 @@ class LandingResponsiveTest < ApplicationSystemTestCase
 
   test "the hero stacks copy above the sample answer on a phone" do
     each_viewport(widths: [PHONE]) do |_width, locale|
-      assert_operator box("main > section:first-of-type > div:first-child")["top"],
+      # ":last-child", not "div:last-child": the mock became a <figure> on the
+      # accessibility pass of task #12708, so the hero's two columns are no
+      # longer the same element.
+      assert_operator box("main > section:first-of-type > :first-child")["top"],
                       :<,
-                      box("main > section:first-of-type > div:last-child")["top"],
+                      box("main > section:first-of-type > :last-child")["top"],
                       "#{locale}: the hero mock must follow the copy, not lead it"
     end
   end

@@ -38,8 +38,13 @@
 
   <%# An illustration, not a recording of the visitor's own mailbox: the
       aria-label announces it as a sample and the disclaimer below says so in
-      words. Both stay. %>
-  <div aria-label="<%= t(".hero.demo.label") %>" class="flex w-full max-w-[460px] flex-col gap-[14px] justify-self-end">
+      words. Both stay.
+
+      A <figure>, not a <div>, because aria-label only names an element whose
+      role supports a name — on a plain div it is dropped, so the announcement
+      the label was written for never happened. figure/figcaption also makes the
+      disclaimer the mock's caption rather than a stray paragraph beside it. %>
+  <figure aria-label="<%= t(".hero.demo.label") %>" class="m-0 flex w-full max-w-[460px] flex-col gap-[14px] justify-self-end">
     <div class="max-w-[85%] self-end rounded-[22px_22px_6px_22px] bg-ink px-5 py-4 text-[16px] leading-[1.5] text-white">
       <%= t(".hero.demo.question") %>
     </div>
@@ -56,8 +61,8 @@
       </ul>
     </div>
 
-    <p class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></p>
-  </div>
+    <figcaption class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></figcaption>
+  </figure>
 </section>
 
 <%= render "pages/why" %>
@@ -178,9 +183,14 @@
     make the browser close the answer a visitor is half-way through as soon as
     they open the next question. %>
 <section id="faq" class="py-16">
-  <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
+  <%# The design gives this section a kicker and no heading, which left the page
+      with a section that the heading outline — and so a screen reader's list of
+      headings — did not mention at all. The kicker IS the section's heading, so
+      it is marked up as the h2 it already reads as; the classes are the kicker's,
+      unchanged, so nothing moves on screen. %>
+  <h2 class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
     <%= t(".faq.kicker") %>
-  </span>
+  </h2>
 
   <div class="mt-6 flex max-w-[760px] flex-col gap-3">
     <% t(".faq.items").each do |item| %>

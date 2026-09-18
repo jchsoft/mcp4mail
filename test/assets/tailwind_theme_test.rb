@@ -3,17 +3,23 @@ require "test_helper"
 class TailwindThemeTest < ActiveSupport::TestCase
   SOURCE = Rails.root.join("app/assets/tailwind/application.css")
 
+  # The palette of docs/design/landing-v2.html, with the four values the
+  # accessibility pass of task #12708 moved. Those four are marked below with
+  # the design's original and the ratio that failed; every other token is the
+  # design's own and a diff here means the page has drifted from the mock.
+  # docs/accessibility/axe-report.md carries the full measurement table.
   REQUIRED_COLORS = {
     "paper" => "#fbf8f3",
     "ink" => "#1f2430",
     "ink-soft" => "#4a515f",
-    "ink-muted" => "#6b7280",
+    "ink-muted" => "#5c626e",    # design #6b7280: 4.56:1 on paper, and every use renders at 13-14px
     "ink-on-dark" => "#cfd3dc",
     "code-chip" => "#343b4a",
     "brand" => "#f26b1d",
-    "brand-hover" => "#e35f14",
+    "brand-hover" => "#f5792f",  # design #e35f14: the ink CTA label read 4.37:1 on it
+    "brand-deep" => "#bc430f",   # design #c94a12: kickers and the nav hover read 4.43:1 on paper
     "brand-tint" => "#fde9dc",
-    "green" => "#1f8a70",
+    "green" => "#1a7a63",        # design #1f8a70: white on the live pill 4.26:1, the token as link text 4.02:1
     "green-deep" => "#15654f",
     "green-tint" => "#dff3ec",
     "highlight" => "#ffd166",

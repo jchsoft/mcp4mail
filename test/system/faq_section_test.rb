@@ -5,7 +5,9 @@ class FaqSectionTest < ApplicationSystemTestCase
     visit root_url
 
     within "#faq" do
-      assert_selector "span", text: /questions/i
+      # The kicker is the section's h2 since task #12708: the FAQ was the one
+      # section the heading outline did not mention.
+      assert_selector "h2", text: /questions/i
       assert_selector "details", count: 5
       assert_selector "summary", text: "Do I have to install anything?"
       assert_selector "summary", text: "What does it cost?"
@@ -68,7 +70,8 @@ class FaqSectionTest < ApplicationSystemTestCase
           matches: summary.matches(":focus-visible"),
           width: styles.outlineWidth,
           style: styles.outlineStyle,
-          color: styles.outlineColor
+          color: styles.outlineColor,
+          shadow: styles.boxShadow
         };
       })()
     JS
@@ -78,7 +81,11 @@ class FaqSectionTest < ApplicationSystemTestCase
     assert outline["matches"], "expected the summary to match :focus-visible after keyboard focus"
     assert_equal "3px", outline["width"]
     assert_equal "solid", outline["style"]
-    assert_equal "rgb(242, 107, 29)", outline["color"]
+    # The ring went two-tone on task #12708 — the outline is ink, and the brand
+    # orange it used to be now fills the offset gap as a box-shadow. A single
+    # orange ring was only 2.87:1 against this cream page.
+    assert_equal "rgb(31, 36, 48)", outline["color"]
+    assert_includes outline["shadow"], "rgb(242, 107, 29)"
   end
 
   test "several answers can stay open at once" do
