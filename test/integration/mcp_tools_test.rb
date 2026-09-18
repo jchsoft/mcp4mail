@@ -19,7 +19,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     tools = response.parsed_body.dig("result", "tools")
-    assert_equal %w[get_mail_account get_message list_mail_accounts search_messages], tools.map { |tool| tool["name"] }
+    assert_equal %w[get_attachment get_mail_account get_message list_mail_accounts search_messages], tools.map { |tool| tool["name"] }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
@@ -251,6 +251,56 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     server&.stop
   end
 
+  test "get_attachment returns metadata and a working download url, never the bytes" do
+    message = index_message(mail_accounts(:work), uid: 1, subject: "Faktura",
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 12_345 } ])
+
+    payload = get_attachment(message_id: message.id, attachment_index: 0)
+
+    assert_equal [ message.id, 0, "faktura.pdf", "application/pdf", 12_345 ],
+      payload.values_at("message_id", "attachment_index", "filename", "content_type", "size")
+    assert_equal %w[attachment_index content_type expires_in_seconds filename message_id size url], payload.keys.sort
+    assert_match %r{\Ahttp://[^/]+/attachment-downloads/}, payload["url"]
+    assert_equal [ "get_attachment", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
+  end
+
+  test "get_attachment refuses an attachment above its size limit" do
+    message = index_message(mail_accounts(:work), uid: 1, subject: "Faktura",
+      attachments: [ { "filename" => "big.zip", "content_type" => "application/zip", "size" => McpTools::GetAttachment::MAX_ATTACHMENT_BYTES + 1 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "maximum"
+  end
+
+  test "get_attachment refuses an index that does not exist" do
+    message = index_message(mail_accounts(:work), uid: 1, subject: "No attachments")
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "No attachment"
+  end
+
+  test "get_attachment refuses a negative index" do
+    message = index_message(mail_accounts(:work), uid: 1, subject: "Faktura",
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 100 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: -1)
+
+    assert result["isError"]
+  end
+
+  test "get_attachment never reaches another user's mail" do
+    message = index_message(mail_accounts(:personal), uid: 1, subject: "Not yours",
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 100 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0)
+
+    assert result["isError"]
+  end
+
   private
     def search(**arguments)
       result = call_tool("search_messages", **arguments)
@@ -280,6 +330,13 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     def get_message(**arguments)
       result = call_tool("get_message", **arguments)
+
+      assert_not result["isError"], result.to_json
+      JSON.parse(result.dig("content", 0, "text"))
+    end
+
+    def get_attachment(**arguments)
+      result = call_tool("get_attachment", **arguments)
 
       assert_not result["isError"], result.to_json
       JSON.parse(result.dig("content", 0, "text"))
