@@ -3,6 +3,7 @@
 module McpTools
   class ListMailAccounts < ApplicationTool
     tool_name "list_mail_accounts"
+    title "List mailboxes"
     description "List the mail accounts you have connected to mcp4mail. Use an account's id with the other tools."
     input_schema(
       type: "object",

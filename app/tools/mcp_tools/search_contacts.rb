@@ -12,6 +12,8 @@ module McpTools
     MAX_LIMIT = 25
 
     tool_name "search_contacts"
+    title "Search contacts"
+
     description <<~TEXT.squish
       Find people you have exchanged mail with, by name or address. Returns name, address, how many
       indexed messages they appear in, when they were last seen, and whether they wrote to you

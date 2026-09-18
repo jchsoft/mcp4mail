@@ -106,4 +106,81 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "index counts today's and this week's calls per mailbox" do
+    work = mail_accounts(:work)
+    record_event(work, created_at: 2.hours.ago)
+    record_event(work, created_at: 3.hours.ago)
+    record_event(work, created_at: Time.current.beginning_of_week + 1.minute)
+    record_event(work, created_at: 3.weeks.ago)
+    record_event(mail_accounts(:personal), user: users(:two))
+
+    sign_in_as @user
+    get mail_accounts_path
+
+    assert_select "#calls_mail_account_#{work.id}", /today: 2.*this week: 3/
+  end
+
+  test "index shows no calls for a mailbox nothing has asked for" do
+    sign_in_as @user
+    get mail_accounts_path
+
+    assert_select "#calls_mail_account_#{mail_accounts(:work).id}", /today: 0, this week: 0/
+  end
+
+  test "activity lists the recent calls with their tool titles, clients and outcomes" do
+    work = mail_accounts(:work)
+    Hitch::Client.register!(client_id: "client-abc", client_name: "Claude Desktop", redirect_uris: [ "https://example.com/cb" ])
+    record_event(work, tool_name: "search_messages", rows_returned: 7, created_at: 5.minutes.ago)
+    record_event(work, tool_name: "get_message", outcome: "denied", created_at: 10.minutes.ago)
+
+    sign_in_as @user
+    get activity_mail_account_path(work)
+
+    assert_response :success
+    assert_select "turbo-frame#activity_mail_account_#{work.id} li", 2
+    assert_select "li", /Search messages/
+    assert_select "li", /Claude Desktop/
+    assert_select "li", /rows: 7/
+    assert_select "li span.text-red-700", "denied"
+    assert_select "li", /5 minutes ago/
+  end
+
+  test "activity shows at most the last twenty calls, newest first" do
+    work = mail_accounts(:work)
+    25.times { |index| record_event(work, tool_name: "search_messages", rows_returned: index, created_at: index.minutes.ago) }
+
+    sign_in_as @user
+    get activity_mail_account_path(work)
+
+    assert_select "li", McpAuditEvent::RECENT_LIMIT
+    assert_select "li:first-of-type", /rows: 0/
+  end
+
+  test "activity says so when the mailbox has never been called" do
+    sign_in_as @user
+    get activity_mail_account_path(mail_accounts(:work))
+
+    assert_select "#activity_empty_mail_account_#{mail_accounts(:work).id}"
+  end
+
+  test "activity refuses another user's mailbox" do
+    sign_in_as @user
+    get activity_mail_account_path(mail_accounts(:personal))
+
+    assert_response :not_found
+  end
+
+  test "activity requires sign-in" do
+    get activity_mail_account_path(mail_accounts(:work))
+    assert_redirected_to new_session_path
+  end
+
+  private
+    def record_event(mail_account, user: @user, tool_name: "search_messages", outcome: "ok", rows_returned: 0, created_at: Time.current)
+      McpAuditEvent.create!(
+        user:, mail_account_id: mail_account.id, tool_name:, outcome:, rows_returned:,
+        client_id: "client-abc", created_at: created_at
+      )
+    end
 end

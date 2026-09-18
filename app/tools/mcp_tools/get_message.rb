@@ -8,6 +8,8 @@ module McpTools
     BODY_CHAR_LIMIT = 20_000
 
     tool_name "get_message"
+    title "Read message"
+
     description <<~TEXT.squish
       Read one message: its headers and body. Give it the id of a row from search_messages.
       The body prefers plain text; HTML mail is converted to text rather than handed over as

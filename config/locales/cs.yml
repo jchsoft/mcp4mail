@@ -27,6 +27,45 @@ cs:
       password_too_long: "je příliš dlouhé"
       required: "musí existovat"
 
+  # Rails ships no Czech copy for relative times, and the activity list on the
+  # mailboxes page prints them. Instrumental case, so "před %{time}" reads right.
+  datetime:
+    distance_in_words:
+      half_a_minute: "půl minuty"
+      less_than_x_seconds:
+        one: "méně než sekundou"
+        other: "méně než %{count} sekundami"
+      x_seconds:
+        one: "sekundou"
+        other: "%{count} sekundami"
+      less_than_x_minutes:
+        one: "méně než minutou"
+        other: "méně než %{count} minutami"
+      x_minutes:
+        one: "minutou"
+        other: "%{count} minutami"
+      about_x_hours:
+        one: "přibližně hodinou"
+        other: "přibližně %{count} hodinami"
+      x_days:
+        one: "dnem"
+        other: "%{count} dny"
+      about_x_months:
+        one: "přibližně měsícem"
+        other: "přibližně %{count} měsíci"
+      x_months:
+        one: "měsícem"
+        other: "%{count} měsíci"
+      about_x_years:
+        one: "přibližně rokem"
+        other: "přibližně %{count} lety"
+      over_x_years:
+        one: "více než rokem"
+        other: "více než %{count} lety"
+      almost_x_years:
+        one: "téměř rokem"
+        other: "téměř %{count} lety"
+
   activerecord:
     errors:
       messages:
@@ -201,6 +240,19 @@ cs:
       remove: "Odebrat"
       remove_confirm: "Odebrat schránku %{name}? mcp4mail zapomene její heslo i index zpráv; pošta na serveru zůstane beze změny."
       connect_ai: "Dál: propojte svou AI aplikaci →"
+      calls: "Volání AI dnes: %{today}, tento týden: %{week}"
+      recent_activity: "Poslední aktivita"
+      activity_loading: "Načítání…"
+    activity:
+      empty: "Do této schránky zatím žádná AI nesáhla."
+      when: "před %{time}"
+      rows: "řádků: %{count}"
+      outcomes:
+        ok: "ok"
+        error: "chyba"
+        denied: "odmítnuto"
+        rate_limited: "překročen limit"
+        search_limited: "limit hledání"
     new:
       title: "Přidat schránku"
       intro: "mcp4mail čte poštu přes IMAP. Vyberte poskytovatele a nastavení serveru se vyplní samo."

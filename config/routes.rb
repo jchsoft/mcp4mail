@@ -6,7 +6,9 @@ Rails.application.routes.draw do
 
   resource :session
   resource :registration, only: %i[ new create ]
-  resources :mail_accounts, only: %i[ index new create destroy ]
+  resources :mail_accounts, only: %i[ index new create destroy ] do
+    get :activity, on: :member
+  end
   get "connect-ai", to: "connect_ai#show", as: :connect_ai
   get "attachment-downloads/:token", to: "attachment_downloads#show", as: :attachment_download
   resources :passwords, param: :token

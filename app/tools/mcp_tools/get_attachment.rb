@@ -8,6 +8,8 @@ module McpTools
     MAX_ATTACHMENT_BYTES = 10.megabytes
 
     tool_name "get_attachment"
+    title "Download attachment"
+
     description <<~TEXT.squish
       Get a download link for one attachment of a message. Give it the message id (from
       search_messages or get_message) and the attachment's position in that message's

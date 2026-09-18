@@ -194,6 +194,19 @@ en:
       remove: "Remove"
       remove_confirm: "Remove %{name}? mcp4mail forgets its password and the message index; your mail on the server is not touched."
       connect_ai: "Next: connect your AI app →"
+      calls: "AI calls today: %{today}, this week: %{week}"
+      recent_activity: "Recent activity"
+      activity_loading: "Loading…"
+    activity:
+      empty: "No AI has called this mailbox yet."
+      when: "%{time} ago"
+      rows: "rows: %{count}"
+      outcomes:
+        ok: "ok"
+        error: "error"
+        denied: "denied"
+        rate_limited: "rate limited"
+        search_limited: "search limited"
     new:
       title: "Add a mailbox"
       intro: "mcp4mail reads your mail over IMAP. Pick your provider and the server settings fill themselves in."
