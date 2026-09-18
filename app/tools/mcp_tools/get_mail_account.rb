@@ -3,6 +3,7 @@
 module McpTools
   class GetMailAccount < ApplicationTool
     tool_name "get_mail_account"
+    title "Show mailbox"
     description "Show the connection details of one of your mail accounts (never its password)."
     input_schema(
       type: "object",

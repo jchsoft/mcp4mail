@@ -23,6 +23,15 @@ module McpTools
         subclass.annotations(**READ_ONLY_ANNOTATIONS)
       end
 
+      # A human name for the tool. MCP clients show it instead of the wire name, and so
+      # does the activity list on the mailboxes page - a person reads "Search messages",
+      # not search_messages. annotations replaces the whole hash, so merge into it.
+      def title(value = nil)
+        return (annotations || {})[:title] if value.nil?
+
+        annotations(**(annotations || {}), title: value)
+      end
+
       def read_only?
         declared = annotations || {}
         declared[:read_only_hint] == true && declared[:destructive_hint] == false

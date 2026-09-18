@@ -7,6 +7,7 @@ module McpTools
   # never from IMAP SEARCH.
   class SearchMessages < ApplicationTool
     tool_name "search_messages"
+    title "Search messages"
     description <<~TEXT.squish
       Search the headers of your own indexed mail. Returns one compact row per message - id,
       account, folder, date, sender, subject, and the names and sizes of any attachments - and
