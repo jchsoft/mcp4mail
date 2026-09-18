@@ -62,15 +62,25 @@ class SecuritySectionTest < ApplicationSystemTestCase
         const link = document.querySelector("#security a");
         link.focus();
         const style = getComputedStyle(link);
-        return { color: style.outlineColor, width: style.outlineWidth, style: style.outlineStyle };
+        return {
+          color: style.outlineColor,
+          width: style.outlineWidth,
+          style: style.outlineStyle,
+          shadow: style.boxShadow
+        };
       })()
     JS
 
     # Brand orange on ink is 5.1:1, past the 3:1 a focus indicator needs, so the
-    # global ring is deliberately not overridden inside the panel.
-    assert_equal BRAND, outline["color"]
+    # global ring is still not overridden inside the panel. Task #12708 found
+    # the opposite problem — the same orange is 2.87:1 on the cream page — and
+    # made the ring two-tone: an ink outline outside, the orange filling the
+    # offset gap as a box-shadow. Here the ink half vanishes into the panel and
+    # the orange half is what the visitor sees.
+    assert_equal INK, outline["color"]
     assert_equal "solid", outline["style"]
     assert_equal "3px", outline["width"]
+    assert_includes outline["shadow"], BRAND
   end
 
   test "the panel survives a 375px viewport without clipping its corners" do

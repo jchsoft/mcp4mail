@@ -1,7 +1,9 @@
 require "application_system_test_case"
 
 class BuiltSectionTest < ApplicationSystemTestCase
-  GREEN = "rgb(31, 138, 112)".freeze
+  # #1a7a63, not the design's #1f8a70: task #12708 darkened the token so white
+  # on the pill reaches AA. See docs/accessibility/axe-report.md.
+  GREEN = "rgb(26, 122, 99)".freeze
   LINE = "rgb(235, 228, 216)".freeze
 
   test "the section explains the workflow and renders its inline markup, in either language" do
