@@ -41,13 +41,15 @@
   </head>
 
   <body>
-    <%= render "shared/nav" %>
+    <%= render "shared/marketing_header" %>
 
-    <main class="container mx-auto mt-12 px-5">
-      <div class="w-full">
-        <%= render "shared/flash" %>
-        <%= yield %>
-      </div>
+    <%# The 1160px content column of docs/design/landing-v2.html. No top margin:
+        each section carries its own vertical rhythm, starting with the hero. %>
+    <main class="landing-shell">
+      <%= render "shared/flash" %>
+      <%= yield %>
     </main>
+
+    <%= render "shared/marketing_footer" %>
   </body>
 </html>

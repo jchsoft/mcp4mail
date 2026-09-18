@@ -1,0 +1,35 @@
+<%# Public marketing header, from the header block of docs/design/landing-v2.html.
+    The section ids are the English ones in both locales — only the labels are
+    translated, so an anchor keeps working when a visitor switches language.
+
+    Route helpers go through main_app: the public layout also dresses the Hitch
+    consent screen, which renders inside an isolated engine where the bare
+    helpers do not resolve. %>
+<header class="landing-shell flex flex-wrap items-center gap-7 py-[22px]">
+  <%= link_to main_app.root_path, class: "mr-auto inline-flex items-center gap-2.5 font-heading text-[22px] font-extrabold tracking-[-0.02em] text-ink no-underline" do %>
+    <span aria-hidden="true" class="inline-grid size-[34px] place-items-center rounded-[10px] bg-brand text-[15px] font-extrabold text-ink">@</span>
+    <%= t("pages.home.nav.brand") %>
+  <% end %>
+
+  <nav aria-label="<%= t("pages.home.nav.label") %>" class="flex flex-wrap gap-6 text-[15px] font-medium">
+    <% { why: "#why", how: "#how", security: "#security", built: "#built", faq: "#faq" }.each do |key, anchor| %>
+      <%= link_to t("pages.home.nav.#{key}"), anchor, class: "text-ink no-underline hover:text-brand-deep" %>
+    <% end %>
+  </nav>
+
+  <span class="inline-flex rounded-full bg-surface-hover p-[3px] text-[13px] font-semibold">
+    <% I18n.available_locales.each do |locale| %>
+      <% current = locale == I18n.locale %>
+      <%= link_to t("pages.home.nav.locale_#{locale}"),
+                  url_for(locale: locale),
+                  lang: locale,
+                  aria: { current: ("page" if current) },
+                  class: class_names("rounded-full px-3 py-[5px] no-underline",
+                                     current ? "bg-ink text-white" : "text-ink") %>
+    <% end %>
+  </span>
+
+  <%= link_to t("pages.home.nav.cta"),
+              authenticated? ? main_app.mail_accounts_path : main_app.new_registration_path,
+              class: "inline-flex items-center rounded-full bg-ink px-5 py-[11px] text-[15px] font-semibold text-white no-underline hover:bg-code-chip" %>
+</header>

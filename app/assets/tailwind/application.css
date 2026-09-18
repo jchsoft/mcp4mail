@@ -75,6 +75,7 @@
   --color-code-chip: #343b4a;
   --color-brand: #f26b1d;
   --color-brand-hover: #e35f14;
+  --color-brand-deep: #c94a12;
   --color-brand-tint: #fde9dc;
   --color-green: #1f8a70;
   --color-green-deep: #15654f;
@@ -97,6 +98,14 @@
   --text-h2-sub: clamp(28px, 3.4vw, 42px);
   --text-h2-sub--line-height: 1.1;
   --text-h2-sub--letter-spacing: -0.02em;
+}
+
+/* The 1160px content column the landing shares between header, sections and
+   footer, with the design's fluid side padding. */
+@utility landing-shell {
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 48px);
 }
 
 @layer base {

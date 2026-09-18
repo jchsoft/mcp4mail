@@ -54,6 +54,7 @@ cs:
       connect_ai: "Propojit s AI"
       source: "Zdrojový kód na GitHubu"
       nav:
+        label: "Sekce stránky"
         brand: "mcp4mail"
         why: "K čemu"
         how: "Jak na to"
