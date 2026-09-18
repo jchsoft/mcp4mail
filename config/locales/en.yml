@@ -1,4 +1,6 @@
 en:
+  meta:
+    description: "Your mailbox as an MCP server. Connect an IMAP account and let your AI assistant read and search your mail - over OAuth 2.1, open source, self-hostable."
   nav:
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"

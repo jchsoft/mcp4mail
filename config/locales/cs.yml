@@ -1,4 +1,6 @@
 cs:
+  meta:
+    description: "Vaše e-mailová schránka jako MCP server. Připojte IMAP účet a nechte svého AI asistenta číst a prohledávat poštu – přes OAuth 2.1, open source, provozovatelné i na vlastním serveru."
   nav:
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
