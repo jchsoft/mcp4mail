@@ -39,13 +39,6 @@ en:
     home:
       title: "mcp4mail - your mail, readable by your AI"
       meta_description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
-      # Keys of the old placeholder page, still rendered by app/views/pages/home.html.erb.
-      # The landing cleanup subtask removes them once the sections below are in the view.
-      tagline: "Your mailbox as an MCP server. Connect an IMAP account and let your AI assistant read and search your mail - over OAuth 2.1, open source, self-hostable."
-      get_started: "Get started"
-      mailboxes: "Your mailboxes"
-      connect_ai: "Connect AI"
-      source: "Source on GitHub"
       nav:
         label: "Page sections"
         brand: "mcp4mail"

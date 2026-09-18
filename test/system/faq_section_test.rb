@@ -127,10 +127,24 @@ class FaqSectionTest < ApplicationSystemTestCase
 
     assert_link "FAQ", href: "#faq"
     click_link "FAQ"
-    assert_equal "#faq", page.evaluate_script("location.hash")
+    assert_equal "#faq", settled_location_hash
   end
 
   private
+    # click_link returns once the click is dispatched, not once the browser has
+    # acted on it, and none of Capybara's waiting matchers look at the fragment.
+    # Reading location.hash straight after the click therefore raced the
+    # navigation and caught an empty string on a loaded CI runner. Poll instead.
+    def settled_location_hash
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + Capybara.default_max_wait_time
+      hash = page.evaluate_script("location.hash")
+      while hash.to_s.empty? && Process.clock_gettime(Process::CLOCK_MONOTONIC) < deadline
+        sleep 0.05
+        hash = page.evaluate_script("location.hash")
+      end
+      hash
+    end
+
     # The rotation is animated, so the first read catches it part-way round.
     def settled_marker_transform
       deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + Capybara.default_max_wait_time
