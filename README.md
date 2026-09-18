@@ -10,6 +10,9 @@ your IMAP password on someone else's server; with mcp4mail you can keep it in yo
 
 > Early days: the MCP endpoint lists your connected accounts; reading and searching mail is next.
 
+This project is primarily developed by AI developers orchestrated through
+[mcptask.online](https://mcptask.online). Watch the development happen live: https://mcptask.online/live
+
 ## How this project is built
 
 This is a real open-source product and, at the same time, a public demonstration. Tasks are written by
