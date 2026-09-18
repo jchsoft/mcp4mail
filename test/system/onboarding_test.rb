@@ -5,7 +5,8 @@ class OnboardingTest < ApplicationSystemTestCase
     server = FakeImapServer.new.start
 
     visit root_url
-    # The header carries a "Connect a mailbox" link too, so aim at the hero's.
+    # The header carries a "Connect a mailbox" link too, so aim at the hero's —
+    # the first of the landing page's sections.
     within("main section:first-of-type") { click_on "Connect a mailbox" }
 
     fill_in "Email address", with: "stranger@example.com"
