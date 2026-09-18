@@ -36,6 +36,7 @@ en:
       connect_ai: "Connect AI"
       source: "Source on GitHub"
       nav:
+        label: "Page sections"
         brand: "mcp4mail"
         why: "Why"
         how: "How"
