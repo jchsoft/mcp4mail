@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Placeholder">
+  <rect width="800" height="600" fill="#f1ebe1"/>
+  <g fill="none" stroke="#ebe4d8" stroke-width="2">
+    <rect x="40" y="40" width="720" height="520" rx="16"/>
+    <path d="M40 120h720"/>
+  </g>
+  <g fill="#1f2430" font-family="'Instrument Sans', system-ui, sans-serif">
+    <text x="72" y="92" font-size="26" font-weight="600">mcptask.online/live</text>
+    <text x="72" y="300" font-size="20" fill="#6b7280">Screenshot placeholder</text>
+    <text x="72" y="332" font-size="16" fill="#6b7280">The real asset is produced by task #12697.</text>
+  </g>
+</svg>
