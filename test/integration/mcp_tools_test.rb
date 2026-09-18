@@ -19,7 +19,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     tools = response.parsed_body.dig("result", "tools")
-    assert_equal %w[get_mail_account list_mail_accounts search_messages], tools.map { |tool| tool["name"] }
+    assert_equal %w[get_mail_account get_message list_mail_accounts search_messages], tools.map { |tool| tool["name"] }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
@@ -173,6 +173,84 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "search_limited", 0 ], McpAuditEvent.sole.values_at(:outcome, :rows_returned)
   end
 
+  test "get_message returns headers and the plain text body, and audits one row" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: plain_body("Ahoj, jak se máš?"),
+      to_addresses: [ { "name" => nil, "address" => "bob@example.com" } ],
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 12_345 } ])
+
+    payload = get_message(id: message.id)
+
+    assert_equal "Ahoj, jak se máš?", payload["body"].strip
+    assert_equal false, payload["truncated"]
+    assert_equal "bob@example.com", payload["to"].sole
+    assert_equal [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 12_345 } ], payload["attachments"]
+    assert_equal [ "get_message", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
+  ensure
+    server&.stop
+  end
+
+  test "get_message converts an html-only body to text instead of handing back markup" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: html_body("<p>Řádek jedna</p><p>Řádek dva</p>"))
+
+    payload = get_message(id: message.id)
+
+    assert_equal "Řádek jedna\nŘádek dva", payload["body"].strip
+  ensure
+    server&.stop
+  end
+
+  test "get_message never reaches another user's mail" do
+    message = index_message(mail_accounts(:personal), uid: 1, subject: "Not yours")
+
+    result = call_tool("get_message", id: message.id)
+
+    assert result["isError"]
+    assert_not_includes result.to_json, "Not yours"
+  end
+
+  test "get_message asks for an id when none is given" do
+    result = call_tool("get_message", id: nil)
+
+    assert result["isError"]
+  end
+
+  test "get_message explains a message that no longer exists" do
+    result = call_tool("get_message", id: MailMessage.maximum(:id).to_i + 1)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "No message"
+  end
+
+  test "get_message explains when the indexed message is no longer on the server" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: plain_body("hi"), uidvalidity: 1)
+    # The server has since re-issued UIDVALIDITY (e.g. the mailbox was rebuilt), so the row
+    # search_messages handed out no longer identifies a real message.
+    @fake_mailboxes["INBOX"][:uidvalidity] = 999
+
+    result = call_tool("get_message", id: message.id)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "no longer on the server"
+  ensure
+    server&.stop
+  end
+
+  test "get_message truncates a very long body and says so" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: plain_body("a" * (McpTools::GetMessage::BODY_CHAR_LIMIT + 500)))
+
+    payload = get_message(id: message.id)
+
+    assert_equal McpTools::GetMessage::BODY_CHAR_LIMIT, payload["body"].length
+    assert_equal true, payload["truncated"]
+    assert_includes payload["note"], "cut off"
+  ensure
+    server&.stop
+  end
+
   private
     def search(**arguments)
       result = call_tool("search_messages", **arguments)
@@ -198,5 +276,46 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       response.parsed_body.fetch("result")
+    end
+
+    def get_message(**arguments)
+      result = call_tool("get_message", **arguments)
+
+      assert_not result["isError"], result.to_json
+      JSON.parse(result.dig("content", 0, "text"))
+    end
+
+    # A MailAccount pointed at a real, in-process FakeImapServer, so get_message can actually
+    # fetch a body over IMAP instead of just reading the local index. index_body_message adds
+    # messages to the same mailboxes hash the server was started with.
+    def start_fake_account
+      @fake_mailboxes = { "INBOX" => { uidvalidity: 1, messages: [] } }
+      server = FakeImapServer.new(mailboxes: @fake_mailboxes).start
+      account = @user.mail_accounts.create!(
+        host: "127.0.0.1", port: server.port, ssl: false, username: "bob", password: "fixture-app-password"
+      )
+      [ server, account ]
+    end
+
+    # Indexes a message the way MessageSync would, and adds it to the fake server's mailbox so
+    # the same uid/folder/uidvalidity resolves to a real body fetch.
+    def index_body_message(account, uid:, body:, uidvalidity: 1, subject: "Subject", from_address: "sender@example.com",
+      to_addresses: [], attachments: [])
+      folder = account.mail_folders.find_or_create_by!(name: "INBOX") { |new_folder| new_folder.uidvalidity = uidvalidity }
+      message = account.mail_messages.create!(
+        mail_folder: folder, uidvalidity:, uid:, subject:, from_address:, to_addresses:, cc_addresses: [],
+        has_attachments: attachments.any?, attachments:,
+        search_text: MailMessage.build_search_text(subject:, from_name: nil, from_address:, to_addresses:, cc_addresses: [])
+      )
+      @fake_mailboxes["INBOX"][:messages] << { uid:, body: }
+      message
+    end
+
+    def plain_body(text, charset: "UTF-8")
+      "Content-Type: text/plain; charset=#{charset}\r\n\r\n#{text}".b
+    end
+
+    def html_body(html)
+      "Content-Type: text/html; charset=UTF-8\r\n\r\n#{html}".b
     end
 end
