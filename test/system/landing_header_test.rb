@@ -1,6 +1,6 @@
 require "application_system_test_case"
 
-class MarketingHeaderTest < ApplicationSystemTestCase
+class LandingHeaderTest < ApplicationSystemTestCase
   test "the header wraps cleanly on a 375px phone, with no horizontal scroll" do
     page.driver.browser.manage.window.resize_to(375, 800)
     visit root_url
