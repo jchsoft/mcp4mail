@@ -1,6 +1,6 @@
 require "application_system_test_case"
 
-class HowSectionTest < ApplicationSystemTestCase
+class LandingHowTest < ApplicationSystemTestCase
   INK = "rgb(31, 36, 48)".freeze
   WHITE = "rgb(255, 255, 255)".freeze
   BRAND = "rgb(242, 107, 29)".freeze
