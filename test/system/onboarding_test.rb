@@ -5,7 +5,8 @@ class OnboardingTest < ApplicationSystemTestCase
     server = FakeImapServer.new.start
 
     visit root_url
-    click_on "Get started"
+    # The header carries a "Connect a mailbox" link too, so aim at the hero's.
+    within("main section") { click_on "Connect a mailbox" }
 
     fill_in "Email address", with: "stranger@example.com"
     fill_in "Password", with: "long-enough", match: :prefer_exact
