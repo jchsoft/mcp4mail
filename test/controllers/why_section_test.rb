@@ -45,6 +45,6 @@ class WhySectionTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_select "section#why h2", count: 1
-    assert_select "section#why figure :is(h1, h2, h3, h4, h5, h6)", count: 0
+    %w[h1 h2 h3 h4 h5 h6].each { |level| assert_select "section#why figure #{level}", count: 0 }
   end
 end
