@@ -1,17 +1,56 @@
 <% content_for :title, t(".title") %>
 
-<section class="mx-auto max-w-2xl text-center">
-  <h1 class="text-5xl font-bold tracking-tight">mcp4mail</h1>
-  <p class="mt-6 text-lg text-gray-600"><%= t(".tagline") %></p>
-  <div class="mt-10 flex justify-center gap-4">
-    <% if authenticated? %>
-      <%= link_to t(".mailboxes"), mail_accounts_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
-    <% else %>
-      <%= link_to t(".get_started"), new_registration_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
-    <% end %>
-    <%= link_to t(".connect_ai"), connect_ai_path, class: "rounded-md px-3.5 py-2.5 border border-gray-300 hover:bg-gray-50 font-medium" %>
+<%# Hero, from the data-screen-label="Hero" block of docs/design/landing-v2.html.
+    auto-fit + minmax(320px) collapses the two columns to one on its own around
+    700px, so there is deliberately no breakpoint here. %>
+<section class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] pt-[72px] pb-24">
+  <div>
+    <span class="inline-flex items-center gap-2 rounded-full bg-green-tint px-3.5 py-1.5 text-[13px] font-semibold text-green-deep">
+      <%= t(".hero.badge") %>
+    </span>
+
+    <%# The highlight is a gradient rather than a border-bottom so it sits behind
+        the descenders of the highlighted word. %>
+    <h1 class="mt-[22px] font-heading text-h1 font-extrabold">
+      <%= t(".hero.heading_before") %>
+      <span class="bg-[linear-gradient(transparent_62%,var(--color-highlight)_62%)]"><%= t(".hero.heading_highlight") %></span>
+      <%= t(".hero.heading_after") %>
+    </h1>
+
+    <p class="mt-6 max-w-[34em] text-[19px] leading-[1.55] text-ink-soft"><%= t(".hero.lede") %></p>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <%# The label stays ink on orange — white would drop the pair below contrast. %>
+      <%= link_to t(".hero.cta_primary"),
+                  authenticated? ? mail_accounts_path : new_registration_path,
+                  class: "inline-flex items-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover" %>
+      <%= link_to t(".hero.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
+                  class: "inline-flex items-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+    </div>
+
+    <p class="mt-5 text-sm text-ink-muted"><%= t(".hero.works_with") %></p>
   </div>
-  <p class="mt-10 text-sm text-gray-500">
-    <%= link_to t(".source"), "https://github.com/jchsoft/mcp4mail", class: "underline hover:text-gray-900" %>
-  </p>
+
+  <%# An illustration, not a recording of the visitor's own mailbox: the
+      aria-label announces it as a sample and the disclaimer below says so in
+      words. Both stay. %>
+  <div aria-label="<%= t(".hero.demo.label") %>" class="flex w-full max-w-[460px] flex-col gap-[14px] justify-self-end">
+    <div class="max-w-[85%] self-end rounded-[22px_22px_6px_22px] bg-ink px-5 py-4 text-[16px] leading-[1.5] text-white">
+      <%= t(".hero.demo.question") %>
+    </div>
+
+    <div class="rounded-[22px_22px_22px_6px] border border-line bg-surface px-[22px] py-5 text-[15px] leading-[1.55] shadow-[0_8px_30px_rgba(31,36,48,.06)]">
+      <p class="mb-2.5 flex items-center gap-2 text-xs font-semibold text-green-deep">
+        <span aria-hidden="true" class="size-2 rounded-full bg-green"></span>
+        <%= t(".hero.demo.source") %>
+      </p>
+      <ul class="flex list-disc flex-col gap-1.5 pl-[18px] text-ink">
+        <% t(".hero.demo.items").each do |item| %>
+          <li><strong><%= item[:label] %></strong> — <%= item[:body] %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <p class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></p>
+  </div>
 </section>

@@ -5,7 +5,10 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", "mcp4mail"
+    # The heading is assembled from three locale keys, so it carries the view's
+    # own whitespace between them.
+    assert_select "h1", /Your mail,\s+readable\s+by your AI\./
+    assert_select "h1 span", "readable"
   end
 
   test "home page has favicon links and Open Graph / Twitter meta tags" do
