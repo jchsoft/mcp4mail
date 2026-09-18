@@ -36,7 +36,7 @@ class OnboardingTest < ApplicationSystemTestCase
 
     click_on "Next: connect your AI app"
     assert_selector "h1", text: "Connect AI"
-    assert_selector "#client-grok", text: "Allow pop-ups for grok.com"
+    assert_selector "#client-claude", text: "Add custom connector"
     assert_no_selector "#no-mailbox"
   ensure
     server&.stop
@@ -72,6 +72,6 @@ class OnboardingTest < ApplicationSystemTestCase
     within("#language-switcher") { click_on "CS" }
 
     assert_selector "h1", text: "Propojit s AI"
-    assert_selector "#client-grok", text: "Povolte vyskakovací okna pro grok.com"
+    assert_selector "#client-claude", text: "V claude.ai nebo Claude Desktop"
   end
 end
