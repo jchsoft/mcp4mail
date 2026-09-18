@@ -54,3 +54,48 @@
     <p class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></p>
   </div>
 </section>
+
+<%# Security, from the data-screen-label="Security" block of docs/design/landing-v2.html.
+    The one dark surface on the page. Everything inside the panel sits on ink, so
+    the page's green links and orange kicker are swapped for the yellow highlight —
+    green on #1f2430 lands at 2.6:1 and would not carry.
+
+    The global focus ring (3px brand orange, app/assets/tailwind/application.css)
+    was checked against this panel rather than assumed: #f26b1d on #1f2430 is
+    5.1:1, well past the 3:1 WCAG asks of a focus indicator, so the global rule
+    stands here and is not weakened. %>
+<section id="security" class="py-16">
+  <div class="rounded-[32px] bg-ink p-[clamp(32px,5vw,64px)] text-white">
+    <div class="max-w-[680px]">
+      <span class="block text-sm font-bold tracking-[.04em] text-highlight uppercase">
+        <%= t(".security.kicker") %>
+      </span>
+
+      <h2 class="mt-3.5 font-heading text-h2 font-extrabold"><%= t(".security.heading") %></h2>
+
+      <p class="mt-5 text-[18px] leading-[1.6] text-ink-on-dark"><%= t(".security.lede") %></p>
+    </div>
+
+    <%# Same auto-fit as the hero: four columns at 1440px, one at 375px, with no
+        breakpoint of our own. %>
+    <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-x-8 gap-y-9">
+      <% t(".security.points", deep_interpolation: true,
+           self_hosting_url: "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md").each do |point| %>
+        <div>
+          <h3 class="font-heading text-[20px] font-bold text-white"><%= point[:title] %></h3>
+
+          <%# The locale bodies carry a <code> chip and a link. Both take their
+              dark-panel treatment here rather than in the translation, which
+              keeps markup out of the translator's way. sanitize, not raw: the
+              strings are ours, but nothing in the view should be the only thing
+              standing between a locale file and the page. %>
+          <p class="mt-2.5 leading-[1.6] text-ink-on-dark
+                    [&_code]:rounded-md [&_code]:bg-code-chip [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm
+                    [&_a]:text-highlight [&_a]:underline [&_a]:hover:no-underline">
+            <%= sanitize point[:body_html] %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
