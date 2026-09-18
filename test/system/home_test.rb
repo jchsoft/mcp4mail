@@ -43,6 +43,36 @@ class HomeTest < ApplicationSystemTestCase
     end
   end
 
+  test "switching to Czech and back changes the page and survives a reload" do
+    visit root_url
+    assert_selector "html[lang=en]"
+
+    within("header") { click_link "CS" }
+    assert_selector "html[lang=cs]"
+    assert_selector "h1", text: "Vaše pošta,"
+
+    visit root_url
+    assert_selector "html[lang=cs]"
+
+    within("header") { click_link "EN" }
+    assert_selector "html[lang=en]"
+    assert_selector "h1", text: "Your mail,"
+
+    visit root_url
+    assert_selector "html[lang=en]"
+  end
+
+  test "the closing and header calls to action follow a signed-in visitor to their mailboxes" do
+    visit new_session_url
+    fill_in placeholder: "Enter your email address", with: users(:one).email_address
+    fill_in placeholder: "Enter your password", with: "password"
+    click_button "Sign in"
+    assert_current_path root_path
+
+    within("main section:last-of-type") { assert_link "Connect a mailbox", href: mail_accounts_path }
+    within("header") { assert_link "Connect a mailbox", href: mail_accounts_path }
+  end
+
   test "the highlighted word sits on a gradient behind its descenders" do
     visit root_url
 
