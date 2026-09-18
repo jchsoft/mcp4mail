@@ -102,6 +102,61 @@
   </div>
 </section>
 
+<%# How it's built, from the data-screen-label="How it's built" block of
+    docs/design/landing-v2.html. The same auto-fit as the hero, on a 300px floor,
+    so the image drops below the copy without a breakpoint of our own.
+
+    The claims in this section were checked against the repository rather than
+    copied from the design: the "main protection" ruleset on jchsoft/mcp4mail
+    requires a pull request, a linear history and the five green checks of
+    .github/workflows/ci.yml before a merge, so "nobody pushes to main directly"
+    is literally true. A merge is not a release, though — the site runs from the
+    `production` branch, which trails main — so the path the copy names stops at
+    the merge and the second paragraph says who promotes. %>
+<section id="built" class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] py-16">
+  <div>
+    <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
+      <%= t(".built.kicker") %>
+    </span>
+
+    <h2 class="mt-3.5 font-heading text-h2-sub font-extrabold"><%= t(".built.heading") %></h2>
+
+    <%# The locale string carries the link to mcptask.online and the <code> chip
+        around main; the view styles them here so the translation stays prose.
+        sanitize, not raw, on the same reasoning as the security panel. %>
+    <p class="mt-5 text-[17px] leading-[1.6] text-ink-soft
+              [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm
+              [&_a]:text-green-deep [&_a]:underline [&_a]:hover:no-underline">
+      <%= sanitize t(".built.body_html", mcptask_url: "https://mcptask.online") %>
+    </p>
+
+    <p class="mt-3.5 text-[17px] leading-[1.6] text-ink-soft"><%= t(".built.body_2") %></p>
+
+    <div class="mt-7 flex flex-wrap gap-3">
+      <%# The design's pill, unchanged: white on #1f8a70 measures 4.26:1, just
+          under the 4.5:1 AA asks of a 16px label, and the hover lifts it to
+          7.0:1. Raised on task #12703 rather than quietly recoloured — the two
+          greens are the design's, and which one rests is the designer's call. %>
+      <%= link_to "https://mcptask.online/live",
+                  class: "inline-flex items-center gap-2 rounded-full bg-green px-[22px] py-[13px] font-semibold text-white no-underline hover:bg-green-deep" do %>
+        <span aria-hidden="true" class="size-2 rounded-full bg-highlight"></span>
+        <%= t(".built.cta_live") %>
+      <% end %>
+
+      <%= link_to t(".built.cta_contribute"),
+                  "https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md",
+                  class: "inline-flex items-center rounded-full border-2 border-ink px-[22px] py-[13px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+    </div>
+  </div>
+
+  <%# The slot is 3:2, the ratio task #12697 captured at, so object-cover has
+      nothing to crop; aspect-ratio plus the partial's width/height attributes
+      hold the space before the lazy image arrives. %>
+  <div class="aspect-[3/2] overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_12px_40px_rgba(31,36,48,.08)]">
+    <%= render "pages/built_live_image" %>
+  </div>
+</section>
+
 <%# FAQ, from the data-screen-label="FAQ" block of docs/design/landing-v2.html.
     Native <details>/<summary>, no Stimulus: the browser already gets disclosure,
     keyboard operation and screen-reader semantics right, and the global base
