@@ -101,3 +101,33 @@
     </div>
   </div>
 </section>
+
+<%# FAQ, from the data-screen-label="FAQ" block of docs/design/landing-v2.html.
+    Native <details>/<summary>, no Stimulus: the browser already gets disclosure,
+    keyboard operation and screen-reader semantics right, and the global base
+    layer hides its default triangle so the design's own marker can stand in.
+
+    The items deliberately carry no shared name attribute. Grouping them would
+    make the browser close the answer a visitor is half-way through as soon as
+    they open the next question. %>
+<section id="faq" class="py-16">
+  <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
+    <%= t(".faq.kicker") %>
+  </span>
+
+  <div class="mt-6 flex max-w-[760px] flex-col gap-3">
+    <% t(".faq.items").each do |item| %>
+      <details class="rounded-2xl border border-line bg-surface px-[22px] py-[18px]">
+        <summary class="flex cursor-pointer items-center gap-3.5 font-heading text-[19px] font-bold">
+          <%# The + rotates into an × on open; .faq-mark carries that transform,
+              and its reduced-motion opt-out, from the base layer. %>
+          <span aria-hidden="true"
+                class="faq-mark inline-flex size-[26px] flex-none items-center justify-center rounded-full bg-brand-tint text-[18px] text-brand-deep">+</span>
+          <%= item[:question] %>
+        </summary>
+
+        <p class="mt-3 ml-10 text-base leading-[1.6] text-ink-soft"><%= item[:answer] %></p>
+      </details>
+    <% end %>
+  </div>
+</section>
