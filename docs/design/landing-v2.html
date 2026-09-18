@@ -26,13 +26,15 @@
   ::selection { background: #ffd166; }
 </style>
 <style>
-    /* Hover states, converted from the prototype's style-hover="..." attributes. */
-    .hv-1:hover { color:#c94a12; }
-    .hv-2:hover { background:#343b4a; }
-    .hv-3:hover { background:#e35f14; }
-    .hv-4:hover { background:#f1ebe1; }
-    .hv-5:hover { background:#15654f; }
-    .hv-6:hover { background:#fff; }
+    /* Hover states, converted from the prototype's style-hover="..." attributes.
+       !important because every element carries its own inline style="...", which
+       would otherwise win and leave these rules doing nothing. */
+    .hv-1:hover { color:#c94a12 !important; }
+    .hv-2:hover { background:#343b4a !important; }
+    .hv-3:hover { background:#e35f14 !important; }
+    .hv-4:hover { background:#f1ebe1 !important; }
+    .hv-5:hover { background:#15654f !important; }
+    .hv-6:hover { background:#fff !important; }
   section[lang] + section[lang] { border-top: 1px dashed #ebe4d8; }
 </style>
 </head>

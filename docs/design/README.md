@@ -92,6 +92,9 @@ The conversion was mechanical apart from the hover states. For the record:
   `placeholder-live.svg`; `image-slot.js` is gone. The real screenshot asset is
   produced by task #12697.
 - The 24 `style-hover="…"` attributes became six generated `.hv-N:hover` rules in a
-  `<style>` block, one per distinct declaration.
+  `<style>` block, one per distinct declaration. They are marked `!important`: the
+  design styles every element with an inline `style="…"`, which would otherwise win on
+  specificity and leave the hover states doing nothing. The prototype runtime swapped
+  inline styles directly, so the question never came up there.
 
 [story #12693]: https://mcptask.online/jchsoft/pieces/12693
