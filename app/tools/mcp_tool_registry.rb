@@ -14,6 +14,7 @@ class McpToolRegistry < Hitch::MCP::Registry
     super
   end
 
+  register McpTools::GetAttachment, scopes: [ "mcp" ]
   register McpTools::GetMailAccount, scopes: [ "mcp" ]
   register McpTools::GetMessage, scopes: [ "mcp" ]
   register McpTools::ListMailAccounts, scopes: [ "mcp" ]
