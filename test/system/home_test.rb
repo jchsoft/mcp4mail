@@ -70,8 +70,10 @@ class HomeTest < ApplicationSystemTestCase
 
   private
     # The header carries a "Connect a mailbox" link of its own, so hero assertions
-    # scope to the section rather than the whole page.
+    # scope to the section rather than the whole page. The hero is the first
+    # section of the page and the landing has more of them below it, so name it
+    # by position rather than matching every section.
     def within_hero(&block)
-      within("main section", &block)
+      within("main section:first-of-type", &block)
     end
 end

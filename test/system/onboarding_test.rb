@@ -6,7 +6,7 @@ class OnboardingTest < ApplicationSystemTestCase
 
     visit root_url
     # The header carries a "Connect a mailbox" link too, so aim at the hero's.
-    within("main section") { click_on "Connect a mailbox" }
+    within("main section:first-of-type") { click_on "Connect a mailbox" }
 
     fill_in "Email address", with: "stranger@example.com"
     fill_in "Password", with: "long-enough", match: :prefer_exact
