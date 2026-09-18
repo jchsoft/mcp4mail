@@ -10,6 +10,27 @@ your IMAP password on someone else's server; with mcp4mail you can keep it in yo
 
 > Early days: the MCP endpoint lists your connected accounts; reading and searching mail is next.
 
+## How this project is built
+
+This is a real open-source product and, at the same time, a public demonstration. Tasks are written by
+people in [mcptask.online](https://mcptask.online), picked up by runners (Claude Code driven by the
+mcptask runner, on our own machines), and every change follows the same path: task → branch → pull request
+→ tests & CI → merge → deploy to [mcp4mail.online](https://mcp4mail.online). Nobody, person or runner,
+pushes to `main` directly: the branch is protected by a repository ruleset that requires an open pull
+request, a linear history, and green status checks (security scans, lint, unit tests, system tests) before
+a squash merge is allowed.
+
+Watch it live: https://mcptask.online/live
+
+Where to look if you want to verify any of this yourself: the [Pull requests](../../pulls) tab, where each
+PR links its task and shows its CI runs, including the failed ones; [CLAUDE.md](CLAUDE.md) and
+[`.claude/`](.claude), the instructions the runners work from; and the
+[CI configuration](.github/workflows/ci.yml).
+
+People still write the task briefs, review the pull requests, and decide what ships and what doesn't; a
+runner executes a task end to end, but it is not deciding what to build. A runner is a user with a seat
+here, not something free or unlimited.
+
 ## MCP tools
 
 | Tool | What it does |
