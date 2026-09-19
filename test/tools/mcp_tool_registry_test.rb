@@ -10,6 +10,19 @@ class McpToolRegistryTest < ActiveSupport::TestCase
     end
   end
 
+  test "every registered tool declares a human title" do
+    McpToolRegistry.declarations.each do |declaration|
+      tool = declaration.class_name.constantize
+
+      assert tool.title.present?, "#{declaration.class_name} has no title annotation"
+      assert_equal tool.title, McpToolRegistry.title_for(tool.tool_name)
+    end
+  end
+
+  test "a tool name with no tool behind it still reads as words" do
+    assert_equal "Send mail", McpToolRegistry.title_for("send_mail")
+  end
+
   test "refuses to register a tool that declares writes" do
     writer = Class.new(McpTools::ApplicationTool) do
       def self.name = "SendMail"

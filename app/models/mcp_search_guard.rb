@@ -1,5 +1,6 @@
 # Keeps a runaway agent loop from walking a whole mailbox through the search tool: every page is
-# capped, and each account has a budget of searches and of returned rows per window.
+# capped, and each subject - a mail account, or the caller when a search spans all of their
+# accounts - has a budget of searches and of returned rows per window.
 class McpSearchGuard
   class Exhausted < StandardError; end
 
@@ -14,16 +15,16 @@ class McpSearchGuard
     requested.to_i.clamp(1, MAX_PAGE_SIZE)
   end
 
-  def initialize(mail_account)
-    @mail_account = mail_account
+  def initialize(subject)
+    @subject = subject
   end
 
   def admit!
-    raise Exhausted, "Search row budget for this account is used up; try again within the hour." if ROWS.exhausted?(@mail_account)
-    raise Exhausted, "Too many searches on this account; try again in a few minutes." unless SEARCHES.admit?(@mail_account)
+    raise Exhausted, "Search row budget is used up; try again within the hour." if ROWS.exhausted?(@subject)
+    raise Exhausted, "Too many searches; try again in a few minutes." unless SEARCHES.admit?(@subject)
   end
 
   def record_rows(count)
-    ROWS.consume(@mail_account, count)
+    ROWS.consume(@subject, count)
   end
 end

@@ -1,0 +1,21 @@
+<%# Public marketing footer, from the footer block of docs/design/landing-v2.html.
+
+    Two items the design does not draw, added on task #12705 because a deployed
+    page needs them where the mock does not:
+
+      * the language switcher, so a visitor who has read the whole page does not
+        have to scroll back to the header to change language;
+      * the self-hosting guide, which the Security section points at in passing
+        and which deserves a permanent home down here.
+
+    The row stays half links, half plain text, as drawn — the licence and the
+    company name are statements, not destinations. %>
+<footer class="landing-shell flex flex-wrap items-center gap-x-7 gap-y-2 pt-8 pb-12 text-sm text-ink-muted">
+  <span><%= t("pages.home.footer.license") %></span>
+  <%= link_to t("pages.home.footer.github"), "https://github.com/jchsoft/mcp4mail", class: "inline-flex items-center text-green hover:text-green-deep max-lg:min-h-11" %>
+  <%= link_to t("pages.home.footer.self_hosting"), "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md", class: "inline-flex items-center text-green hover:text-green-deep max-lg:min-h-11" %>
+  <%= link_to t("pages.home.footer.live"), "https://mcptask.online/live", class: "inline-flex items-center text-green hover:text-green-deep max-lg:min-h-11" %>
+  <span><%= t("pages.home.footer.company") %></span>
+
+  <%= render "shared/locale_switcher" %>
+</footer>

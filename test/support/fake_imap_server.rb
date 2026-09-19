@@ -4,10 +4,11 @@
 # care about. It accepts any number of connections, one after the other.
 #
 # `mailboxes` maps a folder name to { uidvalidity:, messages: [...] }; each message is a hash
-# with :uid and optionally :flags, :internaldate, :size, :envelope (see #envelope) and
-# :bodystructure (a raw IMAP BODYSTRUCTURE string). The hash is read on every command, so a
-# test can mutate it between syncs. `drop_on_fetch_of` closes the connection when a
-# UID FETCH asks for that UID, simulating a crash mid-folder. `uidnext: false` on a mailbox
+# with :uid and optionally :flags, :internaldate, :size, :envelope (see #envelope),
+# :bodystructure (a raw IMAP BODYSTRUCTURE string) and :body (the raw RFC822 source, returned
+# as a BODY[] literal when a FETCH asks for BODY[] or BODY.PEEK[]). The hash is read on every
+# command, so a test can mutate it between syncs. `drop_on_fetch_of` closes the connection when
+# a UID FETCH asks for that UID, simulating a crash mid-folder. `uidnext: false` on a mailbox
 # leaves out the optional UIDNEXT response.
 class FakeImapServer
   attr_reader :port, :fetched_uid_sets
@@ -105,14 +106,16 @@ class FakeImapServer
           socket.write("* SEARCH#{matched.map { |uid| " #{uid}" }.join}\r\n")
           socket.write("#{tag} OK SEARCH completed\r\n")
         when "FETCH"
-          set = rest.split(" ").first
+          set, requested = rest.split(" ", 2)
           matched = matching_uids(mailbox, set)
           @fetched_uid_sets << matched
           break if @drop_on_fetch_of && matched.include?(@drop_on_fetch_of)
 
           uids = mailbox_uids(mailbox)
           mailbox[:messages].select { |m| matched.include?(m[:uid]) }.each do |message|
-            socket.write("* #{uids.index(message[:uid]) + 1} FETCH (#{fetch_items(message)})\r\n")
+            items = fetch_items(message)
+            items += " #{body_item(message)}" if requested.to_s.match?(/BODY(\.PEEK)?\[\]/) && message[:body]
+            socket.write("* #{uids.index(message[:uid]) + 1} FETCH (#{items})\r\n")
           end
           socket.write("#{tag} OK FETCH completed\r\n")
         else
@@ -184,6 +187,12 @@ class FakeImapServer
       addresses.call(fields[:to]), addresses.call(fields[:cc]), "NIL",
       quote(fields[:in_reply_to]), quote(fields[:message_id])
     ].join(" ").then { |items| "(#{items})" }
+  end
+
+  # A real server echoes "BODY[]" regardless of whether BODY[] or BODY.PEEK[] was requested.
+  def body_item(message)
+    bytes = message[:body].to_s.b
+    "BODY[] {#{bytes.bytesize}}\r\n#{bytes}"
   end
 
   # 8-bit values are sent as literals, as real servers do.

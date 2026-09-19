@@ -5,7 +5,9 @@ class OnboardingTest < ApplicationSystemTestCase
     server = FakeImapServer.new.start
 
     visit root_url
-    click_on "Get started"
+    # The header carries a "Connect a mailbox" link too, so aim at the hero's —
+    # the first of the landing page's sections.
+    within("main section:first-of-type") { click_on "Connect a mailbox" }
 
     fill_in "Email address", with: "stranger@example.com"
     fill_in "Password", with: "long-enough", match: :prefer_exact
@@ -34,7 +36,7 @@ class OnboardingTest < ApplicationSystemTestCase
 
     click_on "Next: connect your AI app"
     assert_selector "h1", text: "Connect AI"
-    assert_selector "#client-grok", text: "Allow pop-ups for grok.com"
+    assert_selector "#client-claude", text: "Add custom connector"
     assert_no_selector "#no-mailbox"
   ensure
     server&.stop
@@ -70,6 +72,6 @@ class OnboardingTest < ApplicationSystemTestCase
     within("#language-switcher") { click_on "CS" }
 
     assert_selector "h1", text: "Propojit s AI"
-    assert_selector "#client-grok", text: "Povolte vyskakovací okna pro grok.com"
+    assert_selector "#client-claude", text: "V claude.ai nebo Claude Desktop"
   end
 end

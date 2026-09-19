@@ -4,6 +4,7 @@
     <%= link_to t("nav.connect_ai"), main_app.connect_ai_path, class: "text-gray-700 hover:text-gray-900" %>
     <% if authenticated? %>
       <%= link_to t("nav.mailboxes"), main_app.mail_accounts_path, class: "text-gray-700 hover:text-gray-900" %>
+      <%= link_to t("nav.account"), main_app.account_path, class: "text-gray-700 hover:text-gray-900" %>
       <%= button_to t("nav.sign_out"), main_app.session_path, method: :delete, class: "text-gray-700 hover:text-gray-900 cursor-pointer" %>
     <% else %>
       <%= link_to t("nav.sign_in"), main_app.new_session_path, class: "text-gray-700 hover:text-gray-900" %>
