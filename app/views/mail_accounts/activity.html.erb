@@ -1,0 +1,22 @@
+<%# The last calls against one mailbox. Arguments are never stored, so nothing here is mail content. %>
+<%= turbo_frame_tag dom_id(@mail_account, :activity) do %>
+  <% if @events.empty? %>
+    <p class="mt-2 text-gray-500" id="<%= dom_id(@mail_account, :activity_empty) %>"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="mt-2 divide-y divide-gray-100">
+      <% @events.each do |event| %>
+        <li class="py-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <span class="text-gray-500"><%= t(".when", time: time_ago_in_words(event.created_at)) %></span>
+          <span class="font-medium"><%= event.tool_title %></span>
+          <span class="text-gray-600"><%= @client_names.fetch(event.client_id, event.client_id) %></span>
+          <% if event.denied? %>
+            <span class="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"><%= t(".outcomes.denied") %></span>
+          <% else %>
+            <span class="text-gray-500"><%= t(".outcomes.#{event.outcome}") %></span>
+          <% end %>
+          <span class="text-gray-500"><%= t(".rows", count: event.rows_returned) %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>

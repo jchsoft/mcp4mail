@@ -74,4 +74,9 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # Runs the axe-core accessibility engine inside the system-test browser, so the
+  # landing page's a11y check is part of the suite rather than a one-off audit
+  # someone remembers to repeat [https://github.com/dequelabs/axe-core-gems]
+  gem "axe-core-capybara"
 end

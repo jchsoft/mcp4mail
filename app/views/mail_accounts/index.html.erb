@@ -1,0 +1,42 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto md:w-2/3 w-full">
+  <div class="flex items-center justify-between gap-4">
+    <h1 class="font-bold text-4xl"><%= t(".title") %></h1>
+    <%= link_to t(".add"), new_mail_account_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+  </div>
+
+  <% if @mail_accounts.empty? %>
+    <p class="mt-8 text-gray-600" id="empty"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="mt-8 divide-y divide-gray-200 border-y border-gray-200">
+      <% @mail_accounts.each do |mail_account| %>
+        <li class="py-4 flex items-start justify-between gap-4" id="<%= dom_id(mail_account) %>">
+          <div class="min-w-0">
+            <p class="font-medium"><%= mail_account.label %></p>
+            <p class="text-sm text-gray-600"><%= mail_account.username %> · <%= mail_account.host %>:<%= mail_account.port %></p>
+            <% if mail_account.last_error.present? %>
+              <p class="text-sm text-red-600"><%= t(".last_error", error: mail_account.last_error) %></p>
+            <% end %>
+            <p class="mt-1 text-sm text-gray-600" id="<%= dom_id(mail_account, :calls) %>">
+              <%= t(".calls", today: @today_counts.fetch(mail_account.id, 0), week: @week_counts.fetch(mail_account.id, 0)) %>
+            </p>
+            <details class="mt-2 text-sm">
+              <summary class="text-blue-600 underline hover:no-underline cursor-pointer"><%= t(".recent_activity") %></summary>
+              <%= turbo_frame_tag dom_id(mail_account, :activity), src: activity_mail_account_path(mail_account), loading: "lazy" do %>
+                <p class="mt-2 text-gray-500"><%= t(".activity_loading") %></p>
+              <% end %>
+            </details>
+          </div>
+          <%= button_to t(".remove"), mail_account, method: :delete,
+                form: { data: { turbo_confirm: t(".remove_confirm", name: mail_account.label) } },
+                class: "text-sm text-red-600 underline hover:no-underline cursor-pointer" %>
+        </li>
+      <% end %>
+    </ul>
+
+    <p class="mt-8">
+      <%= link_to t(".connect_ai"), connect_ai_path, class: "text-blue-600 underline hover:no-underline" %>
+    </p>
+  <% end %>
+</div>

@@ -5,6 +5,24 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", "mcp4mail"
+    # The heading is assembled from three locale keys, so it carries the view's
+    # own whitespace between them.
+    assert_select "h1", /Your mail,\s+readable\s+by your AI\./
+    assert_select "h1 span", "readable"
+  end
+
+  test "home page has favicon links and Open Graph / Twitter meta tags" do
+    get root_url
+
+    assert_response :success
+    assert_select "link[rel=icon][href='/favicon.ico']"
+    assert_select "link[rel=icon][href='/icon.svg'][type='image/svg+xml']"
+    assert_select "link[rel='apple-touch-icon'][href='/apple-touch-icon.png']"
+
+    assert_select "meta[property='og:title']"
+    assert_select "meta[property='og:description']"
+    assert_select "meta[property='og:image'][content=?]", "#{root_url}og-image.png"
+    assert_select "meta[name='twitter:card'][content='summary_large_image']"
+    assert_select "meta[name='twitter:image'][content=?]", "#{root_url}og-image.png"
   end
 end

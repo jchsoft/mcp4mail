@@ -1,12 +1,236 @@
-<% content_for :title, "mcp4mail - your mailbox as an MCP server" %>
+<% content_for :title, t(".title") %>
 
-<section class="mx-auto max-w-2xl text-center">
-  <h1 class="text-5xl font-bold tracking-tight">mcp4mail</h1>
-  <p class="mt-6 text-lg text-gray-600">
-    Your mailbox as an MCP server. Connect an IMAP account and let your AI assistant read and search your mail - over OAuth 2.1, open source, self-hostable.
-  </p>
-  <p class="mt-10 text-sm text-gray-500">
-    Coming soon ·
-    <%= link_to "Source on GitHub", "https://github.com/jchsoft/mcp4mail", class: "underline hover:text-gray-900" %>
-  </p>
+<%# Hero, from the data-screen-label="Hero" block of docs/design/landing-v2.html.
+    auto-fit + minmax(360px) collapses the two columns to one on its own, with
+    no breakpoint here. The floor was 320px until the responsive pass of task
+    #12707: 320 left the hero in two 326px columns at 768px, where neither the h1
+    nor the chat mock had the width the design draws them at. 360 moves the switch
+    to ~830px, so a tablet portrait gets the stacked hero. The min(100%,360px) is
+    not decoration: a bare 360px floor is wider than the 335px content column of a
+    375px phone, and the track would hold its floor and push the page sideways. %>
+<section class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] pt-[72px] pb-24">
+  <div>
+    <span class="inline-flex items-center gap-2 rounded-full bg-green-tint px-3.5 py-1.5 text-[13px] font-semibold text-green-deep">
+      <%= t(".hero.badge") %>
+    </span>
+
+    <%# The highlight is a gradient rather than a border-bottom so it sits behind
+        the descenders of the highlighted word. %>
+    <h1 class="mt-[22px] font-heading text-h1 font-extrabold">
+      <%= t(".hero.heading_before") %>
+      <span class="bg-[linear-gradient(transparent_62%,var(--color-highlight)_62%)]"><%= t(".hero.heading_highlight") %></span>
+      <%= t(".hero.heading_after") %>
+    </h1>
+
+    <p class="mt-6 max-w-[34em] text-[19px] leading-[1.55] text-ink-soft"><%= t(".hero.lede") %></p>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <%# The label stays ink on orange — white would drop the pair below contrast. %>
+      <%= link_to t(".hero.cta_primary"),
+                  authenticated? ? mail_accounts_path : new_registration_path,
+                  class: "inline-flex items-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover" %>
+      <%= link_to t(".hero.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
+                  class: "inline-flex items-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+    </div>
+
+    <p class="mt-5 text-sm text-ink-muted"><%= t(".hero.works_with") %></p>
+  </div>
+
+  <%# An illustration, not a recording of the visitor's own mailbox: the
+      aria-label announces it as a sample and the disclaimer below says so in
+      words. Both stay.
+
+      A <figure>, not a <div>, because aria-label only names an element whose
+      role supports a name — on a plain div it is dropped, so the announcement
+      the label was written for never happened. figure/figcaption also makes the
+      disclaimer the mock's caption rather than a stray paragraph beside it. %>
+  <figure aria-label="<%= t(".hero.demo.label") %>" class="m-0 flex w-full max-w-[460px] flex-col gap-[14px] justify-self-end">
+    <div class="max-w-[85%] self-end rounded-[22px_22px_6px_22px] bg-ink px-5 py-4 text-[16px] leading-[1.5] text-white">
+      <%= t(".hero.demo.question") %>
+    </div>
+
+    <div class="rounded-[22px_22px_22px_6px] border border-line bg-surface px-[22px] py-5 text-[15px] leading-[1.55] shadow-[0_8px_30px_rgba(31,36,48,.06)]">
+      <p class="mb-2.5 flex items-center gap-2 text-xs font-semibold text-green-deep">
+        <span aria-hidden="true" class="size-2 rounded-full bg-green"></span>
+        <%= t(".hero.demo.source") %>
+      </p>
+      <ul class="flex list-disc flex-col gap-1.5 pl-[18px] text-ink">
+        <% t(".hero.demo.items").each do |item| %>
+          <li><strong><%= item[:label] %></strong> — <%= item[:body] %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <figcaption class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></figcaption>
+  </figure>
+</section>
+
+<%= render "pages/why" %>
+
+<%= render "pages/how" %>
+
+<%# Security, from the data-screen-label="Security" block of docs/design/landing-v2.html.
+    The one dark surface on the page. Everything inside the panel sits on ink, so
+    the page's green links and orange kicker are swapped for the yellow highlight —
+    green on #1f2430 lands at 2.6:1 and would not carry.
+
+    The global focus ring (3px brand orange, app/assets/tailwind/application.css)
+    was checked against this panel rather than assumed: #f26b1d on #1f2430 is
+    5.1:1, well past the 3:1 WCAG asks of a focus indicator, so the global rule
+    stands here and is not weakened. %>
+<section id="security" class="py-16">
+  <div class="rounded-[32px] bg-ink p-[clamp(32px,5vw,64px)] text-white">
+    <div class="max-w-[680px]">
+      <span class="block text-sm font-bold tracking-[.04em] text-highlight uppercase">
+        <%= t(".security.kicker") %>
+      </span>
+
+      <h2 class="mt-3.5 font-heading text-h2 font-extrabold"><%= t(".security.heading") %></h2>
+
+      <p class="mt-5 text-[18px] leading-[1.6] text-ink-on-dark"><%= t(".security.lede") %></p>
+    </div>
+
+    <%# Four columns at 1440px, two on a tablet, one on a phone. This was an
+        auto-fit track on a 240px floor until task #12707 measured it: inside the
+        panel padding, 1440px leaves 936px, which auto-fit spends on three columns
+        and an orphan rather than on the four the design draws. The counts are
+        named outright so the reference width gets the row it was designed for. %>
+    <div class="mt-12 grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 xl:grid-cols-4">
+      <% t(".security.points", deep_interpolation: true,
+           self_hosting_url: "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md").each do |point| %>
+        <div>
+          <h3 class="font-heading text-[20px] font-bold text-white"><%= point[:title] %></h3>
+
+          <%# The locale bodies carry a <code> chip and a link. Both take their
+              dark-panel treatment here rather than in the translation, which
+              keeps markup out of the translator's way. sanitize, not raw: the
+              strings are ours, but nothing in the view should be the only thing
+              standing between a locale file and the page. %>
+          <p class="mt-2.5 leading-[1.6] text-ink-on-dark
+                    [&_code]:rounded-md [&_code]:bg-code-chip [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:[overflow-wrap:anywhere]
+                    [&_a]:text-highlight [&_a]:underline [&_a]:hover:no-underline">
+            <%= sanitize point[:body_html] %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# How it's built, from the data-screen-label="How it's built" block of
+    docs/design/landing-v2.html. The same auto-fit as the hero, on a 360px floor,
+    so the image drops below the copy without a breakpoint of our own. The floor
+    was 300px until task #12707: it put a 326px-wide screenshot beside 326px of
+    copy at 768px, too small to read either.
+
+    The claims in this section were checked against the repository rather than
+    copied from the design: the "main protection" ruleset on jchsoft/mcp4mail
+    requires a pull request, a linear history and the five green checks of
+    .github/workflows/ci.yml before a merge, so "nobody pushes to main directly"
+    is literally true. A merge is not a release, though — the site runs from the
+    `production` branch, which trails main — so the path the copy names stops at
+    the merge and the second paragraph says who promotes. %>
+<section id="built" class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-center gap-y-12 gap-x-[clamp(32px,5vw,80px)] py-16">
+  <div>
+    <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
+      <%= t(".built.kicker") %>
+    </span>
+
+    <h2 class="mt-3.5 font-heading text-h2-sub font-extrabold"><%= t(".built.heading") %></h2>
+
+    <%# The locale string carries the link to mcptask.online and the <code> chip
+        around main; the view styles them here so the translation stays prose.
+        sanitize, not raw, on the same reasoning as the security panel. %>
+    <p class="mt-5 text-[17px] leading-[1.6] text-ink-soft
+              [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:[overflow-wrap:anywhere]
+              [&_a]:text-green-deep [&_a]:underline [&_a]:hover:no-underline">
+      <%= sanitize t(".built.body_html", mcptask_url: "https://mcptask.online") %>
+    </p>
+
+    <p class="mt-3.5 text-[17px] leading-[1.6] text-ink-soft"><%= t(".built.body_2") %></p>
+
+    <div class="mt-7 flex flex-wrap gap-3">
+      <%# The design's pill, unchanged: white on #1f8a70 measures 4.26:1, just
+          under the 4.5:1 AA asks of a 16px label, and the hover lifts it to
+          7.0:1. Raised on task #12703 rather than quietly recoloured — the two
+          greens are the design's, and which one rests is the designer's call. %>
+      <%= link_to "https://mcptask.online/live",
+                  class: "inline-flex items-center gap-2 rounded-full bg-green px-[22px] py-[13px] font-semibold text-white no-underline hover:bg-green-deep" do %>
+        <span aria-hidden="true" class="size-2 rounded-full bg-highlight"></span>
+        <%= t(".built.cta_live") %>
+      <% end %>
+
+      <%= link_to t(".built.cta_contribute"),
+                  "https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md",
+                  class: "inline-flex items-center rounded-full border-2 border-ink px-[22px] py-[13px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+    </div>
+  </div>
+
+  <%# The slot is 3:2, the ratio task #12697 captured at, so object-cover has
+      nothing to crop; aspect-ratio plus the partial's width/height attributes
+      hold the space before the lazy image arrives. %>
+  <div class="aspect-[3/2] overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_12px_40px_rgba(31,36,48,.08)]">
+    <%= render "pages/built_live_image" %>
+  </div>
+</section>
+
+<%# FAQ, from the data-screen-label="FAQ" block of docs/design/landing-v2.html.
+    Native <details>/<summary>, no Stimulus: the browser already gets disclosure,
+    keyboard operation and screen-reader semantics right, and the global base
+    layer hides its default triangle so the design's own marker can stand in.
+
+    The items deliberately carry no shared name attribute. Grouping them would
+    make the browser close the answer a visitor is half-way through as soon as
+    they open the next question. %>
+<section id="faq" class="py-16">
+  <%# The design gives this section a kicker and no heading, which left the page
+      with a section that the heading outline — and so a screen reader's list of
+      headings — did not mention at all. The kicker IS the section's heading, so
+      it is marked up as the h2 it already reads as; the classes are the kicker's,
+      unchanged, so nothing moves on screen. %>
+  <h2 class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase">
+    <%= t(".faq.kicker") %>
+  </h2>
+
+  <div class="mt-6 flex max-w-[760px] flex-col gap-3">
+    <% t(".faq.items").each do |item| %>
+      <details class="rounded-2xl border border-line bg-surface px-[22px] py-[18px]">
+        <summary class="flex cursor-pointer items-center gap-3.5 font-heading text-[19px] font-bold max-lg:min-h-11">
+          <%# The + rotates into an × on open; .faq-mark carries that transform,
+              and its reduced-motion opt-out, from the base layer. %>
+          <span aria-hidden="true"
+                class="faq-mark inline-flex size-[26px] flex-none items-center justify-center rounded-full bg-brand-tint text-[18px] text-brand-deep">+</span>
+          <%= item[:question] %>
+        </summary>
+
+        <p class="mt-3 ml-10 text-base leading-[1.6] text-ink-soft"><%= item[:answer] %></p>
+      </details>
+    <% end %>
+  </div>
+</section>
+
+<%# Closing CTA, from the data-screen-label="Close" block of
+    docs/design/landing-v2.html. The primary button is the header's dark pill,
+    not the hero's orange one: the hero already asked in orange, and repeating
+    it at the foot of the page would put two identical first-choice buttons on
+    one screen at the point where the visitor has read everything.
+
+    The panel is the page's last block before the footer, so its bottom padding
+    is the design's smaller 32px — the footer supplies the rest of the gap. %>
+<section class="pt-16 pb-8">
+  <div class="flex flex-wrap items-center justify-between gap-7 rounded-[32px] bg-brand-tint p-[clamp(32px,5vw,64px)]">
+    <div class="max-w-[560px]">
+      <h2 class="font-heading text-h2-sub font-extrabold"><%= t(".close.heading") %></h2>
+
+      <p class="mt-3.5 text-[17px] leading-[1.6] text-ink-soft"><%= t(".close.lede") %></p>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <%= link_to t(".close.cta_primary"),
+                  authenticated? ? mail_accounts_path : new_registration_path,
+                  class: "inline-flex items-center rounded-full bg-ink px-[26px] py-[15px] text-[16px] font-bold text-white no-underline hover:bg-code-chip" %>
+      <%= link_to t(".close.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
+                  class: "inline-flex items-center rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface" %>
+    </div>
+  </div>
 </section>
