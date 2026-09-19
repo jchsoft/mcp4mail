@@ -1,0 +1,48 @@
+# Self-hosting: the app and PostgreSQL in one command.
+#
+#   cp .env.example .env    # then fill in the values, see docs/self-hosting.md
+#   docker compose up -d
+#
+# The app listens on port 80 inside the container. Put a TLS-terminating reverse proxy in front of it:
+# OAuth and every MCP client expect https, and HITCH_RESOURCE_URI must be that public https URL.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${MCP4MAIL_PORT:-8080}:80"
+    environment:
+      MCP4MAIL_DATABASE_HOST: db
+      MCP4MAIL_DATABASE_PASSWORD: ${MCP4MAIL_DATABASE_PASSWORD:?set MCP4MAIL_DATABASE_PASSWORD in .env}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?set SECRET_KEY_BASE in .env}
+      HITCH_RESOURCE_URI: ${HITCH_RESOURCE_URI:?set HITCH_RESOURCE_URI in .env, e.g. https://mail.example.org/mcp}
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: ${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY:?set ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY in .env}
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY:?set ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY in .env}
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: ${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT:?set ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT in .env}
+      # Runs Solid Queue (mail index refresh) inside the web process, so one container is enough.
+      SOLID_QUEUE_IN_PUMA: "true"
+      RAILS_LOG_LEVEL: ${RAILS_LOG_LEVEL:-info}
+    volumes:
+      - storage:/rails/storage
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mcp4mail
+      POSTGRES_PASSWORD: ${MCP4MAIL_DATABASE_PASSWORD:?set MCP4MAIL_DATABASE_PASSWORD in .env}
+      POSTGRES_DB: mcp4mail_production
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U mcp4mail -d mcp4mail_production" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres:
+  storage:

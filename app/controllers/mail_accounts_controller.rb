@@ -1,8 +1,17 @@
 class MailAccountsController < ApplicationController
-  before_action :set_mail_account, only: :destroy
+  before_action :set_mail_account, only: %i[ activity destroy ]
 
   def index
     @mail_accounts = current_user.mail_accounts.order(:created_at)
+    @today_counts = audit_events.count_by_account(since: Time.current.beginning_of_day)
+    @week_counts = audit_events.count_by_account(since: Time.current.beginning_of_week)
+  end
+
+  # The frame under each mailbox, fetched when its disclosure is opened: the index itself
+  # stays one page load however many mailboxes are on it.
+  def activity
+    @events = audit_events.for_account(@mail_account).recent.to_a
+    @client_names = McpAuditEvent.client_names_for(@events)
   end
 
   def new
@@ -35,6 +44,10 @@ class MailAccountsController < ApplicationController
   private
     def set_mail_account
       @mail_account = current_user.mail_accounts.find(params[:id])
+    end
+
+    def audit_events
+      current_user.mcp_audit_events
     end
 
     def mail_account_params

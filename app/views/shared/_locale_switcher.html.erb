@@ -1,0 +1,20 @@
+<%# The language toggle, rendered by both the marketing header and the marketing
+    footer. url_for keeps every other parameter of the current request, so the
+    toggle switches language in place instead of sending the visitor home.
+
+    Both copies carry the same label; the header and footer landmarks around
+    them are what tells a screen-reader user which one it has reached. %>
+<span aria-label="<%= t("pages.home.nav.locale_label") %>"
+      class="inline-flex rounded-full bg-surface-hover p-[3px] text-[13px] font-semibold"
+      role="group">
+  <% I18n.available_locales.each do |locale| %>
+    <% current = locale == I18n.locale %>
+    <%= link_to t("pages.home.nav.locale_#{locale}"),
+                url_for(locale: locale),
+                lang: locale,
+                aria: { current: ("page" if current) },
+                class: class_names("inline-flex items-center justify-center rounded-full px-3 py-[5px] no-underline",
+                                   "max-lg:min-h-11 max-lg:min-w-11",
+                                   current ? "bg-ink text-white" : "text-ink") %>
+  <% end %>
+</span>

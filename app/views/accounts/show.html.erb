@@ -1,0 +1,47 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto w-full md:w-2/3">
+  <h1 class="font-heading text-4xl font-extrabold tracking-[-0.02em]"><%= t(".title") %></h1>
+
+  <dl class="mt-8 divide-y divide-line border-y border-line" id="account-summary">
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-ink-soft"><%= t(".email") %></dt>
+      <dd class="font-medium"><%= current_user.email_address %></dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-ink-soft"><%= t(".member_since") %></dt>
+      <dd class="font-medium"><%= current_user.created_at.to_date.iso8601 %></dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-ink-soft"><%= t(".mailboxes") %></dt>
+      <dd class="font-medium"><%= @mail_accounts_count %></dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-ink-soft"><%= t(".messages") %></dt>
+      <dd class="font-medium"><%= @messages_count %></dd>
+    </div>
+    <div class="flex justify-between gap-4 py-3">
+      <dt class="text-ink-soft"><%= t(".audit_events") %></dt>
+      <dd class="font-medium"><%= @audit_events_count %></dd>
+    </div>
+  </dl>
+
+  <section class="mt-10" id="download-my-data">
+    <h2 class="font-heading text-2xl font-bold"><%= t(".export_title") %></h2>
+    <p class="mt-2 text-ink-soft"><%= t(".export_body") %></p>
+    <%# turbo: false so the browser takes the response as a download rather than Turbo trying
+        to render a JSON body as a page. %>
+    <%= link_to t(".export"), export_account_path, data: { turbo: false },
+          class: "mt-4 inline-block rounded-md px-3.5 py-2.5 bg-brand hover:bg-brand-hover text-ink font-semibold" %>
+  </section>
+
+  <section class="mt-10" id="delete-my-account">
+    <h2 class="font-heading text-2xl font-bold text-red-700"><%= t(".delete_title") %></h2>
+    <p class="mt-2 text-ink-soft"><%= t(".delete_body") %></p>
+    <%# The confirmation repeats the list rather than asking "are you sure": the dialog is the
+        last place where what disappears can still be read. %>
+    <%= button_to t(".delete"), account_path, method: :delete,
+          form: { data: { turbo_confirm: t(".delete_confirm") } },
+          class: "mt-4 rounded-md border border-red-700 px-3.5 py-2.5 text-red-700 font-semibold hover:bg-red-50 cursor-pointer" %>
+  </section>
+</div>

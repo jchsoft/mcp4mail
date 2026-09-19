@@ -1,0 +1,10 @@
+<%# A screenshot of a live dashboard goes stale. The capture recipe — 1440px viewport
+    at 2x, cropped to 3:2, WebP at quality 80 — is written down in task #12697:
+    https://mcptask.online/jchsoft/pieces/12697 %>
+<%= image_tag "mcptask-live.webp",
+      alt: t("pages.home.built.image_alt"),
+      width: 1920,
+      height: 1280,
+      loading: "lazy",
+      decoding: "async",
+      class: "block h-full w-full object-cover" %>

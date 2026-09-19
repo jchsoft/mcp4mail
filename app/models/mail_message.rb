@@ -23,4 +23,18 @@ class MailMessage < ApplicationRecord
     parts = [ subject, *participants.flat_map { |p| [ p["name"], p["address"] ] } ]
     normalize_search_text(parts.compact_blank.join(" "))
   end
+
+  # "Name <address>", falling back to whichever half of the pair is present.
+  def self.display_address(entry)
+    name = entry["name"]
+    address = entry["address"]
+    return address if name.blank?
+    return name if address.blank?
+
+    "#{name} <#{address}>"
+  end
+
+  def from_display
+    self.class.display_address("name" => from_name, "address" => from_address)
+  end
 end

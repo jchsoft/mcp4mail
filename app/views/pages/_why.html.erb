@@ -1,0 +1,30 @@
+<%# The "What it's for" block of docs/design/landing-v2.html. The id is the
+    English one in both locales so the header's anchor survives a language
+    switch, and the three cards come from the locale array rather than the
+    markup — the copy is the translators' to change, not ours. %>
+<section id="why" class="py-16">
+  <div class="max-w-[720px]">
+    <span class="block text-[14px] font-bold uppercase tracking-[.04em] text-brand-deep"><%= t("pages.home.why.kicker") %></span>
+    <h2 class="mt-3.5 font-heading text-h2 font-extrabold"><%= t("pages.home.why.heading") %></h2>
+    <p class="mt-5 max-w-[60ch] text-[18px] leading-[1.6] text-ink-soft"><%= t("pages.home.why.lede") %></p>
+  </div>
+
+  <%# One column or three, never two. This was an auto-fit track on a 280px
+      floor until the responsive pass of task #12707: at 768px it put two cards in
+      the first row and left the third alone in the second, which reads as a
+      mistake rather than as a choice. Three cards do not divide into two columns,
+      so the counts are named instead of derived: a tablet gets three full-width
+      cards, a laptop the row of three the design draws. %>
+  <div class="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <% t("pages.home.why.cards").each do |card| %>
+      <%# A quoted utterance with a gloss: figure/blockquote/figcaption says that,
+          two paragraphs in a div do not. No heading inside — the cards sit under
+          the section's h2 and an h3 apiece would only clutter the outline.
+          The quotation marks belong to the copy, each locale bringing its own. %>
+      <figure class="m-0 rounded-[20px] border border-line bg-surface p-6">
+        <blockquote class="m-0 font-heading text-[19px] font-bold leading-[1.25] tracking-[-0.015em]"><%= card[:quote] %></blockquote>
+        <figcaption class="mt-3.5 text-[15px] leading-[1.55] text-ink-soft"><%= card[:note] %></figcaption>
+      </figure>
+    <% end %>
+  </div>
+</section>

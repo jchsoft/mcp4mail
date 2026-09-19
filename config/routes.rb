@@ -5,9 +5,16 @@ Rails.application.routes.draw do
   mount Hitch::Engine => "/"
 
   resource :session
+  resource :account, only: %i[ show destroy ] do
+    get :export
+  end
   resource :registration, only: %i[ new create ]
-  resources :mail_accounts, only: %i[ index new create destroy ]
+  resources :mail_accounts, only: %i[ index new create destroy ] do
+    get :activity, on: :member
+  end
   get "connect-ai", to: "connect_ai#show", as: :connect_ai
+  get "attachment-downloads/:token", to: "attachment_downloads#show", as: :attachment_download
+  get "account-exports/:token", to: "account_exports#show", as: :account_export_download
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

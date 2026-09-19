@@ -1,10 +1,15 @@
 cs:
+  meta:
+    description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
   nav:
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
+    account: "Účet"
     sign_in: "Přihlásit se"
     sign_up: "Registrovat"
     sign_out: "Odhlásit se"
+  layouts:
+    skip_to_content: "Přeskočit na obsah"
   flash:
     try_again_later: "Zkuste to prosím za chvíli."
 
@@ -22,6 +27,45 @@ cs:
       in: "musí být v rozsahu %{count}"
       password_too_long: "je příliš dlouhé"
       required: "musí existovat"
+
+  # Rails ships no Czech copy for relative times, and the activity list on the
+  # mailboxes page prints them. Instrumental case, so "před %{time}" reads right.
+  datetime:
+    distance_in_words:
+      half_a_minute: "půl minuty"
+      less_than_x_seconds:
+        one: "méně než sekundou"
+        other: "méně než %{count} sekundami"
+      x_seconds:
+        one: "sekundou"
+        other: "%{count} sekundami"
+      less_than_x_minutes:
+        one: "méně než minutou"
+        other: "méně než %{count} minutami"
+      x_minutes:
+        one: "minutou"
+        other: "%{count} minutami"
+      about_x_hours:
+        one: "přibližně hodinou"
+        other: "přibližně %{count} hodinami"
+      x_days:
+        one: "dnem"
+        other: "%{count} dny"
+      about_x_months:
+        one: "přibližně měsícem"
+        other: "přibližně %{count} měsíci"
+      x_months:
+        one: "měsícem"
+        other: "%{count} měsíci"
+      about_x_years:
+        one: "přibližně rokem"
+        other: "přibližně %{count} lety"
+      over_x_years:
+        one: "více než rokem"
+        other: "více než %{count} lety"
+      almost_x_years:
+        one: "téměř rokem"
+        other: "téměř %{count} lety"
 
   activerecord:
     errors:
@@ -42,12 +86,115 @@ cs:
 
   pages:
     home:
-      title: "mcp4mail – vaše schránka jako MCP server"
-      tagline: "Vaše e-mailová schránka jako MCP server. Připojte IMAP účet a nechte svého AI asistenta číst a prohledávat poštu – přes OAuth 2.1, open source, provozovatelné i na vlastním serveru."
-      get_started: "Začít"
-      mailboxes: "Vaše schránky"
-      connect_ai: "Propojit s AI"
-      source: "Zdrojový kód na GitHubu"
+      title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
+      meta_description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+      nav:
+        label: "Sekce stránky"
+        brand: "mcp4mail"
+        why: "K čemu"
+        how: "Jak na to"
+        security: "Bezpečnost"
+        built: "Jak vzniká"
+        faq: "Otázky"
+        cta: "Připojit schránku"
+        locale_cs: "CS"
+        locale_en: "EN"
+        locale_label: "Jazyk"
+      hero:
+        badge: "Open source · MIT · zdarma k provozování"
+        # The H1 is three keys because the middle word carries the highlight span.
+        heading_before: "Vaše pošta,"
+        heading_highlight: "srozumitelná"
+        heading_after: "pro vaši AI."
+        lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+        cta_primary: "Připojit schránku"
+        cta_secondary: "Kód na GitHubu"
+        works_with: "Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP."
+        demo:
+          label: "Ukázka otázky a odpovědi"
+          question: "Co mi letos psali z pojišťovny? Shrň to do pár bodů."
+          source: "Přečteno ze schránky · 4 zprávy"
+          items:
+            - label: "Leden"
+              body: "roční vyúčtování, přeplatek 1 240 Kč."
+            - label: "Duben"
+              body: "nová smlouva k podpisu, čekají na odpověď."
+            - label: "Srpen"
+              body: "připomínka: nahlásit stav tachometru do 15. 9."
+          disclaimer: "Ilustrační ukázka. Ve schránce se nic nezměnilo — ani stav „přečteno“."
+      why:
+        kicker: "K čemu to je"
+        heading: "Zeptáte se své pošty jako člověka. Ne jako programátor."
+        lede: "Nemusíte vědět, co je IMAP, MCP ani server. Stačí, že máte e‑mail a používáte Claude, ChatGPT nebo Grok. Po propojení jim položíte otázku — a oni si odpověď najdou ve vaší schránce."
+        cards:
+          - quote: "„Na které maily z minulého týdne jsem ještě neodpověděl?“"
+            note: "Přehled o tom, co čeká — bez ručního procházení schránky."
+          - quote: "„Najdi potvrzení objednávky bot a řekni mi, kdy dorazí.“"
+            note: "Konkrétní zpráva, konkrétní odpověď. Hledá podle odesílatele, předmětu i data."
+          - quote: "„Shrň mi celé vlákno o rekonstrukci a co z toho pro mě plyne.“"
+            note: "Dlouhé konverzace v pár větách — i napříč složkami."
+      how:
+        kicker: "Jak na to"
+        heading: "Tři kroky. Žádná instalace."
+        steps:
+          - title: "Přidejte schránku"
+            body_html: "Přihlaste se na mcp4mail.online a zadejte e‑mailovou adresu a <strong>heslo aplikace</strong> — zvláštní heslo jen pro tento účel, které vám Gmail, iCloud, Outlook i Seznam vygenerují v nastavení. Hlavní heslo nikdy nezadáváte."
+          - title: "Propojte svou AI"
+            body_html: "V Claude, ChatGPT nebo Groku otevřete nastavení konektorů a vložte jednu adresu: <code>%{connector_url}</code>. Přihlásíte se, potvrdíte přístup — hotovo. Jako když povolíte přihlášení přes Google."
+          - title: "Zeptejte se"
+            body_html: "Napište otázku, jak byste ji řekli kolegovi. AI si přečte, co potřebuje, a odpoví. Vidí jen schránky, které jste připojili, a nemůže v nich nic změnit — ani označit zprávu jako přečtenou."
+        works_with_label: "Funguje s"
+        clients:
+          - "Claude Desktop"
+          - "Claude Cowork"
+          - "ChatGPT"
+          - "Grok"
+          - "cokoli s MCP"
+      security:
+        kicker: "Bezpečnost"
+        heading: "Čte. Nikdy nepíše."
+        lede: "Do schránky se dostane jen to, co jí dovolíte, a nic v ní nemůže změnit. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami."
+        points:
+          - title: "Jen čtení, zabudované"
+            body_html: "Žádný nástroj neodesílá, nepřesouvá, nemaže ani nepřeznačuje zprávy. Server se odmítne spustit s nástrojem, který nedeklaruje, že je jen pro čtení."
+          - title: "Heslo aplikace, šifrované"
+            body_html: "Zadáváte heslo aplikace, ne heslo k účtu — kdykoli ho zrušíte. V databázi leží šifrované a AI klient ho nikdy neuvidí; přístup dostává přes OAuth 2.1."
+          - title: "Nebo úplně u vás"
+            body_html: "Jeden <code>docker compose up</code> a přihlašovací údaje nikdy neopustí váš počítač. <a href=\"%{self_hosting_url}\">Návod k self‑hostingu</a>."
+          - title: "Limity a záznam"
+            body_html: "Každé volání se zapíše: kdo, jaký klient, jaký nástroj, s jakým výsledkem. Hledání má rozpočet, aby žádná smyčka neprošla celou schránku."
+      built:
+        kicker: "Jak tento projekt vzniká"
+        heading: "Píší ho AI vývojáři. Zadání píší lidé."
+        body_html: "mcp4mail je skutečný open‑source produkt a zároveň veřejná ukázka. Úkoly zadávají lidé v <a href=\"%{mcptask_url}\">mcptask.online</a>; vyzvednou je runnery — Claude Code řízený mcptask runnerem na našich strojích — a každá změna jde stejnou cestou: úkol → větev → pull request → testy → merge. Nikdo, člověk ani runner, nepíše do <code>main</code> přímo."
+        body_2: "Merge není vydání: web běží z oddělené větve, kterou člověk povýší, až je práce hotová. Lidé dál rozhodují, co se postaví a co se vydá. Chcete pomoct? Issues a pull requesty jsou vítané."
+        cta_live: "Sledovat živě"
+        cta_contribute: "Přispět"
+        image_alt: "Živý přehled na mcptask.online s rozpracovaným úkolem mcp4mailu: runner je ve fázi „píše kód“, před ním je ještě pull request, testy a sloučení."
+      faq:
+        kicker: "Časté otázky"
+        items:
+          - question: "Musím něco instalovat?"
+            answer: "Ne. Hostovaná verze běží na mcp4mail.online; stačí přidat schránku a v AI klientovi vložit adresu konektoru. Instalace (docker compose) je jen pro ty, kdo si chtějí server provozovat sami."
+          - question: "Co je heslo aplikace a kde ho najdu?"
+            answer: "Zvláštní heslo, které vygenerujete v nastavení zabezpečení své pošty (Gmail, iCloud, Outlook.com, Yahoo, Fastmail a další). Funguje jen pro přihlášení k poště, dá se kdykoli zrušit a nikdy neotevře celý váš účet."
+          - question: "Může AI něco poslat nebo smazat?"
+            answer: "Ne. Žádný nástroj to neumí a server takový nástroj ani nespustí. Zápis může přijít později, ale jen jako výslovné zapnutí pro konkrétní schránku."
+          - question: "Co si mcp4mail ukládá?"
+            answer: "Kopii hlaviček zpráv — odesílatel, příjemci, předmět, datum, příznaky, velikost — obnovovanou každých 15 minut, aby hledání nezatěžovalo váš poštovní server. Obsah dotazů se do záznamu neukládá."
+          - question: "Kolik to stojí?"
+            answer: "Kód je open source pod licencí MIT — provozovat si ho můžete zdarma. Podmínky hostované verze najdete na mcp4mail.online."
+      close:
+        heading: "Vaše schránka už čeká na první otázku."
+        lede: "Tři kroky, pět minut, nic k instalaci."
+        cta_primary: "Připojit schránku"
+        cta_secondary: "GitHub"
+      footer:
+        license: "mcp4mail · MIT"
+        github: "GitHub"
+        self_hosting: "Návod k self‑hostingu"
+        live: "Vzniká živě na mcptask.online"
+        company: "JCHSoft"
 
   sessions:
     new:
@@ -76,6 +223,26 @@ cs:
       success: "Heslo bylo změněno."
       mismatch: "Hesla se neshodují."
 
+  accounts:
+    show:
+      title: "Váš účet"
+      email: "E-mailová adresa"
+      member_since: "Účet založen"
+      mailboxes: "Připojené schránky"
+      messages: "Zaindexované zprávy"
+      audit_events: "Zaznamenaná volání AI"
+      export_title: "Stáhnout moje data"
+      export_body: "Jeden soubor JSON se vším, co o vás mcp4mail drží: váš účet, připojené schránky (bez hesel), AI klienti, kterým jste dali přístup, záznam jejich volání a hlavičky zpráv, které indexujeme. Obsah zpráv neukládáme, takže v souboru není."
+      export: "Stáhnout moje data"
+      delete_title: "Smazat můj účet"
+      delete_body: "Okamžitě a nevratně. Pošty u vašeho poskytovatele se to nedotkne — smaže se jen to, co drží mcp4mail."
+      delete: "Smazat můj účet"
+      delete_confirm: "Smazat váš účet? Zmizí schránky i jejich uložená hesla, index hlaviček zpráv, záznam volání AI, přístup všech AI klientů i samotný účet. Stane se to hned a nejde to vrátit. Pošta na serveru zůstane beze změny."
+    export:
+      queued: "Vaše data balíme. Odkaz ke stažení pošleme na %{email}; platí 24 hodin."
+    destroy:
+      success: "Váš účet i všechno, co jsme o něm drželi, je pryč."
+
   registrations:
     new:
       title: "Vytvořit účet"
@@ -94,6 +261,19 @@ cs:
       remove: "Odebrat"
       remove_confirm: "Odebrat schránku %{name}? mcp4mail zapomene její heslo i index zpráv; pošta na serveru zůstane beze změny."
       connect_ai: "Dál: propojte svou AI aplikaci →"
+      calls: "Volání AI dnes: %{today}, tento týden: %{week}"
+      recent_activity: "Poslední aktivita"
+      activity_loading: "Načítání…"
+    activity:
+      empty: "Do této schránky zatím žádná AI nesáhla."
+      when: "před %{time}"
+      rows: "řádků: %{count}"
+      outcomes:
+        ok: "ok"
+        error: "chyba"
+        denied: "odmítnuto"
+        rate_limited: "překročen limit"
+        search_limited: "limit hledání"
     new:
       title: "Přidat schránku"
       intro: "mcp4mail čte poštu přes IMAP. Vyberte poskytovatele a nastavení serveru se vyplní samo."
@@ -134,46 +314,24 @@ cs:
   connect_ai:
     show:
       title: "Propojit s AI"
-      intro: "Přidejte mcp4mail do své AI aplikace jako vlastní konektor (MCP server). Aplikace vás pak pošle sem přihlásit se a potvrdit přístup, a potom může číst a prohledávat schránky, které jste přidali."
+      intro: "Tuto adresu vložte do své AI aplikace jako vlastní konektor (MCP server). Aplikace pak může prohledávat a číst schránky, které jste přidali, a nic jiného."
       no_mailbox: "Zatím nemáte žádnou schránku, AI aplikace by tedy neměla co číst."
-      add_mailbox: "Nejdřív přidejte schránku."
+      add_mailbox: "Přidejte schránku."
       url_title: "Adresa serveru"
-      url_hint: "Tuto adresu vložte do AI aplikace. API klíč nepotřebujete: aplikace vás místo toho požádá o přihlášení do mcp4mail."
       copy: "Kopírovat"
       copied: "Zkopírováno"
-      consent:
-        title: "Na co se zeptá potvrzovací obrazovka"
-        description: "Po přidání konektoru aplikace otevře mcp4mail. Přihlaste se a uvidíte „Authorize <aplikace>: <aplikace> is requesting access to your mcp4mail account“ s oprávněním mcp. Klikněte na Approve."
-        points:
-          - "Potvrzením aplikaci povolíte vaším jménem vypsat vaše schránky, prohledávat je a číst zprávy."
-          - "Přístup je jen pro čtení: nikdy žádnou zprávu neodešle, nepřesune, nesmaže ani nezmění její příznaky."
-          - "Každý dotaz se zapíše do auditního záznamu. Propojení zrušíte odebráním konektoru v AI aplikaci."
-          - "Pokud obrazovka varuje, že aplikace běží na vašem počítači, je to u desktopových aplikací jako Cursor v pořádku. Potvrďte jen tehdy, když jste ji sami spustili."
+      authorization: "Přístup potvrdíte ve svém prohlížeči, až se klient poprvé připojí; mcp4mail po vás nikdy nechce žádný token."
+      clients_label: "Návod podle AI klienta"
       clients:
         claude:
           title: "Claude"
-          steps:
-            - "Otevřete claude.ai → Nastavení → Konektory a klikněte na Přidat vlastní konektor."
-            - "Pojmenujte ho mcp4mail, vložte adresu serveru a klikněte na Přidat."
-            - "Klikněte na Připojit. Přihlaste se do mcp4mail a klikněte na Approve."
-            - "V chatu zapněte konektor mcp4mail v nabídce nástrojů a ptejte se třeba „Co mi minulý týden poslala účetní?“."
+          steps: "V claude.ai nebo Claude Desktop otevřete Settings, Connectors, Add custom connector a vložte adresu. Klikněte na Connect a v okně, které se otevře, přístup potvrďte."
         chatgpt:
           title: "ChatGPT"
-          steps:
-            - "V Settings → Apps & Connectors → Advanced settings zapněte Developer mode (Plus, Pro, Business nebo Enterprise)."
-            - "Zpět v Apps & Connectors klikněte na Create. Pojmenujte konektor mcp4mail, vložte adresu serveru a jako ověření zvolte OAuth."
-            - "Potvrďte, že aplikaci důvěřujete, a klikněte na Create. Přihlaste se do mcp4mail a klikněte na Approve."
-            - "V novém chatu zvolte v nabídce + Developer mode a konektor mcp4mail."
-        grok:
-          title: "Grok"
-          steps:
-            - "Otevřete grok.com/connectors a zvolte New → Custom."
-            - "Vložte adresu serveru a uložte."
-            - "Povolte vyskakovací okna pro grok.com – přihlášení se otevírá v novém okně. Safari je blokuje a Grok pak hlásí chybu, i když se přihlášení podařilo: v Safari → Nastavení → Webové stránky → Vyskakovací okna nastavte grok.com na Povolit."
-            - "Přihlaste se do mcp4mail a klikněte na Approve."
+          steps: "V Settings, Apps & Connectors, Advanced settings zapněte Developer mode, vraťte se zpět, klikněte na Create, vložte adresu a zvolte OAuth. Potvrďte a v okně, které se otevře, přístup schvalte."
         cursor:
           title: "Cursor"
-          steps:
-            - "Otevřete Cursor Settings → Tools & MCP a klikněte na New MCP Server. Cursor otevře váš mcp.json (~/.cursor/mcp.json pro všechny projekty)."
-            - "Přidejte níže uvedený záznam mcp4mail a soubor uložte."
-            - "Zpět v Tools & MCP klikněte u mcp4mail na Connect. Otevře se prohlížeč: přihlaste se do mcp4mail a klikněte na Approve."
+          steps: "Otevřete Cursor Settings, Tools & MCP, New MCP Server a do souboru mcp.json, který se otevře, přidejte mcp4mail s touto adresou. Zpět v Tools & MCP klikněte na Connect a v prohlížeči přístup potvrďte."
+        other:
+          title: "Jiný MCP klient"
+          steps: "Přidejte mcp4mail jako vzdálený MCP server přes HTTP s adresou výše; není co instalovat, žádný příkaz ani balíček. Pokud se klient ptá na způsob ověření, zvolte OAuth."
