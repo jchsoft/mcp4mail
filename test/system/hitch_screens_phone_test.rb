@@ -5,7 +5,7 @@ require "application_system_test_case"
 # phone, so 375px is the width that matters. As in landing_responsive_test.rb,
 # the page is loaded in an iframe of that exact width: headless Firefox will not
 # give a narrower window than about 500px.
-class HitchScreensTest < ApplicationSystemTestCase
+class HitchScreensPhoneTest < ApplicationSystemTestCase
   PHONE = 375
   REDIRECT_URI = "http://127.0.0.1:9999/callback"
 
