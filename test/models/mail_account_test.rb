@@ -16,6 +16,13 @@ class MailAccountTest < ActiveSupport::TestCase
     assert_equal "INBOX", account.default_folder
   end
 
+  test "is read-only until its owner allows changes" do
+    account = build_account
+    account.save!
+
+    assert_not account.reload.writable?
+  end
+
   test "tls_mode sets ssl and starttls as one choice" do
     account = build_account(tls_mode: "starttls")
     assert_equal [ false, true ], [ account.ssl, account.starttls ]

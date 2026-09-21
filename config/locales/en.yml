@@ -238,6 +238,9 @@ en:
       calls: "AI calls today: %{today}, this week: %{week}"
       recent_activity: "Recent activity"
       activity_loading: "Loading…"
+      writable: "Allow the AI to make changes to this mailbox"
+      writable_hint: "Off: the AI can only read and search. On: it can also flag, move, draft and, with your approval, send."
+      writable_save: "Save"
     activity:
       empty: "No AI has called this mailbox yet."
       when: "%{time} ago"
@@ -282,6 +285,9 @@ en:
       success: "Connected %{address}. Its messages are being indexed in the background."
     destroy:
       success: "Mailbox %{name} removed."
+    update:
+      writable: "The AI can now make changes to %{name}."
+      read_only: "%{name} is read-only again: the AI can only read and search it."
     providers:
       seznam: "Switch on IMAP access in Seznam Email settings (Settings → POP3/IMAP). With two-step verification, create an app password."
       gmail: "Gmail requires two-step verification and an app password (Google Account → Security → App passwords). Your regular Google password will not work."

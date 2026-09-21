@@ -1,5 +1,5 @@
 class MailAccountsController < ApplicationController
-  before_action :set_mail_account, only: %i[ activity destroy ]
+  before_action :set_mail_account, only: %i[ activity update destroy ]
 
   def index
     @mail_accounts = current_user.mail_accounts.order(:created_at)
@@ -26,6 +26,14 @@ class MailAccountsController < ApplicationController
     @mail_account = current_user.mail_accounts.build(mail_account_params)
     @mail_account.username = @mail_account.username.presence || @mail_account.email_address
     manual_settings? ? create_with_manual_settings : create_with_detection
+  end
+
+  # The list's "Allow the AI to make changes" switch. It is the only thing edited here: the
+  # connection settings are proven at create time and not changed afterwards.
+  def update
+    @mail_account.update!(writable: params.expect(mail_account: [ :writable ]).fetch(:writable))
+    key = @mail_account.writable? ? ".writable" : ".read_only"
+    redirect_to mail_accounts_path, notice: t(key, name: @mail_account.label), status: :see_other
   end
 
   def destroy

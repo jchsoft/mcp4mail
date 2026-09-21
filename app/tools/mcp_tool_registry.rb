@@ -3,12 +3,14 @@
 # Tools are listed and callable only when registered here. Generate one with
 # `bin/rails generate hitch:tool NAME`, then make it inherit McpTools::ApplicationTool.
 #
-# mcp4mail ships read-only: registering a tool that is not an ApplicationTool, or that
-# declares itself anything but read-only and non-destructive, fails at boot.
+# A tool is either read-only and non-destructive, or it says it writes with `write_tool`
+# (and then runs only on mailboxes the owner made writable). Registering a tool that is not
+# an ApplicationTool, or one that sets write annotations without declaring write_tool, fails
+# at boot.
 class McpToolRegistry < Hitch::MCP::Registry
   def self.register(tool_class = nil, scopes: nil)
-    unless tool_class.is_a?(Class) && tool_class < McpTools::ApplicationTool && tool_class.read_only?
-      raise ArgumentError, "#{tool_class.inspect} must be a read-only McpTools::ApplicationTool"
+    unless tool_class.is_a?(Class) && tool_class < McpTools::ApplicationTool && (tool_class.read_only? || tool_class.write_tool?)
+      raise ArgumentError, "#{tool_class.inspect} must be an McpTools::ApplicationTool that is read-only or declares write_tool"
     end
 
     super

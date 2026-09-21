@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     get :export
   end
   resource :registration, only: %i[ new create ]
-  resources :mail_accounts, only: %i[ index new create destroy ] do
+  resources :mail_accounts, only: %i[ index new create update destroy ] do
     get :activity, on: :member
   end
   get "guides", to: "guides#index", as: :guides
