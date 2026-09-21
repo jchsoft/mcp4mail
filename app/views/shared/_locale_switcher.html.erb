@@ -3,10 +3,14 @@
     toggle switches language in place instead of sending the visitor home.
 
     Both copies carry the same label; the header and footer landmarks around
-    them are what tells a screen-reader user which one it has reached. %>
-<span aria-label="<%= t("pages.home.nav.locale_label") %>"
-      class="inline-flex rounded-full bg-surface-hover p-[3px] text-[13px] font-semibold"
-      role="group">
+    them are what tells a screen-reader user which one it has reached.
+
+    The signed-in header passes id: "language-switcher", which the system tests
+    reach for; the marketing copies have no id, since they appear twice a page. %>
+<%= tag.span id: local_assigns[:id],
+             aria: { label: t("pages.home.nav.locale_label") },
+             class: "inline-flex rounded-full bg-surface-hover p-[3px] text-[13px] font-semibold",
+             role: "group" do %>
   <% I18n.available_locales.each do |locale| %>
     <% current = locale == I18n.locale %>
     <%= link_to t("pages.home.nav.locale_#{locale}"),
@@ -17,4 +21,4 @@
                                    "max-lg:min-h-11 max-lg:min-w-11",
                                    current ? "bg-ink text-white" : "text-ink") %>
   <% end %>
-</span>
+<% end %>

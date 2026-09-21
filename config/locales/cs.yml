@@ -2,6 +2,8 @@ cs:
   meta:
     description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
   nav:
+    label: "Hlavní"
+    account_for: "Účet (%{email})"
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
     account: "Účet"
