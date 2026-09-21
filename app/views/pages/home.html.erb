@@ -73,7 +73,7 @@
         <%# The earlier exchange is scenery: hidden from assistive technology and
             faded with a mask rather than opacity. A mask leaves the text colours
             as they are, so the contrast axe measures is still the real one. %>
-        <div aria-hidden="true" class="flex select-none flex-col gap-3 [mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/.4))]">
+        <div aria-hidden="true" class="flex select-none flex-col gap-3 [mask-image:linear-gradient(to_bottom,rgb(0_0_0/.15),rgb(0_0_0/.5))]">
           <div class="flex items-end justify-end gap-2">
             <p class="max-w-[75%] rounded-[16px_16px_4px_16px] bg-ink px-3.5 py-2 text-[13px] leading-[1.45] text-white"><%= t(".hero.demo.earlier_question") %></p>
             <%= render "pages/hero_avatar", speaker: :you, size: "size-6" %>
