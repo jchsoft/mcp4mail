@@ -18,6 +18,15 @@ require "test_helper"
 # stays in that test; it only borrows `screenshot_path` for where to write.
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  # Rails runs test:prepare, and with it tailwindcss:build, only when no test
+  # path is given, and bin/ci ends with assets:clobber. So after a CI run,
+  # `bin/rails test test/system/some_test.rb` served every page unstyled and the
+  # layout tests measured bare HTML (task #12862). Build the stylesheet here
+  # whenever it is missing, so a single file runs against the real CSS.
+  unless Rails.root.join("app/assets/builds/tailwind.css").exist?
+    system("bin/rails", "tailwindcss:build", chdir: Rails.root.to_s, exception: true)
+  end
+
   Capybara.save_path = Rails.root.join("tmp/screenshots").to_s
 
   # Captures the current page under a deterministic name and returns the path.
