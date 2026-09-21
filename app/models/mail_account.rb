@@ -9,6 +9,7 @@ class MailAccount < ApplicationRecord
   belongs_to :user
   has_many :mail_folders, dependent: :delete_all
   has_many :mail_messages, dependent: :delete_all
+  has_many :mcp_client_sightings, dependent: :delete_all
 
   # Non-deterministic on purpose: nothing ever looks an account up by its password.
   encrypts :password

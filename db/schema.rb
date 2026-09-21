@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -180,6 +180,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_090000) do
     t.index ["user_id", "created_at"], name: "index_mcp_audit_events_on_user_id_and_created_at"
   end
 
+  create_table "mcp_client_sightings", force: :cascade do |t|
+    t.string "client_id", null: false
+    t.datetime "first_seen_at", null: false
+    t.bigint "mail_account_id", null: false
+    t.string "remote_ip"
+    t.bigint "user_id", null: false
+    t.index ["mail_account_id", "client_id", "remote_ip"], name: "index_mcp_client_sightings_uniqueness", unique: true, nulls_not_distinct: true
+    t.index ["user_id"], name: "index_mcp_client_sightings_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -204,5 +214,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_090000) do
   add_foreign_key "mail_messages", "mail_accounts", on_delete: :cascade
   add_foreign_key "mail_messages", "mail_folders", on_delete: :cascade
   add_foreign_key "mcp_audit_events", "users", on_delete: :cascade
+  add_foreign_key "mcp_client_sightings", "mail_accounts", on_delete: :cascade
+  add_foreign_key "mcp_client_sightings", "users", on_delete: :cascade
   add_foreign_key "sessions", "users"
 end
