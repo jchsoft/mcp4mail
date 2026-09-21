@@ -1,4 +1,6 @@
 cs:
+  buttons:
+    submitting: "Pracuji…"
   meta:
     description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
   nav:
