@@ -18,10 +18,13 @@ class McpToolRegistry < Hitch::MCP::Registry
     super
   end
 
+  register McpTools::CreateFolder, scopes: [ "mcp" ]
   register McpTools::GetAttachment, scopes: [ "mcp" ]
   register McpTools::GetMailAccount, scopes: [ "mcp" ]
   register McpTools::GetMessage, scopes: [ "mcp" ]
+  register McpTools::ListFolders, scopes: [ "mcp" ]
   register McpTools::ListMailAccounts, scopes: [ "mcp" ]
+  register McpTools::MoveMessage, scopes: [ "mcp" ]
   register McpTools::SearchContacts, scopes: [ "mcp" ]
   register McpTools::SearchMessages, scopes: [ "mcp" ]
 

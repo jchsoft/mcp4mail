@@ -11,9 +11,9 @@
 # a UID FETCH asks for that UID, simulating a crash mid-folder. `uidnext: false` on a mailbox
 # leaves out the optional UIDNEXT response.
 class FakeImapServer
-  attr_reader :port, :fetched_uid_sets
+  attr_reader :port, :fetched_uid_sets, :commands
 
-  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil)
+  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil)
     @server = TCPServer.new("127.0.0.1", 0)
     @port = @server.addr[1]
     @capabilities = capabilities
@@ -23,6 +23,8 @@ class FakeImapServer
     @mailboxes = mailboxes
     @drop_on_fetch_of = drop_on_fetch_of
     @fetched_uid_sets = []
+    @commands = []
+    @namespace_prefix = namespace_prefix
     @thread = nil
   end
 
@@ -67,6 +69,7 @@ class FakeImapServer
 
     while (line = socket.gets)
       tag, command, args = line.strip.split(" ", 3)
+      @commands << [ command, args ].compact.join(" ")
       case command&.upcase
       when "CAPABILITY"
         socket.write("* CAPABILITY #{@capabilities}\r\n")
@@ -83,6 +86,30 @@ class FakeImapServer
           socket.write(%(* #{@list_command} (#{attrs}) "/" "#{folder[:name]}"\r\n))
         end
         socket.write("#{tag} OK #{command.upcase} completed\r\n")
+      when "NAMESPACE"
+        socket.write(%(* NAMESPACE ((#{@namespace_prefix ? %("#{@namespace_prefix}" "/") : %("" "/")})) NIL NIL\r\n))
+        socket.write("#{tag} OK NAMESPACE completed\r\n")
+      when "STATUS"
+        name, _items = args.split(" ", 2)
+        mailbox = @mailboxes[unquote(name)]
+        if mailbox
+          unseen = mailbox[:messages].count { |m| !Array(m[:flags]).include?("\\Seen") }
+          socket.write(%(* STATUS #{name} (MESSAGES #{mailbox[:messages].size} UNSEEN #{unseen})\r\n))
+          socket.write("#{tag} OK STATUS completed\r\n")
+        else
+          socket.write("#{tag} NO no such mailbox\r\n")
+        end
+      when "CREATE"
+        name = unquote(args)
+        if @namespace_prefix && !name.start_with?(@namespace_prefix)
+          socket.write("#{tag} NO [CANNOT] folders must live under #{@namespace_prefix}\r\n")
+        elsif @mailboxes.key?(name)
+          socket.write("#{tag} NO [ALREADYEXISTS] Mailbox exists\r\n")
+        else
+          @mailboxes[name] = { uidvalidity: 500 + @mailboxes.size, messages: [] }
+          @folders << { name: name }
+          socket.write("#{tag} OK CREATE completed\r\n")
+        end
       when "SELECT", "EXAMINE"
         selected = unquote(args)
         mailbox = @mailboxes[selected]
@@ -118,6 +145,36 @@ class FakeImapServer
             socket.write("* #{uids.index(message[:uid]) + 1} FETCH (#{items})\r\n")
           end
           socket.write("#{tag} OK FETCH completed\r\n")
+        when "COPY", "MOVE"
+          set, target = rest.split(" ", 2)
+          destination = @mailboxes[unquote(target)]
+          matched = matching_uids(mailbox, set)
+          if destination.nil?
+            socket.write("#{tag} NO [TRYCREATE] no such mailbox\r\n")
+          else
+            assigned = matched.map do |uid|
+              message = mailbox[:messages].find { |m| m[:uid] == uid }
+              mailbox[:messages].delete(message) if subcommand.upcase == "MOVE"
+              new_uid = (mailbox_uids(destination).max || 0) + 1
+              destination[:messages] << message.merge(uid: new_uid)
+              new_uid
+            end
+            code = "[COPYUID #{destination[:uidvalidity]} #{matched.join(",")} #{assigned.join(",")}]"
+            if subcommand.upcase == "MOVE"
+              socket.write("* OK #{code}\r\n")
+              socket.write("#{tag} OK MOVE completed\r\n")
+            else
+              socket.write("#{tag} OK #{code} COPY completed\r\n")
+            end
+          end
+        when "STORE"
+          set, _rest = rest.split(" ", 2)
+          matching_uids(mailbox, set).each { |uid| mailbox[:messages].find { |m| m[:uid] == uid }[:flags] = Array(mailbox[:messages].find { |m| m[:uid] == uid }[:flags]) + [ "\\Deleted" ] }
+          socket.write("#{tag} OK STORE completed\r\n")
+        when "EXPUNGE"
+          matched = matching_uids(mailbox, rest)
+          mailbox[:messages].reject! { |m| matched.include?(m[:uid]) && Array(m[:flags]).include?("\\Deleted") }
+          socket.write("#{tag} OK EXPUNGE completed\r\n")
         else
           socket.write("#{tag} BAD unknown command\r\n")
         end
