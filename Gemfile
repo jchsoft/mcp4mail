@@ -80,3 +80,5 @@ group :test do
   # someone remembers to repeat [https://github.com/dequelabs/axe-core-gems]
   gem "axe-core-capybara"
 end
+
+gem "redcarpet", "~> 3.6"

@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   resources :mail_accounts, only: %i[ index new create destroy ] do
     get :activity, on: :member
   end
+  get "guides", to: "guides#index", as: :guides
+  get "guides/:provider", to: "guides#show", as: :guide
+  get "sitemap.xml", to: "sitemaps#show", as: :sitemap, defaults: { format: :xml }
   get "connect-ai", to: "connect_ai#show", as: :connect_ai
   get "attachment-downloads/:token", to: "attachment_downloads#show", as: :attachment_download
   get "account-exports/:token", to: "account_exports#show", as: :account_export_download

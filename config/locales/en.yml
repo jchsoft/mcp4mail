@@ -38,6 +38,24 @@ en:
     unknown_host: "We could not find a mail server for this address. Check the address, or enter the IMAP server yourself."
     timeout: "The mail server did not answer in time. Try again in a minute, or enter the IMAP server yourself."
 
+  guides:
+    index:
+      title: "Mailbox setup guides · mcp4mail"
+      description: "Step-by-step guides for connecting mail from Seznam and other providers to mcp4mail over IMAP."
+      kicker: "Guides"
+      heading: "Set up your mailbox"
+      lede: "Every provider hides IMAP in a different place. Pick yours and follow the steps — then connect it to your AI in mcp4mail."
+      read_guide: "Read the guide"
+    show:
+      title: "%{provider} over IMAP · mcp4mail guide"
+      back: "All guides"
+      imap_host: "IMAP server"
+      app_password: "Needs an app password"
+      app_password_note: "Your normal password will not work over IMAP — create an app password first."
+      connect:
+        heading: "Now connect it in mcp4mail"
+        body: "IMAP is on and you know your server. Add the mailbox and your AI can read it — nothing gets sent or deleted."
+        cta: "Connect a mailbox"
   pages:
     home:
       title: "mcp4mail - your mail, readable by your AI"

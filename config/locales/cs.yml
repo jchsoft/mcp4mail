@@ -84,6 +84,24 @@ cs:
         username: "Uživatelské jméno"
         password: "Heslo"
 
+  guides:
+    index:
+      title: "Návody k nastavení schránky · mcp4mail"
+      description: "Návody krok za krokem, jak připojit poštu ze Seznamu a dalších poskytovatelů do mcp4mail přes IMAP."
+      kicker: "Návody"
+      heading: "Nastavte si schránku"
+      lede: "Každý poskytovatel schovává IMAP jinde. Vyberte ten svůj, projděte kroky a pak schránku připojte k AI v mcp4mail."
+      read_guide: "Přečíst návod"
+    show:
+      title: "%{provider} přes IMAP · návod mcp4mail"
+      back: "Všechny návody"
+      imap_host: "IMAP server"
+      app_password: "Vyžaduje heslo pro aplikaci"
+      app_password_note: "Běžné heslo přes IMAP nefunguje — nejdřív si vytvořte heslo pro aplikaci."
+      connect:
+        heading: "Teď ji připojte v mcp4mail"
+        body: "IMAP je zapnutý a server znáte. Přidejte schránku a vaše AI ji bude umět číst — nic se neodešle ani nesmaže."
+        cta: "Připojit schránku"
   pages:
     home:
       title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
