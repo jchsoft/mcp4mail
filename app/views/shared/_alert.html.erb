@@ -1,0 +1,31 @@
+<%#
+  An in-page callout. Unlike shared/_flash it belongs to a section of the page,
+  not to the request, and stays there until the page changes.
+
+  Locals:
+    body:    the text, or HTML built with safe_join / capture by the caller
+    title:   an optional bold first line; the body then reads as its hint
+    variant: :info (guidance), :warning (something to check) or :danger (a failure);
+             defaults to :info. Only :danger is announced (role="alert"), since it
+             is the one that appears in answer to what the person just did.
+    id:      the element id, if tests or links hold on to it
+    class:   extra classes for the box, usually spacing
+
+  Content comes in as locals rather than a block: a block yielded here would
+  resolve the caller's relative t(".key") against shared/alert instead.
+%>
+<% variant = local_assigns.fetch(:variant, :info).to_sym
+   title = local_assigns[:title] %>
+<%= tag.div id: local_assigns[:id], role: ("alert" if variant == :danger),
+      class: [ "rounded-xl border px-4 py-3",
+               { info: "border-line bg-surface text-ink-soft",
+                 warning: "border-brand bg-brand-tint text-brand-deep",
+                 danger: "border-danger bg-danger-tint text-danger-deep" }.fetch(variant),
+               local_assigns[:class] ] do %>
+  <% if title %>
+    <p class="font-medium"><%= title %></p>
+    <p class="text-sm"><%= body %></p>
+  <% else %>
+    <%= body %>
+  <% end %>
+<% end %>
