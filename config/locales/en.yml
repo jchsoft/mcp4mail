@@ -2,6 +2,8 @@ en:
   meta:
     description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
   nav:
+    label: "Main"
+    account_for: "Account (%{email})"
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
     account: "Account"

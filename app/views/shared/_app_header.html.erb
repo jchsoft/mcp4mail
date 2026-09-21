@@ -1,0 +1,46 @@
+<%# The signed-in header, built on the same frame as shared/_marketing_header:
+    the wordmark, a row of links, and a group that wraps as one at 375px.
+
+    Route helpers go through main_app for the same reason as in the marketing
+    header: the layouts also dress screens rendered inside the Hitch engine.
+
+    Sign out is a button_to DELETE. The submit itself carries the pill classes;
+    wrapping it in a link would turn the request into a GET. The form is made
+    inline-flex so it sits in the row instead of breaking it like a block. %>
+<header class="landing-shell flex flex-wrap items-center gap-x-7 gap-y-3 py-[22px]">
+  <%= link_to main_app.root_path, class: "mr-auto inline-flex items-center gap-2.5 max-lg:min-h-11 font-heading text-[22px] font-extrabold tracking-[-0.02em] text-ink no-underline" do %>
+    <span aria-hidden="true" class="inline-grid size-[34px] place-items-center rounded-[10px] bg-brand text-[15px] font-extrabold text-ink">@</span>
+    <%= t("pages.home.nav.brand") %>
+  <% end %>
+
+  <% if authenticated? %>
+    <nav aria-label="<%= t("nav.label") %>" class="flex flex-wrap items-center gap-1 text-[15px] font-medium">
+      <% { mailboxes: main_app.mail_accounts_path, connect_ai: main_app.connect_ai_path }.each do |key, path| %>
+        <%= link_to t("nav.#{key}"), path,
+                    aria: { current: ("page" if current_page?(path)) },
+                    class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-ink no-underline hover:bg-surface-hover aria-[current=page]:bg-surface-hover max-lg:min-h-11" %>
+      <% end %>
+    </nav>
+  <% end %>
+
+  <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+    <%= render "shared/locale_switcher", id: "language-switcher" %>
+
+    <% if authenticated? %>
+      <%# The address is the identity, and it leads to the account page. Long
+          addresses break anywhere rather than push a phone layout sideways. %>
+      <%= link_to current_user.email_address, main_app.account_path,
+                  aria: { label: t("nav.account_for", email: current_user.email_address) },
+                  class: "inline-flex items-center text-[15px] text-ink-soft no-underline [overflow-wrap:anywhere] hover:text-brand-deep max-lg:min-h-11" %>
+      <%= button_to t("nav.sign_out"), main_app.session_path,
+                    method: :delete,
+                    form_class: "inline-flex",
+                    class: "inline-flex cursor-pointer items-center rounded-full border-2 border-ink bg-transparent px-[22px] py-[13px] text-[16px] font-semibold text-ink hover:bg-surface-hover" %>
+    <% else %>
+      <%= link_to t("nav.sign_in"), main_app.new_session_path,
+                  class: "inline-flex items-center text-[15px] font-medium text-ink no-underline hover:text-brand-deep max-lg:min-h-11" %>
+      <%= link_to t("nav.sign_up"), main_app.new_registration_path,
+                  class: "inline-flex items-center rounded-full bg-ink px-5 py-[11px] text-[15px] font-semibold text-white no-underline hover:bg-code-chip" %>
+    <% end %>
+  </div>
+</header>
