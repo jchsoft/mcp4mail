@@ -6,7 +6,6 @@ en:
     account_for: "Account (%{email})"
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
-    account: "Account"
     sign_in: "Sign in"
     sign_up: "Sign up"
     sign_out: "Sign out"
