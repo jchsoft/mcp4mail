@@ -32,13 +32,13 @@ module McpTools
         annotations(**(annotations || {}), title: value)
       end
 
-# One-line opt-out of the read-only defaults for a future write tool: `destructive true`
+      # One-line opt-out of the read-only defaults for a future write tool: `destructive true`
       # (or `destructive false` for a write that only adds, e.g. saving a draft). Either way
       # the tool is no longer read-only and not idempotent unless it says so afterwards.
       def destructive(value)
         annotations(**(annotations || {}), read_only_hint: false, destructive_hint: value, idempotent_hint: false)
       end
-      
+
       def read_only?
         declared = annotations || {}
         declared[:read_only_hint] == true && declared[:destructive_hint] == false
