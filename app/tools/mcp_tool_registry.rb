@@ -28,6 +28,7 @@ class McpToolRegistry < Hitch::MCP::Registry
   register McpTools::SearchContacts, scopes: [ "mcp" ]
   register McpTools::SearchMessages, scopes: [ "mcp" ]
   register McpTools::SetFlags, scopes: [ "mcp" ]
+  register McpTools::TrashMessage, scopes: [ "mcp" ]
 
   # The audit log stores the wire name a client called; the activity list shows the title
   # the tool declares. A name with no registered tool behind it (an older event, a tool

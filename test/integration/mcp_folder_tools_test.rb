@@ -223,6 +223,59 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
     assert_empty @message.reload.flags
   end
 
+  test "trash_message moves to the special-use Trash folder and never expunges" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Bin", attrs: [ "Trash" ] } ], trash: "Bin")
+
+    result = tool_json("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert_equal [ true, "Bin" ], result.values_at("trashed", "folder")
+    assert @server.commands.any? { |command| command.start_with?("UID MOVE") }
+    assert_not @server.commands.any? { |command| command.include?("EXPUNGE") }
+    assert_equal @trash.id, @message.reload.mail_folder_id
+  end
+
+  test "trash_message finds a localized Trash folder by name" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Ko&AWE-" } ], trash: "Ko&AWE-")
+
+    result = tool_json("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert_equal [ "Ko\u0161", "Ko&AWE-" ], result.values_at("folder", "path")
+    assert_equal @trash.id, @message.reload.mail_folder_id
+  end
+
+  test "trash_message refuses when there is no Trash folder" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Archive" } ], trash: "Archive")
+
+    result = call_tool("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert result["isError"]
+    assert_match "no Trash folder", result.dig("content", 0, "text")
+    assert_not @server.commands.any? { |command| command.start_with?("UID MOVE", "UID COPY", "CREATE") }
+    assert_equal @inbox.id, @message.reload.mail_folder_id
+  end
+
+  test "trash_message on a message already in Trash does nothing" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Trash", attrs: [ "Trash" ] } ], trash: "Trash")
+    @message.update!(mail_folder: @trash)
+
+    result = tool_json("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert_equal "Trash", result["folder"]
+    assert_not @server.commands.any? { |command| command.start_with?("UID MOVE", "UID COPY", "UID STORE") }
+  end
+
+  test "trash_message is refused on a read-only mailbox and audited" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Trash", attrs: [ "Trash" ] } ], trash: "Trash")
+    @account.update!(writable: false)
+
+    result = call_tool("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert result["isError"]
+    assert_equal McpTools::ApplicationTool::READ_ONLY_MAILBOX, result.dig("content", 0, "text")
+    assert_equal "denied", McpAuditEvent.sole.outcome
+    assert_equal @inbox.id, @message.reload.mail_folder_id
+  end
+
   private
     def start_server(writable: false, **options)
       @server = FakeImapServer.new(**options).start
@@ -242,6 +295,17 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
       )
       @inbox = @account.mail_folders.create!(name: "INBOX", uidvalidity: 100)
       @archive = @account.mail_folders.create!(name: "Archive", uidvalidity: 200)
+      @message = MailMessage.create!(
+        mail_account: @account, mail_folder: @inbox, uidvalidity: 100, uid: 7, subject: "Hi",
+        from_address: "a@example.com", to_addresses: [], cc_addresses: [], search_text: "hi"
+      )
+    end
+
+    def start_trash_server(folders:, trash:)
+      @mailboxes = { "INBOX" => { uidvalidity: 100, messages: [ { uid: 7 } ] }, trash => { uidvalidity: 200, messages: [] } }
+      start_server(writable: true, capabilities: "IMAP4rev1 MOVE UIDPLUS", mailboxes: @mailboxes, folders:)
+      @inbox = @account.mail_folders.create!(name: "INBOX", uidvalidity: 100)
+      @trash = @account.mail_folders.create!(name: trash, uidvalidity: 200)
       @message = MailMessage.create!(
         mail_account: @account, mail_folder: @inbox, uidvalidity: 100, uid: 7, subject: "Hi",
         from_address: "a@example.com", to_addresses: [], cc_addresses: [], search_text: "hi"

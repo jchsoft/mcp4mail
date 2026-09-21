@@ -10,13 +10,22 @@ module Imap
     class MessageGone < StandardError; end
     class CannotMoveSafely < StandardError; end
 
+    # Names servers give a Trash folder that does not advertise \Trash, compared case-insensitively.
+    TRASH_NAMES = %w[Trash Deleted Koš Papierkorb Corbeille].freeze
+
     def self.call(message, to:)
       new(message, to:).call
     end
 
-    def initialize(message, to:)
+    # Moves to the Trash folder, found by special-use then by its usual names. Never creates one.
+    def self.trash(message)
+      new(message, to: "Trash", trash: true).call
+    end
+
+    def initialize(message, to:, trash: false)
       @message = message
       @destination = to.to_s.strip
+      @trash = trash
     end
 
     def call
@@ -38,10 +47,18 @@ module Imap
 
       def resolve(folders)
         selectable = folders.select(&:selectable)
+        return find_trash(selectable) if @trash
+
         found = selectable.find { |folder| folder.name == destination } ||
           selectable.find { |folder| folder.special_use.to_s.casecmp?(destination) } ||
           selectable.find { |folder| Net::IMAP.decode_utf7(folder.name).casecmp?(destination) }
         found || raise(FolderNotFound, "No folder called #{destination.inspect}. Call list_folders for the folders of this mailbox.")
+      end
+
+      def find_trash(folders)
+        folders.find { |folder| folder.special_use == :trash } ||
+          folders.find { |folder| TRASH_NAMES.any? { |name| name.casecmp?(Net::IMAP.decode_utf7(folder.name.split(folder.delimiter.to_s.presence || "/").last)) } } ||
+          raise(FolderNotFound, "This mailbox has no Trash folder, so the message was not deleted. Delete it in your mail client instead.")
       end
 
       def select_source(imap)
