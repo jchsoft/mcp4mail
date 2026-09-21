@@ -223,7 +223,112 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
     assert_empty @message.reload.flags
   end
 
+  test "create_draft appends a draft to the special-use Drafts folder and indexes it" do
+    start_draft_server
+
+    result = tool_json("create_draft", account_id: @account.id, to: "amy@example.com, bo@example.com", cc: [ "cy@example.com" ], subject: "Hello", body: "Ahoj světe")
+
+    assert_equal [ "Koncepty", "Draft saved to Koncepty; open your mail client to send it." ], result.values_at("folder", "message")
+    stored = @mailboxes["Koncepty"][:messages].sole
+    assert_equal [ "\\Draft" ], stored[:flags]
+    parsed = Mail.new(stored[:body])
+    assert_equal [ "amy@example.com", "bo@example.com" ], parsed.to
+    assert_equal [ "cy@example.com" ], parsed.cc
+    assert_equal [ "bob@example.com" ], parsed.from
+    assert_equal "Ahoj světe", parsed.body.decoded.force_encoding("UTF-8").strip
+    assert_includes stored[:body], "\r\n"
+    indexed = MailMessage.find(result["message_id"])
+    assert_equal [ 1, [ "Draft" ], "Hello" ], [ indexed.uid, indexed.flags, indexed.subject ]
+  end
+
+  test "create_draft threads a reply and adds Re:" do
+    start_draft_server
+    original = MailMessage.create!(
+      mail_account: @account, mail_folder: @account.mail_folders.create!(name: "INBOX", uidvalidity: 100), uidvalidity: 100, uid: 7,
+      subject: "Invoice", message_id: "<orig@example.com>", from_address: "a@example.com", to_addresses: [], cc_addresses: [], search_text: "invoice"
+    )
+
+    tool_json("create_draft", account_id: @account.id, to: [ "a@example.com" ], body: "Thanks", reply_to_message_id: original.id)
+
+    parsed = Mail.new(@mailboxes["Koncepty"][:messages].sole[:body])
+    assert_equal "Re: Invoice", parsed.subject
+    assert_equal "orig@example.com", parsed.in_reply_to
+    assert_equal [ "orig@example.com" ], Array(parsed.references)
+  end
+
+  test "create_draft finds Drafts by name when the server has no special-use" do
+    start_draft_server(folders: [ { name: "INBOX" }, { name: "Entwürfe".then { |n| Net::IMAP.encode_utf7(n) } } ], mailboxes: {
+      "INBOX" => { uidvalidity: 100, messages: [] }, Net::IMAP.encode_utf7("Entwürfe") => { uidvalidity: 300, messages: [] }
+    })
+
+    tool_json("create_draft", account_id: @account.id, to: "a@example.com", body: "x")
+
+    assert_equal 1, @mailboxes[Net::IMAP.encode_utf7("Entwürfe")][:messages].size
+  end
+
+  test "create_draft creates Drafts when none exists" do
+    start_draft_server(folders: [ { name: "INBOX" } ], mailboxes: { "INBOX" => { uidvalidity: 100, messages: [] } })
+
+    result = tool_json("create_draft", account_id: @account.id, to: "a@example.com", body: "x")
+
+    assert_equal "Drafts", result["folder"]
+    assert_equal 1, @mailboxes["Drafts"][:messages].size
+  end
+
+  test "create_draft accepts a single string and arrays alike" do
+    start_draft_server
+
+    tool_json("create_draft", account_id: @account.id, to: "a@example.com", body: "x")
+    tool_json("create_draft", account_id: @account.id, to: [ "a@example.com", "b@example.com" ], body: "x")
+
+    assert_equal [ [ "a@example.com" ], [ "a@example.com", "b@example.com" ] ], @mailboxes["Koncepty"][:messages].map { |m| Mail.new(m[:body]).to }
+  end
+
+  test "create_draft rejects bad recipients, too many recipients and an oversized body" do
+    start_draft_server
+
+    [
+      { to: "not an address" },
+      { to: [] },
+      { to: (1..51).map { |n| "u#{n}@example.com" } },
+      { to: "a@example.com", body: "x" * (100 * 1024 + 1) }
+    ].each do |arguments|
+      assert call_tool("create_draft", account_id: @account.id, **arguments)["isError"], arguments.keys.inspect
+    end
+    assert_empty @mailboxes["Koncepty"][:messages]
+  end
+
+  test "create_draft reports an unknown reply target" do
+    start_draft_server
+
+    result = call_tool("create_draft", account_id: @account.id, to: "a@example.com", reply_to_message_id: 0)
+
+    assert result["isError"]
+    assert_match "No message", result.dig("content", 0, "text")
+  end
+
+  test "create_draft is refused on a read-only mailbox and audited" do
+    start_draft_server
+    @account.update!(writable: false)
+
+    result = call_tool("create_draft", account_id: @account.id, to: "a@example.com", body: "x")
+
+    assert result["isError"]
+    assert_equal McpTools::ApplicationTool::READ_ONLY_MAILBOX, result.dig("content", 0, "text")
+    assert_equal "denied", McpAuditEvent.sole.outcome
+    assert_empty @mailboxes["Koncepty"][:messages]
+  end
+
   private
+    def start_draft_server(folders: nil, mailboxes: nil)
+      @mailboxes = mailboxes || { "INBOX" => { uidvalidity: 100, messages: [] }, "Koncepty" => { uidvalidity: 300, messages: [] } }
+      start_server(
+        writable: true, capabilities: "IMAP4rev1 UIDPLUS SPECIAL-USE", mailboxes: @mailboxes,
+        folders: folders || [ { name: "INBOX" }, { name: "Koncepty", attrs: [ "Drafts" ] } ]
+      )
+      @account.update!(username: "bob@example.com")
+    end
+
     def start_server(writable: false, **options)
       @server = FakeImapServer.new(**options).start
       @account = @user.mail_accounts.create!(

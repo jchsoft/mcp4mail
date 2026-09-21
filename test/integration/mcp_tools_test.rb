@@ -19,9 +19,9 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     listed = response.parsed_body.dig("result", "tools")
-    assert_equal %w[create_folder get_attachment get_mail_account get_message list_folders list_mail_accounts move_message search_contacts search_messages set_flags],
+    assert_equal %w[create_draft create_folder get_attachment get_mail_account get_message list_folders list_mail_accounts move_message search_contacts search_messages set_flags],
       listed.map { |tool| tool["name"] }
-    tools = listed.reject { |tool| %w[create_folder move_message set_flags].include?(tool["name"]) }
+    tools = listed.reject { |tool| %w[create_draft create_folder move_message set_flags].include?(tool["name"]) }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
@@ -35,6 +35,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     titles = response.parsed_body.dig("result", "tools").to_h { |tool| [ tool["name"], tool.dig("annotations", "title") ] }
     assert_equal({
+      "create_draft" => "Save a draft",
       "create_folder" => "Create folder",
       "list_folders" => "List folders",
       "move_message" => "Move message",

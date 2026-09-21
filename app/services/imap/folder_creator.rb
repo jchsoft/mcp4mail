@@ -17,7 +17,12 @@ module Imap
     end
 
     def call
-      Connection.open(mail_account) { |imap| create(imap) }
+      Connection.open(mail_account) { |imap| create_in(imap) }
+    end
+
+    # Creates over an already open connection, for callers that have more to do with the same session.
+    def create_in(imap)
+      create(imap)
     end
 
     private
