@@ -1,3 +1,4 @@
+require "net/imap"
 require "test_helper"
 require "hitch/mcp/test_helper"
 
@@ -149,6 +150,79 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
     assert_equal @inbox.id, @message.reload.mail_folder_id
   end
 
+  test "set_flags flags a message and updates the index" do
+    start_flags_server
+
+    result = tool_json("set_flags", account_id: @account.id, message_id: @message.id, flagged: true)
+
+    assert_equal [ true, false ], result.values_at("flagged", "seen")
+    assert_equal [ "Flagged" ], @message.reload.flags
+    assert @server.commands.any? { |command| command.start_with?("SELECT") }
+    assert_not @server.commands.any? { |command| command.start_with?("EXAMINE") }
+    assert_equal [ "\\Flagged" ], @mailboxes["INBOX"][:messages].first[:flags]
+  end
+
+  test "set_flags marks read and unread" do
+    start_flags_server(flags: [ "\\Flagged" ])
+    @message.update!(flags: [ "Flagged" ])
+
+    seen = tool_json("set_flags", account_id: @account.id, message_id: @message.id, seen: true)
+    assert_equal [ true, true ], seen.values_at("flagged", "seen")
+
+    unseen = tool_json("set_flags", account_id: @account.id, message_id: @message.id, seen: false)
+    assert_equal [ true, false ], unseen.values_at("flagged", "seen")
+    assert_equal [ "Flagged" ], @message.reload.flags
+  end
+
+  test "set_flags sets both flags in one call" do
+    start_flags_server(flags: [ "\\Seen" ])
+    @message.update!(flags: [ "Seen" ])
+
+    result = tool_json("set_flags", account_id: @account.id, message_id: @message.id, flagged: true, seen: false)
+
+    assert_equal [ true, false ], result.values_at("flagged", "seen")
+    assert_equal [ "Flagged" ], @message.reload.flags
+  end
+
+  test "set_flags needs at least one flag" do
+    start_flags_server
+
+    result = call_tool("set_flags", account_id: @account.id, message_id: @message.id)
+
+    assert result["isError"]
+    assert_not @server.commands.any? { |command| command.include?("STORE") }
+  end
+
+  test "set_flags is refused on a read-only mailbox and audited" do
+    start_flags_server
+    @account.update!(writable: false)
+
+    result = call_tool("set_flags", account_id: @account.id, message_id: @message.id, flagged: true)
+
+    assert result["isError"]
+    assert_equal McpTools::ApplicationTool::READ_ONLY_MAILBOX, result.dig("content", 0, "text")
+    assert_equal "denied", McpAuditEvent.sole.outcome
+    assert_empty @message.reload.flags
+  end
+
+  test "set_flags reports an unknown message" do
+    start_flags_server
+
+    result = call_tool("set_flags", account_id: @account.id, message_id: 0, flagged: true)
+
+    assert result["isError"]
+    assert_match "No message", result.dig("content", 0, "text")
+  end
+
+  test "set_flags raises when the server answers NO to the STORE" do
+    start_flags_server(refuse_store: true)
+
+    assert_raises(Net::IMAP::NoResponseError) do
+      Imap::FlagSetter.call(@message, flagged: true)
+    end
+    assert_empty @message.reload.flags
+  end
+
   private
     def start_server(writable: false, **options)
       @server = FakeImapServer.new(**options).start
@@ -168,6 +242,16 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
       )
       @inbox = @account.mail_folders.create!(name: "INBOX", uidvalidity: 100)
       @archive = @account.mail_folders.create!(name: "Archive", uidvalidity: 200)
+      @message = MailMessage.create!(
+        mail_account: @account, mail_folder: @inbox, uidvalidity: 100, uid: 7, subject: "Hi",
+        from_address: "a@example.com", to_addresses: [], cc_addresses: [], search_text: "hi"
+      )
+    end
+
+    def start_flags_server(flags: [], refuse_store: false)
+      @mailboxes = { "INBOX" => { uidvalidity: 100, messages: [ { uid: 7, flags: } ] } }
+      start_server(writable: true, mailboxes: @mailboxes, folders: [ { name: "INBOX" } ], refuse_store:)
+      @inbox = @account.mail_folders.create!(name: "INBOX", uidvalidity: 100)
       @message = MailMessage.create!(
         mail_account: @account, mail_folder: @inbox, uidvalidity: 100, uid: 7, subject: "Hi",
         from_address: "a@example.com", to_addresses: [], cc_addresses: [], search_text: "hi"
