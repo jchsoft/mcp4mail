@@ -13,7 +13,7 @@
 class FakeImapServer
   attr_reader :port, :fetched_uid_sets, :commands
 
-  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil)
+  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false)
     @server = TCPServer.new("127.0.0.1", 0)
     @port = @server.addr[1]
     @capabilities = capabilities
@@ -25,6 +25,8 @@ class FakeImapServer
     @fetched_uid_sets = []
     @commands = []
     @namespace_prefix = namespace_prefix
+    @refuse_store = refuse_store
+    @refuse_store = refuse_store
     @thread = nil
   end
 
@@ -118,7 +120,7 @@ class FakeImapServer
           socket.write("* #{uids.size} EXISTS\r\n")
           socket.write("* OK [UIDVALIDITY #{mailbox[:uidvalidity]}] UIDs valid\r\n") if mailbox[:uidvalidity]
           socket.write("* OK [UIDNEXT #{(uids.max || 0) + 1}] Predicted next UID\r\n") unless mailbox[:uidnext] == false
-          socket.write("#{tag} OK [READ-ONLY] #{command.upcase} completed\r\n")
+          socket.write("#{tag} OK [#{command.casecmp?("SELECT") ? "READ-WRITE" : "READ-ONLY"}] #{command.upcase} completed\r\n")
         else
           selected = nil
           socket.write("#{tag} NO Mailbox does not exist\r\n")
@@ -168,9 +170,18 @@ class FakeImapServer
             end
           end
         when "STORE"
-          set, _rest = rest.split(" ", 2)
-          matching_uids(mailbox, set).each { |uid| mailbox[:messages].find { |m| m[:uid] == uid }[:flags] = Array(mailbox[:messages].find { |m| m[:uid] == uid }[:flags]) + [ "\\Deleted" ] }
-          socket.write("#{tag} OK STORE completed\r\n")
+          set, mode, list = rest.split(" ", 3)
+          names = list.to_s.delete("()").split
+          if @refuse_store
+            socket.write("#{tag} NO STORE refused\r\n")
+          else
+            matching_uids(mailbox, set).each do |uid|
+              message = mailbox[:messages].find { |m| m[:uid] == uid }
+              current = Array(message[:flags])
+              message[:flags] = mode.upcase.start_with?("-") ? current - names : (current | names)
+            end
+            socket.write("#{tag} OK STORE completed\r\n")
+          end
         when "EXPUNGE"
           matched = matching_uids(mailbox, rest)
           mailbox[:messages].reject! { |m| matched.include?(m[:uid]) && Array(m[:flags]).include?("\\Deleted") }
