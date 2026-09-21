@@ -22,8 +22,9 @@ class McpClientAlertsMailerTest < ActionMailer::TestCase
   end
 
   test "new_client is translated into Czech" do
-    mail = I18n.with_locale(:cs) { McpClientAlertsMailer.new_client(@sighting) }
+    # The message is built lazily, so the subject has to be read inside the locale block.
+    subject = I18n.with_locale(:cs) { McpClientAlertsMailer.new_client(@sighting).subject }
 
-    assert_equal "Nový AI klient čte schránku Work", mail.subject
+    assert_equal "Nový AI klient čte schránku Work", subject
   end
 end
