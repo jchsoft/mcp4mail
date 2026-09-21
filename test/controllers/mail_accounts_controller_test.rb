@@ -207,6 +207,53 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "index shows the allow-changes switch off for a new mailbox" do
+    sign_in_as @user
+    get mail_accounts_path
+
+    assert_select "#writable_switch_mail_account_#{mail_accounts(:work).id}[role=switch]:not([checked])"
+    assert_select "#writable_mail_account_#{mail_accounts(:work).id}", /Off: the AI can only read and search/
+  end
+
+  test "update switches changes on and off for the user's own mailbox" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+
+    patch mail_account_path(account), params: { mail_account: { writable: "1" } }
+    assert_redirected_to mail_accounts_path
+    assert account.reload.writable?
+    follow_redirect!
+    assert_select "#writable_switch_mail_account_#{account.id}[checked]"
+
+    patch mail_account_path(account), params: { mail_account: { writable: "0" } }
+    assert_not account.reload.writable?
+  end
+
+  test "update changes nothing but the switch" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+
+    patch mail_account_path(account), params: { mail_account: { writable: "1", host: "evil.example.com" } }
+
+    assert_equal "imap.example.com", account.reload.host
+  end
+
+  test "update refuses another user's mailbox" do
+    sign_in_as @user
+
+    patch mail_account_path(mail_accounts(:personal)), params: { mail_account: { writable: "1" } }
+
+    assert_response :not_found
+    assert_not mail_accounts(:personal).reload.writable?
+  end
+
+  test "update requires sign-in" do
+    patch mail_account_path(mail_accounts(:work)), params: { mail_account: { writable: "1" } }
+
+    assert_redirected_to new_session_path
+    assert_not mail_accounts(:work).reload.writable?
+  end
+
   test "index counts today's and this week's calls per mailbox" do
     travel_to Time.zone.local(2026, 9, 23, 12, 0) # a Wednesday noon, so "start of week" is never today
     work = mail_accounts(:work)
