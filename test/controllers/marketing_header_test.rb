@@ -33,6 +33,17 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "the header links to the provider guides, in both locales" do
+    get root_url(locale: :en)
+    assert_select "header nav a[href=?]", guides_path, text: "Guides"
+
+    get root_url(locale: :cs)
+    assert_select "header nav a[href=?]", guides_path, text: "Návody"
+
+    get guides_url
+    assert_select "header nav a[href=?]", guides_path
+  end
+
   test "the section labels are translated even though the ids are not" do
     get root_url(locale: :en)
     assert_select "header nav a[href='#security']", text: "Security"

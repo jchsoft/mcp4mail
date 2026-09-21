@@ -70,6 +70,7 @@ en:
         security: "Security"
         built: "How it's built"
         faq: "FAQ"
+        guides: "Guides"
         cta: "Connect a mailbox"
         locale_cs: "CS"
         locale_en: "EN"
@@ -81,6 +82,7 @@ en:
         heading_highlight: "readable"
         heading_after: "by your AI."
         lede: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+        audience: "Your mail is not on Gmail? Gmail and Outlook already have native connectors in Claude and ChatGPT — mcp4mail is for everyone else: hosting providers, your own domain, Seznam, iCloud, Fastmail, Zoho and any IMAP mailbox. Free, open source, read-only unless you say otherwise."
         cta_primary: "Connect a mailbox"
         cta_secondary: "Source on GitHub"
         works_with: "Works with Claude Desktop and Cowork, ChatGPT, Grok and anything that speaks MCP."
@@ -96,6 +98,9 @@ en:
             - label: "August"
               body: "reminder: report mileage by 15 Sept."
           disclaimer: "Illustrative. Nothing in the mailbox changed — not even the “read” flag."
+      providers:
+        label: "Works with"
+        all: "All setup guides →"
       why:
         kicker: "What it's for"
         heading: "Ask your mail like a person. Not like a programmer."
@@ -150,6 +155,8 @@ en:
         items:
           - question: "Do I have to install anything?"
             answer: "No. The hosted version runs at mcp4mail.online; add a mailbox and paste the connector address into your AI client. Installing (docker compose) is only for people who want to run the server themselves."
+          - question: "Do I need this for Gmail or Outlook?"
+            answer: "No. Gmail and Outlook have native connectors in Claude, ChatGPT and other AI clients — use those. mcp4mail is for every other mailbox: your hosting provider, your own domain, Seznam, iCloud, Fastmail, Zoho or anything else that speaks IMAP."
           - question: "What is an app password and where do I get one?"
             answer: "A separate password you generate in your mail provider's security settings (Gmail, iCloud, Outlook.com, Yahoo, Fastmail and others). It only works for signing in to mail, can be revoked any time, and never opens your whole account."
           - question: "Can the AI send or delete anything?"
@@ -157,7 +164,7 @@ en:
           - question: "What does mcp4mail store?"
             answer: "A copy of message headers — sender, recipients, subject, date, flags, size — refreshed every 15 minutes so searches don't hit your mail server each time. The content of your questions isn't logged."
           - question: "What does it cost?"
-            answer: "The code is open source under the MIT license — running it yourself is free. Terms of the hosted version are on mcp4mail.online."
+            answer: "Nothing. The code is open source under the MIT license, and both the hosted version at mcp4mail.online and running it yourself are free."
       close:
         heading: "Your mailbox is waiting for its first question."
         lede: "Three steps, five minutes, nothing to install."
@@ -166,6 +173,7 @@ en:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        guides: "Setup guides"
         self_hosting: "Self‑hosting guide"
         live: "Built live on mcptask.online"
         company: "JCHSoft"
