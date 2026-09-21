@@ -37,6 +37,11 @@ in any template.
 | `--color-surface` | `#ffffff` | `bg-surface` | Cards, disclosures, the tab strip, any raised box on paper. |
 | `--color-surface-hover` | `#f1ebe1` | `hover:bg-surface-hover`, `bg-surface-hover` | Hover for outline pills, tabs and card links; the ground of inline code on light; the language switch track. |
 | `--color-line` | `#ebe4d8` | `border-line` | Every hairline border: cards, disclosures, table rows. |
+| `--color-danger` | `#b8321c` | `text-danger`, `bg-danger`, `border-danger` | Errors and destructive actions: error text, the destructive button (white label), the error alert border. A brick red in the brand family. 5.65:1 on paper. |
+| `--color-danger-deep` | `#8f2613` | `hover:bg-danger-deep`, `text-danger-deep` | Hover on a destructive button (it darkens: the label is white); danger text on `danger-tint`. |
+| `--color-danger-tint` | `#fbe3dc` | `bg-danger-tint` | Soft red ground: the error alert and error summary. Always with a `danger` border. |
+| `--color-field-border` | `#8a8378` | `border-field-border` | The border of every input, select and textarea. 3:1 on paper and surface, unlike `line`. |
+| `--color-field-placeholder` | `#6f6a63` | `placeholder:text-field-placeholder` | Placeholder text in form fields. |
 
 ### Families
 

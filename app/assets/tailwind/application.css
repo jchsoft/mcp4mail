@@ -98,6 +98,22 @@
   --color-surface: #ffffff;
   --color-surface-hover: #f1ebe1;
   --color-line: #ebe4d8;
+  /* The error and destructive family, built like green and brand: a base, a
+     deeper shade and a tint. A brick red rather than an alarm red, so it sits
+     beside #f26b1d on one page without fighting it. The base carries text and
+     a white label: 5.65:1 on paper, 5.98:1 on surface and under white. */
+  --color-danger: #b8321c;
+  /* Hover of a destructive button (white label, 8.56:1: it darkens, since the
+     label is white, not ink) and danger text on danger-tint (6.98:1). */
+  --color-danger-deep: #8f2613;
+  --color-danger-tint: #fbe3dc;
+  /* Input, select and textarea borders. A field has to be found without its
+     label, so this is a UI component edge at 3:1, not a hairline like line:
+     3.54:1 on paper, 3.75:1 on surface. */
+  --color-field-border: #8a8378;
+  /* Placeholder text: lighter than ink-muted so it never reads as a typed
+     value, still text at 5.36:1 on surface and 5.06:1 on paper. */
+  --color-field-placeholder: #6f6a63;
 
   --font-heading: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
