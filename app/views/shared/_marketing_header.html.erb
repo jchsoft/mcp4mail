@@ -18,6 +18,9 @@
       <%= link_to t("pages.home.nav.#{key}"), anchor,
                   class: "inline-flex items-center justify-center text-ink no-underline hover:text-brand-deep max-lg:min-h-11 max-lg:min-w-11" %>
     <% end %>
+    <%# The one entry that leaves the page: the provider guides, task #12770. %>
+    <%= link_to t("pages.home.nav.guides"), main_app.guides_path,
+                class: "inline-flex items-center justify-center text-ink no-underline hover:text-brand-deep max-lg:min-h-11 max-lg:min-w-11" %>
   </nav>
 
   <%# The switcher and the call to action travel as one group. Loose, they wrapped

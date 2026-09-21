@@ -24,6 +24,12 @@
 
     <p class="mt-6 max-w-[34em] text-[19px] leading-[1.55] text-ink-soft"><%= t(".hero.lede") %></p>
 
+    <%# Who it is for, task #12770. Gmail and Outlook already have native
+        connectors in the AI clients; saying so up front keeps those visitors from
+        signing up for something they do not need, and tells everyone else this
+        page is about them. %>
+    <p class="mt-4 max-w-[34em] text-[17px] leading-[1.55] text-ink"><%= t(".hero.audience") %></p>
+
     <div class="mt-8 flex flex-wrap gap-3">
       <%# The label stays ink on orange — white would drop the pair below contrast. %>
       <%= link_to t(".hero.cta_primary"),
@@ -64,6 +70,20 @@
     <figcaption class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></figcaption>
   </figure>
 </section>
+
+<%# Provider strip, task #12770: the names, as text rather than logos to keep
+    trademarks out of it, each linking to its setup guide. A div, not a section:
+    it belongs to the hero's claim rather than being a page section of its own,
+    and the header's section anchors stay as they are. %>
+<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-y border-line py-5 text-[15px]">
+  <span class="font-semibold text-ink-muted"><%= t(".providers.label") %></span>
+  <% @guides.each do |guide| %>
+    <%= link_to guide.title, guide_path(guide),
+                class: "inline-flex items-center text-ink no-underline hover:text-brand-deep hover:underline max-lg:min-h-11" %>
+  <% end %>
+  <%= link_to t(".providers.all"), guides_path,
+              class: "inline-flex items-center font-semibold text-green-deep hover:underline max-lg:min-h-11" %>
+</div>
 
 <%= render "pages/why" %>
 

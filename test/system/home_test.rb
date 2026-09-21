@@ -9,9 +9,20 @@ class HomeTest < ApplicationSystemTestCase
     within_hero do
       assert_text "Open source · MIT · free to self‑host"
       assert_text "Works with Claude Desktop and Cowork"
+      assert_text "Your mail is not on Gmail?"
       assert_link "Connect a mailbox", href: new_registration_path
       assert_link "Source on GitHub", href: "https://github.com/jchsoft/mcp4mail"
     end
+  end
+
+  test "the provider strip takes a visitor to their provider's guide" do
+    visit root_url
+
+    click_link "WEDOS"
+
+    assert_current_path guide_path("wedos")
+    within("header") { click_link "Guides" }
+    assert_current_path guides_path
   end
 
   test "the primary call to action points a signed-in visitor at their mailboxes" do

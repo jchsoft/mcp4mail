@@ -116,6 +116,7 @@ cs:
         security: "Bezpečnost"
         built: "Jak vzniká"
         faq: "Otázky"
+        guides: "Návody"
         cta: "Připojit schránku"
         locale_cs: "CS"
         locale_en: "EN"
@@ -127,6 +128,7 @@ cs:
         heading_highlight: "srozumitelná"
         heading_after: "pro vaši AI."
         lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+        audience: "Nemáte poštu na Gmailu? Gmail a Outlook už mají v Claude a ChatGPT vlastní konektory — mcp4mail je pro všechny ostatní: hostingy, vlastní domény, Seznam, iCloud, Fastmail, Zoho a jakoukoli IMAP schránku. Zdarma, open source, jen pro čtení, dokud neřeknete jinak."
         cta_primary: "Připojit schránku"
         cta_secondary: "Kód na GitHubu"
         works_with: "Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP."
@@ -142,6 +144,9 @@ cs:
             - label: "Srpen"
               body: "připomínka: nahlásit stav tachometru do 15. 9."
           disclaimer: "Ilustrační ukázka. Ve schránce se nic nezměnilo — ani stav „přečteno“."
+      providers:
+        label: "Funguje s"
+        all: "Všechny návody →"
       why:
         kicker: "K čemu to je"
         heading: "Zeptáte se své pošty jako člověka. Ne jako programátor."
@@ -196,6 +201,8 @@ cs:
         items:
           - question: "Musím něco instalovat?"
             answer: "Ne. Hostovaná verze běží na mcp4mail.online; stačí přidat schránku a v AI klientovi vložit adresu konektoru. Instalace (docker compose) je jen pro ty, kdo si chtějí server provozovat sami."
+          - question: "Potřebuji to pro Gmail nebo Outlook?"
+            answer: "Ne. Gmail a Outlook mají v Claude, ChatGPT i dalších AI klientech vlastní konektory — použijte ty. mcp4mail je pro všechny ostatní schránky: u vašeho hostingu, na vlastní doméně, Seznam, iCloud, Fastmail, Zoho nebo cokoli dalšího, co umí IMAP."
           - question: "Co je heslo aplikace a kde ho najdu?"
             answer: "Zvláštní heslo, které vygenerujete v nastavení zabezpečení své pošty (Gmail, iCloud, Outlook.com, Yahoo, Fastmail a další). Funguje jen pro přihlášení k poště, dá se kdykoli zrušit a nikdy neotevře celý váš účet."
           - question: "Může AI něco poslat nebo smazat?"
@@ -203,7 +210,7 @@ cs:
           - question: "Co si mcp4mail ukládá?"
             answer: "Kopii hlaviček zpráv — odesílatel, příjemci, předmět, datum, příznaky, velikost — obnovovanou každých 15 minut, aby hledání nezatěžovalo váš poštovní server. Obsah dotazů se do záznamu neukládá."
           - question: "Kolik to stojí?"
-            answer: "Kód je open source pod licencí MIT — provozovat si ho můžete zdarma. Podmínky hostované verze najdete na mcp4mail.online."
+            answer: "Nic. Kód je open source pod licencí MIT a zdarma je hostovaná verze na mcp4mail.online i provoz na vlastním serveru."
       close:
         heading: "Vaše schránka už čeká na první otázku."
         lede: "Tři kroky, pět minut, nic k instalaci."
@@ -212,6 +219,7 @@ cs:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        guides: "Návody k nastavení"
         self_hosting: "Návod k self‑hostingu"
         live: "Vzniká živě na mcptask.online"
         company: "JCHSoft"
