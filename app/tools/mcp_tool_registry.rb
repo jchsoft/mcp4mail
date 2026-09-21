@@ -11,6 +11,8 @@ class McpToolRegistry < Hitch::MCP::Registry
       raise ArgumentError, "#{tool_class.inspect} must be a read-only McpTools::ApplicationTool"
     end
 
+    raise ArgumentError, "#{tool_class.name} must declare a human title" if tool_class.title.blank?
+
     super
   end
 

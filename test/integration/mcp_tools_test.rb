@@ -23,7 +23,23 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
+      assert_equal true, tool.dig("annotations", "idempotentHint"), tool["name"]
+      assert_equal false, tool.dig("annotations", "openWorldHint"), tool["name"]
     end
+  end
+
+  test "every listed tool carries its human title" do
+    post_mcp(method: "tools/list", token: @token)
+
+    titles = response.parsed_body.dig("result", "tools").to_h { |tool| [ tool["name"], tool.dig("annotations", "title") ] }
+    assert_equal({
+      "get_attachment" => "Download attachment",
+      "get_mail_account" => "Show mailbox",
+      "get_message" => "Read message",
+      "list_mail_accounts" => "List mailboxes",
+      "search_contacts" => "Search contacts",
+      "search_messages" => "Search messages"
+    }, titles)
   end
 
   test "list_mail_accounts returns only the caller's accounts and audits the row count" do
