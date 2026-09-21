@@ -24,6 +24,27 @@ class GuidesControllerTest < ActionDispatch::IntegrationTest
     assert_select "link[rel=canonical][href=?]", guide_url("seznam")
   end
 
+  test "every guide file renders with its IMAP host and the connect block" do
+    Guide.all.each do |guide|
+      get guide_url(guide)
+
+      assert_response :success, "guide #{guide.provider} did not render"
+      assert_select "h1", guide.title
+      assert_select "code", guide.imap_host
+      assert_select ".guide-prose h2", minimum: 1
+      assert_select "section h2", "Now connect it in mcp4mail"
+    end
+  end
+
+  test "the index lists Czech providers first, then the international ones" do
+    get guides_url
+
+    titles = css_select("ul a h2").map { |h2| h2.text.strip }
+    czech = [ "Seznam.cz (Email.cz)", "WEDOS", "Forpsi", "Active24" ]
+    assert_equal czech, titles.first(4)
+    assert_equal Guide.all.size, titles.size
+  end
+
   test "an unknown provider is a 404" do
     get guide_url("nosuchprovider")
 
