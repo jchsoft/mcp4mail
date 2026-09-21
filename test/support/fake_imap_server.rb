@@ -112,6 +112,22 @@ class FakeImapServer
           @folders << { name: name }
           socket.write("#{tag} OK CREATE completed\r\n")
         end
+      when "APPEND"
+        name = unquote(args.split(" ", 2).first)
+        size = args[/\{(\d+)\+?\}\z/, 1].to_i
+        socket.write("+ Ready for literal data\r\n")
+        raw = socket.read(size)
+        socket.gets
+        mailbox = @mailboxes[name]
+        if mailbox
+          uid = (mailbox_uids(mailbox).max || 0) + 1
+          flags = args[/\(([^)]*)\)/, 1].to_s.split
+          mailbox[:messages] << { uid:, flags:, body: raw }
+          code = @capabilities.include?("UIDPLUS") ? "[APPENDUID #{mailbox[:uidvalidity]} #{uid}] " : ""
+          socket.write("#{tag} OK #{code}APPEND completed\r\n")
+        else
+          socket.write("#{tag} NO [TRYCREATE] no such mailbox\r\n")
+        end
       when "SELECT", "EXAMINE"
         selected = unquote(args)
         mailbox = @mailboxes[selected]
