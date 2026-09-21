@@ -95,7 +95,7 @@ class LandingPageTest < ActionDispatch::IntegrationTest
     sign_in_as users(:one)
     get mail_accounts_url
     assert_response :success
-    assert_select "header.landing-shell", count: 0
+    assert_select "footer.landing-shell", count: 0
     assert_select "nav a[href=?]", connect_ai_path
   end
 end
