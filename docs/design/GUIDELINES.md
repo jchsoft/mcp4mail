@@ -89,7 +89,7 @@ The line height and tracking travel with the size, so `text-h1` needs no
    `green-deep` is 2.22:1 — neither passes as text or as a non-text indicator. On
    `bg-ink` the accent is `highlight` (10.76:1): kickers, links and status dots.
 
-5. **Four tokens were darkened on purpose; never "restore" the README hexes.**
+5. **Four tokens were moved on purpose; never "restore" the README hexes.**
    `ink-muted` (`#6b7280` → `#5c626e`), `brand-hover` (`#e35f14` → `#f5792f`),
    `brand-deep` (`#c94a12` → `#bc430f`) and `green` (`#1f8a70` → `#1a7a63`) differ
    from the table in [README.md](README.md) because the design's values failed or
@@ -111,8 +111,8 @@ something they do not cover is a sign to extend this list, not to improvise.
 inline-flex items-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover
 ```
 
-**Outline pill** — the secondary action beside a CTA. On a `surface-hover`
-ground (the closing panel) hover to `hover:bg-surface` instead.
+**Outline pill** — the secondary action beside a CTA. On the `brand-tint`
+closing panel hover to `hover:bg-surface` instead.
 
 ```
 inline-flex items-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover
