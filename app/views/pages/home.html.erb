@@ -50,21 +50,77 @@
       role supports a name — on a plain div it is dropped, so the announcement
       the label was written for never happened. figure/figcaption also makes the
       disclaimer the mock's caption rather than a stray paragraph beside it. %>
-  <figure aria-label="<%= t(".hero.demo.label") %>" class="m-0 flex w-full max-w-[460px] flex-col gap-[14px] justify-self-end">
-    <div class="max-w-[85%] self-end rounded-[22px_22px_6px_22px] bg-ink px-5 py-4 text-[16px] leading-[1.5] text-white">
-      <%= t(".hero.demo.question") %>
-    </div>
+  <figure aria-label="<%= t(".hero.demo.label") %>" class="m-0 flex w-full max-w-[460px] flex-col gap-3 justify-self-end">
+    <%# Framed as a chat window, task #12866: two loose bubbles on the page did
+        not read as a conversation. The title bar, one avatar and name per
+        speaker, an earlier exchange fading out above and the composer below say
+        "this happened in your AI's chat" without a word of explanation. %>
+    <div class="overflow-hidden rounded-[24px] border border-line bg-surface shadow-[0_12px_40px_rgba(31,36,48,.08)]">
+      <div class="flex items-center gap-3 border-b border-line bg-paper px-4 py-3">
+        <span aria-hidden="true" class="flex flex-none gap-1.5">
+          <span class="size-2.5 rounded-full bg-line"></span>
+          <span class="size-2.5 rounded-full bg-line"></span>
+          <span class="size-2.5 rounded-full bg-line"></span>
+        </span>
+        <span class="truncate text-[13px] font-semibold text-ink"><%= t(".hero.demo.window_title") %></span>
+        <span class="ml-auto inline-flex flex-none items-center gap-1.5 rounded-full bg-green-tint px-2.5 py-1 text-xs font-semibold text-green-deep">
+          <span aria-hidden="true" class="size-1.5 rounded-full bg-green"></span>
+          <%= t(".hero.demo.connected") %>
+        </span>
+      </div>
 
-    <div class="rounded-[22px_22px_22px_6px] border border-line bg-surface px-[22px] py-5 text-[15px] leading-[1.55] shadow-[0_8px_30px_rgba(31,36,48,.06)]">
-      <p class="mb-2.5 flex items-center gap-2 text-xs font-semibold text-green-deep">
-        <span aria-hidden="true" class="size-2 rounded-full bg-green"></span>
-        <%= t(".hero.demo.source") %>
-      </p>
-      <ul class="flex list-disc flex-col gap-1.5 pl-[18px] text-ink">
-        <% t(".hero.demo.items").each do |item| %>
-          <li><strong><%= item[:label] %></strong> — <%= item[:body] %></li>
-        <% end %>
-      </ul>
+      <div class="flex flex-col gap-4 px-4 pt-3 pb-5 sm:px-5">
+        <%# The earlier exchange is scenery: hidden from assistive technology and
+            faded with a mask rather than opacity. A mask leaves the text colours
+            as they are, so the contrast axe measures is still the real one. %>
+        <div aria-hidden="true" class="flex select-none flex-col gap-3 [mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/.4))]">
+          <div class="flex items-end justify-end gap-2">
+            <p class="max-w-[75%] rounded-[16px_16px_4px_16px] bg-ink px-3.5 py-2 text-[13px] leading-[1.45] text-white"><%= t(".hero.demo.earlier_question") %></p>
+            <%= render "pages/hero_avatar", speaker: :you, size: "size-6" %>
+          </div>
+          <div class="flex items-end gap-2">
+            <%= render "pages/hero_avatar", speaker: :ai, size: "size-6" %>
+            <p class="max-w-[75%] rounded-[16px_16px_16px_4px] border border-line bg-paper px-3.5 py-2 text-[13px] leading-[1.45] text-ink"><%= t(".hero.demo.earlier_answer") %></p>
+          </div>
+        </div>
+
+        <div class="flex items-end justify-end gap-2.5">
+          <div class="flex max-w-[85%] flex-col items-end gap-1">
+            <span class="pr-1 text-xs font-semibold text-ink-muted"><%= t(".hero.demo.you") %></span>
+            <div class="rounded-[20px_20px_6px_20px] bg-ink px-[18px] py-3.5 text-[16px] leading-[1.5] text-white">
+              <%= t(".hero.demo.question") %>
+            </div>
+          </div>
+          <%= render "pages/hero_avatar", speaker: :you, size: "size-8" %>
+        </div>
+
+        <div class="flex items-end gap-2.5">
+          <%= render "pages/hero_avatar", speaker: :ai, size: "size-8" %>
+          <div class="flex min-w-0 flex-col gap-1">
+            <span class="pl-1 text-xs font-semibold text-ink-muted"><%= t(".hero.demo.assistant") %></span>
+            <div class="rounded-[20px_20px_20px_6px] border border-line bg-paper px-[18px] py-4 text-[15px] leading-[1.55]">
+              <p class="mb-2.5 flex items-center gap-2 text-xs font-semibold text-green-deep">
+                <span aria-hidden="true" class="size-2 rounded-full bg-green"></span>
+                <%= t(".hero.demo.source") %>
+              </p>
+              <ul class="flex list-disc flex-col gap-1.5 pl-[18px] text-ink">
+                <% t(".hero.demo.items").each do |item| %>
+                  <li><strong><%= item[:label] %></strong> — <%= item[:body] %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# The composer is a picture of one, not a form: nothing to focus, nothing
+          to announce. %>
+      <div aria-hidden="true" class="flex select-none items-center gap-3 border-t border-line px-4 py-3">
+        <span class="flex-1 truncate rounded-full border border-line bg-paper px-4 py-2 text-[14px] text-ink-muted"><%= t(".hero.demo.composer") %></span>
+        <span class="inline-flex size-9 flex-none items-center justify-center rounded-full bg-brand text-ink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </span>
+      </div>
     </div>
 
     <figcaption class="pl-1.5 text-[13px] text-ink-muted"><%= t(".hero.demo.disclaimer") %></figcaption>

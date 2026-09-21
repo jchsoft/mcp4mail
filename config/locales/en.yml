@@ -88,6 +88,13 @@ en:
         works_with: "Works with Claude Desktop and Cowork, ChatGPT, Grok and anything that speaks MCP."
         demo:
           label: "Example question and answer"
+          window_title: "Chat with your AI"
+          connected: "mcp4mail connected"
+          you: "You"
+          assistant: "AI assistant"
+          earlier_question: "Has the parcel from the e‑shop shipped yet?"
+          earlier_answer: "Yes — it left on Tuesday; the tracking email says Thursday."
+          composer: "Ask about your mail…"
           question: "What did my insurer write this year? A few bullet points."
           source: "Read from your mailbox · 4 messages"
           items:
