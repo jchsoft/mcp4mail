@@ -143,10 +143,11 @@ jobs:
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test:system
 
-      - name: Keep screenshots from failed system tests
+      - name: Keep system test screenshots
         uses: actions/upload-artifact@v7
-        if: failure()
+        if: always()
         with:
-          name: screenshots
+          name: screenshots-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ github.workspace }}/tmp/screenshots
+          retention-days: 14
           if-no-files-found: ignore

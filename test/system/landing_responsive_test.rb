@@ -76,8 +76,6 @@ class LandingResponsiveTest < ApplicationSystemTestCase
   end
 
   test "the page is captured at every width in both languages" do
-    FileUtils.mkdir_p(screenshot_dir)
-
     WIDTHS.product(LOCALES).each do |width, locale|
       open_viewport(width, locale)
 
@@ -86,17 +84,13 @@ class LandingResponsiveTest < ApplicationSystemTestCase
       page.driver.browser.manage.window.resize_to([width + 80, 560].max,
                                                   evaluate_script("document.getElementById('viewport').offsetHeight") + 40)
 
-      path = screenshot_dir.join("landing-#{locale}-#{width}.png")
+      path = screenshot_path("landing-home-#{locale}-#{width}")
       File.binwrite(path, find("#viewport").native.screenshot_as(:png))
       assert_operator File.size(path), :>, 10_000, "#{path} looks empty"
     end
   end
 
   private
-    def screenshot_dir
-      Rails.root.join("tmp/responsive")
-    end
-
     # Loads the page in an iframe of the given width and yields inside it, once
     # per width and language.
     def each_viewport(widths: WIDTHS, locales: LOCALES)
