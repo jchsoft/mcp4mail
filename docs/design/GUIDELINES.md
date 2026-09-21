@@ -110,6 +110,14 @@ Copy these class strings; do not re-derive them. They are the landing page's own
 (`app/views/pages/`, `shared/_marketing_header.html.erb`), and a screen that needs
 something they do not cover is a sign to extend this list, not to improvise.
 
+**Buttons come from `ButtonHelper`** (`app/helpers/button_helper.rb`), which
+carries the pill recipes below plus `max-lg:min-h-11` and `cursor-pointer`:
+`button_link` for an `<a>`, `button_classes(variant)` for `button_to`, and
+`button_submit form, label` for a form, which adds `turbo_submits_with`.
+Variants: `:primary`, `:dark`, `:secondary`, `:destructive`, `:ghost`; sizes
+`:regular` and `:compact`; `on_tint: true` for the brand-tint panel. Never paste a
+pill's class string into a view; change the recipe here and in the helper together.
+
 **Orange pill CTA** — the one primary action of a screen. Ink label (rule 2.1).
 
 ```

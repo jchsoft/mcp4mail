@@ -35,12 +35,12 @@
       <%= button_to t("nav.sign_out"), main_app.session_path,
                     method: :delete,
                     form_class: "inline-flex",
-                    class: "inline-flex cursor-pointer items-center rounded-full border-2 border-ink bg-transparent px-[22px] py-[13px] text-[16px] font-semibold text-ink hover:bg-surface-hover" %>
+                    class: button_classes(:secondary, size: :compact) %>
     <% else %>
       <%= link_to t("nav.sign_in"), main_app.new_session_path,
                   class: "inline-flex items-center text-[15px] font-medium text-ink no-underline hover:text-brand-deep max-lg:min-h-11" %>
-      <%= link_to t("nav.sign_up"), main_app.new_registration_path,
-                  class: "inline-flex items-center rounded-full bg-ink px-5 py-[11px] text-[15px] font-semibold text-white no-underline hover:bg-code-chip" %>
+      <%= button_link t("nav.sign_up"), main_app.new_registration_path,
+                      variant: :dark, size: :compact %>
     <% end %>
   </div>
 </header>

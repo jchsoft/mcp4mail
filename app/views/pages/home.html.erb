@@ -32,11 +32,10 @@
 
     <div class="mt-8 flex flex-wrap gap-3">
       <%# The label stays ink on orange — white would drop the pair below contrast. %>
-      <%= link_to t(".hero.cta_primary"),
-                  authenticated? ? mail_accounts_path : new_registration_path,
-                  class: "inline-flex items-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover" %>
-      <%= link_to t(".hero.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
-                  class: "inline-flex items-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+      <%= button_link t(".hero.cta_primary"),
+                      authenticated? ? mail_accounts_path : new_registration_path %>
+      <%= button_link t(".hero.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
+                      variant: :secondary %>
     </div>
 
     <p class="mt-5 text-sm text-ink-muted"><%= t(".hero.works_with") %></p>
@@ -236,9 +235,9 @@
         <%= t(".built.cta_live") %>
       <% end %>
 
-      <%= link_to t(".built.cta_contribute"),
-                  "https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md",
-                  class: "inline-flex items-center rounded-full border-2 border-ink px-[22px] py-[13px] font-semibold text-ink no-underline hover:bg-surface-hover" %>
+      <%= button_link t(".built.cta_contribute"),
+                      "https://github.com/jchsoft/mcp4mail/blob/main/CONTRIBUTING.md",
+                      variant: :secondary, size: :compact %>
     </div>
   </div>
 
@@ -302,11 +301,11 @@
     </div>
 
     <div class="flex flex-wrap gap-3">
-      <%= link_to t(".close.cta_primary"),
-                  authenticated? ? mail_accounts_path : new_registration_path,
-                  class: "inline-flex items-center rounded-full bg-ink px-[26px] py-[15px] text-[16px] font-bold text-white no-underline hover:bg-code-chip" %>
-      <%= link_to t(".close.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
-                  class: "inline-flex items-center rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface" %>
+      <%= button_link t(".close.cta_primary"),
+                      authenticated? ? mail_accounts_path : new_registration_path,
+                      variant: :dark %>
+      <%= button_link t(".close.cta_secondary"), "https://github.com/jchsoft/mcp4mail",
+                      variant: :secondary, on_tint: true %>
     </div>
   </div>
 </section>
