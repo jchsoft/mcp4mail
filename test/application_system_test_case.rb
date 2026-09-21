@@ -1,6 +1,15 @@
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  # Rails runs test:prepare, and with it tailwindcss:build, only when no test
+  # path is given, and bin/ci ends with assets:clobber. So after a CI run,
+  # `bin/rails test test/system/some_test.rb` served every page unstyled and the
+  # layout tests measured bare HTML (task #12862). Build the stylesheet here
+  # whenever it is missing, so a single file runs against the real CSS.
+  unless Rails.root.join("app/assets/builds/tailwind.css").exist?
+    system("bin/rails", "tailwindcss:build", chdir: Rails.root.to_s, exception: true)
+  end
+
   # One process, however many tests there are. Minitest parallelises a file set
   # over 50 tests by default, and the accessibility pass of task #12708 took the
   # system suite past that line: eight headless Firefoxes on one machine started
