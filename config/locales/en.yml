@@ -324,3 +324,13 @@ en:
         other:
           title: "Other MCP client"
           steps: "Add mcp4mail as a remote MCP server over HTTP with the URL above; there is no command or package to install. If the client asks for an authentication method, choose OAuth."
+  mcp_client_alerts_mailer:
+    new_client:
+      subject: "A new AI client is reading %{account}"
+      intro: "%{client} has just used your mailbox %{account} through mcp4mail for the first time."
+      client: "Client: %{client}"
+      ip: "IP address: %{ip}"
+      unknown_ip: "unknown"
+      time: "Time: %{time}"
+      not_you: "If this was not you, remove the mailbox from mcp4mail and change its app password:"
+      remove: "your mailboxes"

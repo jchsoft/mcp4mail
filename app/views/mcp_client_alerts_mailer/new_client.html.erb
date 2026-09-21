@@ -1,0 +1,9 @@
+<p><%= t(".intro", client: @sighting.client_name, account: @mail_account.label) %></p>
+
+<ul>
+  <li><%= t(".client", client: @sighting.client_name) %></li>
+  <li><%= t(".ip", ip: @sighting.remote_ip.presence || t(".unknown_ip")) %></li>
+  <li><%= t(".time", time: @sighting.first_seen_at.utc.strftime("%Y-%m-%d %H:%M UTC")) %></li>
+</ul>
+
+<p><%= t(".not_you") %> <%= link_to t(".remove"), @url %></p>

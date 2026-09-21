@@ -370,3 +370,13 @@ cs:
         other:
           title: "Jiný MCP klient"
           steps: "Přidejte mcp4mail jako vzdálený MCP server přes HTTP s adresou výše; není co instalovat, žádný příkaz ani balíček. Pokud se klient ptá na způsob ověření, zvolte OAuth."
+  mcp_client_alerts_mailer:
+    new_client:
+      subject: "Nový AI klient čte schránku %{account}"
+      intro: "Schránku %{account} právě poprvé přes mcp4mail použil klient %{client}."
+      client: "Klient: %{client}"
+      ip: "IP adresa: %{ip}"
+      unknown_ip: "neznámá"
+      time: "Čas: %{time}"
+      not_you: "Pokud jste to nebyli vy, odeberte schránku z mcp4mail a změňte její heslo pro aplikace:"
+      remove: "vaše schránky"

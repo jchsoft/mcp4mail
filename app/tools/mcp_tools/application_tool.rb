@@ -110,14 +110,16 @@ module McpTools
       outcome = "search_limited"
       Hitch::MCP::Result.error(exhausted.message)
     ensure
+      mail_account_id = @mail_account&.id || arguments["account_id"]
       McpAuditEvent.record!(
         context:,
         tool_name: self.class.tool_name,
         outcome:,
-        mail_account_id: @mail_account&.id || arguments["account_id"],
+        mail_account_id:,
         rows_returned: @rows_returned,
         duration_ms: ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at) * 1000).round
       )
+      record_sighting(mail_account_id) if mail_account_id
     end
 
     private
@@ -127,6 +129,14 @@ module McpTools
 
       def current_user
         context.principal
+      end
+
+      # authorize! has already proven the account is the caller's. The alert is a side effect
+      # of the call, so a failure here is reported and never turns into a failed tool call.
+      def record_sighting(mail_account_id)
+        Rails.error.handle(ActiveRecord::ActiveRecordError) do
+          McpClientSighting.record!(context:, mail_account_id:)
+        end
       end
 
       def mail_accounts

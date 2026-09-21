@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Everything mcp4mail stores about one person, as a single JSON document: the user row, the
-# mailboxes they connected, the AI clients they granted access to, the audit trail of MCP calls
-# and the header index built from their mail. Message bodies are not in it because they are
-# never stored.
+# mailboxes they connected, the AI clients they granted access to, the audit trail of MCP calls,
+# which client first used which mailbox from where, and the header index built from their mail.
+# Message bodies are not in it because they are never stored.
 #
 # No password material is ever included - not the account password digest, not the encrypted
 # IMAP passwords. MailAccount#serializable_hash drops its own; the user's digest is left out
@@ -47,6 +47,7 @@ class AccountExport
       "mail_accounts" => mail_accounts,
       "oauth_clients" => oauth_clients,
       "mcp_audit_events" => audit_events,
+      "mcp_client_sightings" => client_sightings,
       "messages" => messages
     }
   end
@@ -76,6 +77,10 @@ class AccountExport
           "revoked_at" => token.revoked_at&.iso8601
         }
       end
+    end
+
+    def client_sightings
+      user.mcp_client_sightings.order(:first_seen_at).map(&:serializable_hash)
     end
 
     def audit_events
