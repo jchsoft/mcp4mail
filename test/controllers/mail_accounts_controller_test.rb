@@ -208,6 +208,7 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index counts today's and this week's calls per mailbox" do
+    travel_to Time.zone.local(2026, 9, 23, 12, 0) # a Wednesday noon, so "start of week" is never today
     work = mail_accounts(:work)
     record_event(work, created_at: 2.hours.ago)
     record_event(work, created_at: 3.hours.ago)
