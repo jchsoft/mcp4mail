@@ -201,6 +201,15 @@ grow cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold text-ink-soft hov
 The selected state is driven by `aria-selected`, never by a separate class, so
 what the eye sees and what a screen reader hears cannot drift apart.
 
+**Flash and alert** — two partials, not class strings. `shared/_flash` is the
+per-request message: `#alert` on the danger tokens with `role="alert"`, `#notice`
+on the green tint with `role="status"`, both live regions so a Turbo navigation
+is announced. `shared/_alert` is the in-page callout that belongs to a section:
+`render "shared/alert", variant:, id:, class:, title:, body:` with variants
+`:info` (surface and line: guidance), `:warning` (brand tint) and `:danger`
+(danger tokens, `role="alert"`). Content comes in as `title:`/`body:` rather than
+a block, so the caller's relative `t(".key")` keeps its own scope.
+
 **Text link** — `text-green hover:text-green-deep` with an underline in running
 text on paper; `text-highlight` on the dark panel (rule 2.4).
 

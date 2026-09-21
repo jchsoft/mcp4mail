@@ -16,7 +16,8 @@
             <p class="font-medium"><%= mail_account.label %></p>
             <p class="text-sm text-gray-600"><%= mail_account.username %> · <%= mail_account.host %>:<%= mail_account.port %></p>
             <% if mail_account.last_error.present? %>
-              <p class="text-sm text-red-600"><%= t(".last_error", error: mail_account.last_error) %></p>
+              <%= render "shared/alert", variant: :danger, id: dom_id(mail_account, :last_error), class: "mt-2 text-sm",
+                    body: t(".last_error", error: mail_account.last_error) %>
             <% end %>
             <p class="mt-1 text-sm text-gray-600" id="<%= dom_id(mail_account, :calls) %>">
               <%= t(".calls", today: @today_counts.fetch(mail_account.id, 0), week: @week_counts.fetch(mail_account.id, 0)) %>
