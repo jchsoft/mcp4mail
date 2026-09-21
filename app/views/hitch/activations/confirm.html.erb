@@ -1,0 +1,56 @@
+<%# Overrides hitch-rails' device-activation decision (RFC 8628 §3.3 / §5.4).
+    The code is shown back large so the person can compare it with their
+    device across a desk, and the client is named only by what the server
+    verified. An unverified client gets no Approve button. The form keeps the
+    gem's fields: user_code, and decision=approve|deny. %>
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto my-12 max-w-[560px] rounded-[20px] border border-line bg-surface p-6 sm:p-10 max-sm:my-8">
+  <h1 class="font-heading text-4xl font-extrabold tracking-[-0.02em] text-ink"><%= t(".title") %></h1>
+
+  <div class="mt-6 rounded-2xl border border-line bg-paper px-5 py-5 text-center">
+    <p class="text-sm font-bold tracking-[.04em] text-brand-deep uppercase"><%= t(".code_label") %></p>
+    <p class="mt-2 font-code text-[clamp(32px,10vw,48px)] leading-tight font-bold tracking-[.12em] text-ink [overflow-wrap:anywhere]"><%= @user_code %></p>
+    <p class="mt-2 text-sm text-ink-muted"><%= t(".code_check") %></p>
+  </div>
+
+  <% if @activation.unverified? %>
+    <p class="mt-5 rounded-xl border border-danger bg-danger-tint px-4 py-3 leading-[1.5] text-danger-deep">
+      <%= t(".unverified_html") %>
+    </p>
+  <% else %>
+    <p class="mt-5 text-[17px] leading-[1.6] text-ink-soft [overflow-wrap:anywhere]">
+      <%= t(@activation.operator_registered? ? ".request_operator_html" : ".request_html",
+            client: @activation.display_client_name, brand: @brand_name) %>
+    </p>
+
+    <% if @activation.localhost_only_client? %>
+      <p class="mt-5 rounded-xl border border-brand bg-brand-tint px-4 py-3 leading-[1.5] text-ink">
+        <%= t(".localhost_warning_html") %>
+      </p>
+    <% end %>
+
+    <% if @activation.scopes.present? %>
+      <%= render "hitch/scopes", scopes: @activation.scopes %>
+    <% end %>
+
+    <p class="mt-5 text-sm leading-[1.6] text-ink-muted"><%= t("hitch.authorizations.new.read_only") %></p>
+
+    <p class="mt-2 text-sm text-ink-muted [&_code]:font-code [&_code]:[overflow-wrap:anywhere]">
+      <%= t(".resource") %> <code><%= @activation.grant.resource_uri %></code>
+    </p>
+  <% end %>
+
+  <%= form_with url: activate_path, method: :post, data: { turbo: false }, class: "mt-8 flex flex-wrap gap-3" do %>
+    <%= hidden_field_tag :user_code, @user_code %>
+
+    <% unless @activation.unverified? %>
+      <button type="submit" name="decision" value="approve" class="inline-flex cursor-pointer items-center justify-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover max-sm:w-full">
+        <%= t(".approve") %>
+      </button>
+    <% end %>
+    <button type="submit" name="decision" value="deny" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover max-sm:w-full">
+      <%= t(".deny") %>
+    </button>
+  <% end %>
+</div>

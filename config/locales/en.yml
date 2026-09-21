@@ -351,3 +351,50 @@ en:
       time: "Time: %{time}"
       not_you: "If this was not you, remove the mailbox from mcp4mail and change its app password:"
       remove: "your mailboxes"
+
+  # hitch-rails' consent and device-activation screens, overridden in app/views/hitch/.
+  hitch:
+    scopes_heading: "What it asks for"
+    scopes:
+      mcp: "Search and read the mail in the mailboxes you connected to mcp4mail."
+    activation_alerts:
+      blank_code: "Enter the code your device is showing."
+      bad_submission: "Something went wrong with that submission. Enter the code again."
+      too_many_attempts: "Too many attempts. Wait a minute and try again."
+      unavailable: "Code entry is temporarily unavailable. Try again shortly."
+      unknown_code: "That code isn't waiting for approval. It may have expired or already been used — ask your device for a fresh one."
+    authorizations:
+      new:
+        kicker: "Connect AI"
+        title: "Connect %{client}"
+        request_html: "<strong>%{client}</strong> (<code>%{host}</code>) is asking for access to your %{brand} account. It will act as you."
+        localhost_warning_html: "<strong>This application runs on your own computer.</strong> It will receive access at <code>%{host}</code>, so approve it only if you started it yourself and recognise it."
+        read_only: "Every mailbox stays read-only unless you switch on “Allow the AI to make changes to this mailbox” for it in mcp4mail."
+        resource: "Resource:"
+        approve: "Approve access"
+        deny: "Deny access"
+    activations:
+      new:
+        title: "Connect a device"
+        intro: "A device or program you started — a coding agent, a script, a server — showed you a short code and pointed you here. Enter the code to see what it is asking for."
+        warning_html: "<strong>Only enter a code you asked a device for.</strong> If someone sent you this code — in an email, a chat, a phone call — stop. Entering it would give <em>their</em> device access to your %{brand} account."
+        code_label: "Code"
+        submit: "Check the code"
+      confirm:
+        title: "Approve this device?"
+        code_label: "Code"
+        code_check: "Check that your device shows this same code."
+        unverified_html: "<strong>This application could not be verified right now.</strong> Its identity document did not resolve, so there is nothing trustworthy to show you about who is asking. Approving is disabled; the code will expire on its own. If you started this device yourself, ask it for a fresh code and try again later."
+        request_html: "<strong>%{client}</strong> is asking for access to your %{brand} account. It will act as you."
+        request_operator_html: "<strong>%{client}</strong>, a client registered by this server's operator, is asking for access to your %{brand} account. It will act as you."
+        localhost_warning_html: "<strong>This application runs on someone's own computer.</strong> Approve it only if that computer is yours and you started this yourself."
+        resource: "Resource:"
+        approve: "Approve access"
+        deny: "Deny access"
+      done:
+        approved:
+          title: "Access approved"
+          body: "You can close this page. The device will pick up its access the next time it checks in — usually within a few seconds."
+        denied:
+          title: "Access denied"
+          body: "The device has been told no, and its code no longer works. If this was a code someone sent you, you did exactly the right thing."
