@@ -134,6 +134,13 @@ cs:
         works_with: "Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP."
         demo:
           label: "Ukázka otázky a odpovědi"
+          window_title: "Chat s vaší AI"
+          connected: "mcp4mail připojeno"
+          you: "Vy"
+          assistant: "AI asistent"
+          earlier_question: "Odeslali už ten balík z e‑shopu?"
+          earlier_answer: "Ano — odešel v úterý, podle sledovacího e‑mailu dorazí ve čtvrtek."
+          composer: "Zeptejte se na svou poštu…"
           question: "Co mi letos psali z pojišťovny? Shrň to do pár bodů."
           source: "Přečteno ze schránky · 4 zprávy"
           items:
