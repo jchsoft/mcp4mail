@@ -32,6 +32,19 @@ class McpToolRegistryTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { Class.new(McpToolRegistry).register(writer, scopes: [ "mcp" ]) }
   end
 
+  test "refuses to register a tool without a title" do
+    untitled = Class.new(McpTools::ApplicationTool) { def self.name = "Untitled" }
+
+    assert_raises(ArgumentError) { Class.new(McpToolRegistry).register(untitled, scopes: [ "mcp" ]) }
+  end
+
+  test "destructive declares a write tool in one line" do
+    writer = Class.new(McpTools::ApplicationTool) { destructive true }
+
+    assert_not writer.read_only?
+    assert_equal({ read_only_hint: false, destructive_hint: true, idempotent_hint: false, open_world_hint: false }, writer.annotations)
+  end
+
   test "refuses to register a tool outside ApplicationTool" do
     raw = Class.new(Hitch::MCP::Tool) { def self.name = "RawTool" }
 
