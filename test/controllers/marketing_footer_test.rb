@@ -52,6 +52,14 @@ class MarketingFooterTest < ActionDispatch::IntegrationTest
     assert_select "footer a[href=?]", SELF_HOSTING_URL, text: "Návod k self‑hostingu"
   end
 
+  test "the footer links to the provider guides" do
+    get root_url
+    assert_select "footer a[href=?]", guides_path, text: "Setup guides"
+
+    get root_url(locale: :cs)
+    assert_select "footer a[href=?]", guides_path, text: "Návody k nastavení"
+  end
+
   test "the footer carries its own locale switcher, reflecting the current locale" do
     get root_url
     assert_select "footer a[href=?][aria-current='page']", root_path(locale: "en")

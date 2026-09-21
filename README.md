@@ -88,14 +88,24 @@ How the password is stored and who can decrypt it is described in the
 
 ## MCP endpoint: read-only by design
 
-The first release only reads: no tool sends, moves, deletes or re-flags mail, and the tool registry refuses
-to boot with a tool that does not declare itself read-only. Write tools may come later, behind an explicit
-per-account opt-in.
+Every mailbox is read-only until you say otherwise. Each mailbox on the Mail accounts page has one switch,
+"Allow the AI to make changes to this mailbox", and it is off by default. No scopes, no per-tool
+permissions: that switch is the whole opt-in.
+
+- **Off** (the default): the AI can only read and search. Any tool that would change the mailbox is refused
+  with a message telling the model the mailbox is read-only, and the refusal is written to the audit log as
+  `denied`.
+- **On**: tools that change mail (flag, move, draft and, with your approval, send) may act on that mailbox.
+
+The tool registry refuses to boot with a tool that is neither read-only and non-destructive nor explicitly
+declared as a write tool (`write_tool destructive: ...` on `McpTools::ApplicationTool`), so nothing can
+slip in as a write tool by accident. Write tools announce `readOnlyHint: false` and declare their own
+`destructiveHint`.
 
 What read-only does and does not mean, plainly:
 
-- Nothing can change your mailbox. Folders are opened with IMAP `EXAMINE`, so even reading does not mark
-  messages as seen.
+- Nothing can change a mailbox without its switch. Folders are opened with IMAP `EXAMINE`, so even reading
+  does not mark messages as seen.
 - It does read your mail, whenever an AI client you connected asks. Connect only clients you trust with that.
 - It keeps a copy of message headers (sender, recipients, subject, date, flags, size) in its own database,
   refreshed every 15 minutes, so searches do not hit your mail server each time.

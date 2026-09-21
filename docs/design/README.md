@@ -13,6 +13,14 @@ prototype's CS/EN switcher is inert in this static copy, which is why both block
 render one after the other. Sections carry `data-screen-label` attributes — that is
 how the sibling subtasks address them.
 
+**This file is the token reference; [GUIDELINES.md](GUIDELINES.md) is the rulebook.**
+Every UI change follows GUIDELINES.md — which utilities to use, the component
+recipes, the hard contrast and focus rules. The tables below record the design as
+it was drawn: four colours (`ink-muted`, `brand-hover`, `brand-deep`, `green`) and
+the focus ring were changed for accessibility when they shipped, and the shipped
+values in `app/assets/tailwind/application.css` are the ones to use. Never copy a
+hex from here back into the code.
+
 ## Design tokens
 
 ### Colors

@@ -35,8 +35,8 @@ class HitchOauthTest < ActionDispatch::IntegrationTest
     get "/oauth/authorize", params: authorize_params
 
     assert_response :success
-    assert_select "h1", "Authorize Local Development"
-    assert_select "button", "Approve"
+    assert_select "h1", "Connect Local Development"
+    assert_select "button", "Approve access"
     assert_includes response.body, "mcp4mail"
   end
 

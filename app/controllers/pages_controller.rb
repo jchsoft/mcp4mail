@@ -6,5 +6,6 @@ class PagesController < ApplicationController
   layout "public"
 
   def home
+    @guides = Guide.all
   end
 end

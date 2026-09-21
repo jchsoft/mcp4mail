@@ -22,14 +22,39 @@ class LandingPageTest < ActionDispatch::IntegrationTest
     get root_url(locale: :cs)
     assert_select "html[lang=cs]"
     assert_select "main > section", count: 7
-    assert_select "#faq details", count: 5
+    assert_select "#faq details", count: 6
     assert_select "header nav a[href='#security']", text: "Bezpečnost"
 
     get root_url(locale: :en)
     assert_select "html[lang=en]"
     assert_select "main > section", count: 7
-    assert_select "#faq details", count: 5
+    assert_select "#faq details", count: 6
     assert_select "header nav a[href='#security']", text: "Security"
+  end
+
+  test "the page says who it is for and links every provider guide" do
+    get root_url
+
+    assert_select "main > section:first-of-type p", text: /Your mail is not on Gmail\?/
+    Guide.all.each do |guide|
+      assert_select "main a[href=?]", guide_path(guide), text: guide.title
+    end
+    assert_select "main a[href=?]", guides_path, text: "All setup guides →"
+
+    get root_url(locale: :cs)
+    assert_select "main > section:first-of-type p", text: /Nemáte poštu na Gmailu\?/
+    assert_select "main a[href=?]", guides_path, text: "Všechny návody →"
+  end
+
+  test "the page names no price, plan or upgrade: the project is free" do
+    I18n.available_locales.each do |locale|
+      get root_url(locale: locale)
+
+      text = css_select("body").text
+      [ /\bpric(e|ing)\b/i, /\bplans?\b/i, /\bPro\b/, /\bupgrade\b/i, /\bceník\b/i, /\bpředplatné\b/i ].each do |pattern|
+        assert_no_match pattern, text, "#{locale}: the landing page must not mention #{pattern.source}"
+      end
+    end
   end
 
   test "signed out, every call to action points at registration" do
@@ -70,7 +95,7 @@ class LandingPageTest < ActionDispatch::IntegrationTest
     sign_in_as users(:one)
     get mail_accounts_url
     assert_response :success
-    assert_select "header.landing-shell", count: 0
+    assert_select "footer.landing-shell", count: 0
     assert_select "nav a[href=?]", connect_ai_path
   end
 end

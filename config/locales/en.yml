@@ -1,10 +1,13 @@
 en:
+  buttons:
+    submitting: "Working…"
   meta:
     description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
   nav:
+    label: "Main"
+    account_for: "Account (%{email})"
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
-    account: "Account"
     sign_in: "Sign in"
     sign_up: "Sign up"
     sign_out: "Sign out"
@@ -20,10 +23,12 @@ en:
         password: "Password"
         password_confirmation: "Password confirmation"
       mail_account:
+        email_address: "Email address"
         display_name: "Name (optional)"
         host: "IMAP server"
         port: "Port"
         ssl: "SSL/TLS"
+        tls_mode: "Security"
         username: "Username"
         password: "Password"
 
@@ -38,6 +43,24 @@ en:
     unknown_host: "We could not find a mail server for this address. Check the address, or enter the IMAP server yourself."
     timeout: "The mail server did not answer in time. Try again in a minute, or enter the IMAP server yourself."
 
+  guides:
+    index:
+      title: "Mailbox setup guides · mcp4mail"
+      description: "Step-by-step guides for connecting mail from Seznam and other providers to mcp4mail over IMAP."
+      kicker: "Guides"
+      heading: "Set up your mailbox"
+      lede: "Every provider hides IMAP in a different place. Pick yours and follow the steps — then connect it to your AI in mcp4mail."
+      read_guide: "Read the guide"
+    show:
+      title: "%{provider} over IMAP · mcp4mail guide"
+      back: "All guides"
+      imap_host: "IMAP server"
+      app_password: "Needs an app password"
+      app_password_note: "Your normal password will not work over IMAP — create an app password first."
+      connect:
+        heading: "Now connect it in mcp4mail"
+        body: "IMAP is on and you know your server. Add the mailbox and your AI can read it — nothing gets sent or deleted."
+        cta: "Connect a mailbox"
   pages:
     home:
       title: "mcp4mail - your mail, readable by your AI"
@@ -50,6 +73,7 @@ en:
         security: "Security"
         built: "How it's built"
         faq: "FAQ"
+        guides: "Guides"
         cta: "Connect a mailbox"
         locale_cs: "CS"
         locale_en: "EN"
@@ -61,11 +85,19 @@ en:
         heading_highlight: "readable"
         heading_after: "by your AI."
         lede: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+        audience: "Your mail is not on Gmail? Gmail and Outlook already have native connectors in Claude and ChatGPT — mcp4mail is for everyone else: hosting providers, your own domain, Seznam, iCloud, Fastmail, Zoho and any IMAP mailbox. Free, open source, read-only unless you say otherwise."
         cta_primary: "Connect a mailbox"
         cta_secondary: "Source on GitHub"
         works_with: "Works with Claude Desktop and Cowork, ChatGPT, Grok and anything that speaks MCP."
         demo:
           label: "Example question and answer"
+          window_title: "Chat with your AI"
+          connected: "mcp4mail connected"
+          you: "You"
+          assistant: "AI assistant"
+          earlier_question: "Has the parcel from the e‑shop shipped yet?"
+          earlier_answer: "Yes — it left on Tuesday; the tracking email says Thursday."
+          composer: "Ask about your mail…"
           question: "What did my insurer write this year? A few bullet points."
           source: "Read from your mailbox · 4 messages"
           items:
@@ -76,6 +108,9 @@ en:
             - label: "August"
               body: "reminder: report mileage by 15 Sept."
           disclaimer: "Illustrative. Nothing in the mailbox changed — not even the “read” flag."
+      providers:
+        label: "Works with"
+        all: "All setup guides →"
       why:
         kicker: "What it's for"
         heading: "Ask your mail like a person. Not like a programmer."
@@ -130,6 +165,8 @@ en:
         items:
           - question: "Do I have to install anything?"
             answer: "No. The hosted version runs at mcp4mail.online; add a mailbox and paste the connector address into your AI client. Installing (docker compose) is only for people who want to run the server themselves."
+          - question: "Do I need this for Gmail or Outlook?"
+            answer: "No. Gmail and Outlook have native connectors in Claude, ChatGPT and other AI clients — use those. mcp4mail is for every other mailbox: your hosting provider, your own domain, Seznam, iCloud, Fastmail, Zoho or anything else that speaks IMAP."
           - question: "What is an app password and where do I get one?"
             answer: "A separate password you generate in your mail provider's security settings (Gmail, iCloud, Outlook.com, Yahoo, Fastmail and others). It only works for signing in to mail, can be revoked any time, and never opens your whole account."
           - question: "Can the AI send or delete anything?"
@@ -137,7 +174,7 @@ en:
           - question: "What does mcp4mail store?"
             answer: "A copy of message headers — sender, recipients, subject, date, flags, size — refreshed every 15 minutes so searches don't hit your mail server each time. The content of your questions isn't logged."
           - question: "What does it cost?"
-            answer: "The code is open source under the MIT license — running it yourself is free. Terms of the hosted version are on mcp4mail.online."
+            answer: "Nothing. The code is open source under the MIT license, and both the hosted version at mcp4mail.online and running it yourself are free."
       close:
         heading: "Your mailbox is waiting for its first question."
         lede: "Three steps, five minutes, nothing to install."
@@ -146,6 +183,7 @@ en:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        guides: "Setup guides"
         self_hosting: "Self‑hosting guide"
         live: "Built live on mcptask.online"
         company: "JCHSoft"
@@ -218,6 +256,9 @@ en:
       calls: "AI calls today: %{today}, this week: %{week}"
       recent_activity: "Recent activity"
       activity_loading: "Loading…"
+      writable: "Allow the AI to make changes to this mailbox"
+      writable_hint: "Off: the AI can only read and search. On: it can also flag, move, draft and, with your approval, send."
+      writable_save: "Save"
     activity:
       empty: "No AI has called this mailbox yet."
       when: "%{time} ago"
@@ -230,15 +271,24 @@ en:
         search_limited: "search limited"
     new:
       title: "Add a mailbox"
-      intro: "mcp4mail reads your mail over IMAP. Pick your provider and the server settings fill themselves in."
-      provider: "Provider"
-      provider_other: "Other - I will enter the server myself"
+      intro: "mcp4mail reads your mail over IMAP. Enter your address and password - we find the server settings ourselves."
       username_placeholder: "Usually your full email address"
-      password_hint: "Use an app password wherever your provider offers one: it can be revoked on its own and is not the key to your whole account. It is stored encrypted."
-      display_name_placeholder: "e.g. Work"
-      submit: "Test connection and add"
-      submitting: "Testing connection…"
-      submit_hint: "We sign in to the server first and save the mailbox only if that works."
+      password_hint: "Use an app-specific password if your provider offers one."
+      connection_details: "Connection details"
+      connection_details_hint: "Filled in for you when we find your server. Enter them yourself only if your provider gave you different ones."
+      tls_modes:
+        ssl: "SSL/TLS"
+        starttls: "STARTTLS"
+        none: "None (unencrypted)"
+      submit: "Connect"
+      submitting: "Finding your mail server…"
+      submit_hint: "We sign in to the server first and save the mailbox only if that works. This can take a few seconds."
+      detection:
+        no_server_found: "We could not find a mail server for %{domain}."
+        timeout: "Looking for the mail server for %{domain} took too long."
+        auth_failed: "The server refused the password."
+        imap_disabled: "The server refused the login because IMAP access is switched off for this mailbox."
+        hint: "Check the address and password, or open Connection details and enter the server settings from your provider."
       outcomes:
         auth_failed:
           title: "The server rejected the username or password."
@@ -250,9 +300,12 @@ en:
           title: "The server could not be reached."
           hint: "Check the server name and port. If your provider runs IMAP on a different host than its website, look it up in their help pages."
     create:
-      success: "Mailbox %{name} added. Its messages are being indexed in the background."
+      success: "Connected %{address}. Its messages are being indexed in the background."
     destroy:
       success: "Mailbox %{name} removed."
+    update:
+      writable: "The AI can now make changes to %{name}."
+      read_only: "%{name} is read-only again: the AI can only read and search it."
     providers:
       seznam: "Switch on IMAP access in Seznam Email settings (Settings → POP3/IMAP). With two-step verification, create an app password."
       gmail: "Gmail requires two-step verification and an app password (Google Account → Security → App passwords). Your regular Google password will not work."
@@ -289,3 +342,60 @@ en:
         other:
           title: "Other MCP client"
           steps: "Add mcp4mail as a remote MCP server over HTTP with the URL above; there is no command or package to install. If the client asks for an authentication method, choose OAuth."
+  mcp_client_alerts_mailer:
+    new_client:
+      subject: "A new AI client is reading %{account}"
+      intro: "%{client} has just used your mailbox %{account} through mcp4mail for the first time."
+      client: "Client: %{client}"
+      ip: "IP address: %{ip}"
+      unknown_ip: "unknown"
+      time: "Time: %{time}"
+      not_you: "If this was not you, remove the mailbox from mcp4mail and change its app password:"
+      remove: "your mailboxes"
+
+  # hitch-rails' consent and device-activation screens, overridden in app/views/hitch/.
+  hitch:
+    scopes_heading: "What it asks for"
+    scopes:
+      mcp: "Search and read the mail in the mailboxes you connected to mcp4mail."
+    activation_alerts:
+      blank_code: "Enter the code your device is showing."
+      bad_submission: "Something went wrong with that submission. Enter the code again."
+      too_many_attempts: "Too many attempts. Wait a minute and try again."
+      unavailable: "Code entry is temporarily unavailable. Try again shortly."
+      unknown_code: "That code isn't waiting for approval. It may have expired or already been used — ask your device for a fresh one."
+    authorizations:
+      new:
+        kicker: "Connect AI"
+        title: "Connect %{client}"
+        request_html: "<strong>%{client}</strong> (<code>%{host}</code>) is asking for access to your %{brand} account. It will act as you."
+        localhost_warning_html: "<strong>This application runs on your own computer.</strong> It will receive access at <code>%{host}</code>, so approve it only if you started it yourself and recognise it."
+        read_only: "Every mailbox stays read-only unless you switch on “Allow the AI to make changes to this mailbox” for it in mcp4mail."
+        resource: "Resource:"
+        approve: "Approve access"
+        deny: "Deny access"
+    activations:
+      new:
+        title: "Connect a device"
+        intro: "A device or program you started — a coding agent, a script, a server — showed you a short code and pointed you here. Enter the code to see what it is asking for."
+        warning_html: "<strong>Only enter a code you asked a device for.</strong> If someone sent you this code — in an email, a chat, a phone call — stop. Entering it would give <em>their</em> device access to your %{brand} account."
+        code_label: "Code"
+        submit: "Check the code"
+      confirm:
+        title: "Approve this device?"
+        code_label: "Code"
+        code_check: "Check that your device shows this same code."
+        unverified_html: "<strong>This application could not be verified right now.</strong> Its identity document did not resolve, so there is nothing trustworthy to show you about who is asking. Approving is disabled; the code will expire on its own. If you started this device yourself, ask it for a fresh code and try again later."
+        request_html: "<strong>%{client}</strong> is asking for access to your %{brand} account. It will act as you."
+        request_operator_html: "<strong>%{client}</strong>, a client registered by this server's operator, is asking for access to your %{brand} account. It will act as you."
+        localhost_warning_html: "<strong>This application runs on someone's own computer.</strong> Approve it only if that computer is yours and you started this yourself."
+        resource: "Resource:"
+        approve: "Approve access"
+        deny: "Deny access"
+      done:
+        approved:
+          title: "Access approved"
+          body: "You can close this page. The device will pick up its access the next time it checks in — usually within a few seconds."
+        denied:
+          title: "Access denied"
+          body: "The device has been told no, and its code no longer works. If this was a code someone sent you, you did exactly the right thing."

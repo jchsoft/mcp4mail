@@ -1,10 +1,13 @@
 cs:
+  buttons:
+    submitting: "Pracuji…"
   meta:
     description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
   nav:
+    label: "Hlavní"
+    account_for: "Účet (%{email})"
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
-    account: "Účet"
     sign_in: "Přihlásit se"
     sign_up: "Registrovat"
     sign_out: "Odhlásit se"
@@ -77,13 +80,33 @@ cs:
         password: "Heslo"
         password_confirmation: "Heslo znovu"
       mail_account:
+        email_address: "E-mailová adresa"
         display_name: "Název (nepovinné)"
         host: "IMAP server"
         port: "Port"
         ssl: "SSL/TLS"
+        tls_mode: "Zabezpečení"
         username: "Uživatelské jméno"
         password: "Heslo"
 
+  guides:
+    index:
+      title: "Návody k nastavení schránky · mcp4mail"
+      description: "Návody krok za krokem, jak připojit poštu ze Seznamu a dalších poskytovatelů do mcp4mail přes IMAP."
+      kicker: "Návody"
+      heading: "Nastavte si schránku"
+      lede: "Každý poskytovatel schovává IMAP jinde. Vyberte ten svůj, projděte kroky a pak schránku připojte k AI v mcp4mail."
+      read_guide: "Přečíst návod"
+    show:
+      title: "%{provider} přes IMAP · návod mcp4mail"
+      back: "Všechny návody"
+      imap_host: "IMAP server"
+      app_password: "Vyžaduje heslo pro aplikaci"
+      app_password_note: "Běžné heslo přes IMAP nefunguje — nejdřív si vytvořte heslo pro aplikaci."
+      connect:
+        heading: "Teď ji připojte v mcp4mail"
+        body: "IMAP je zapnutý a server znáte. Přidejte schránku a vaše AI ji bude umět číst — nic se neodešle ani nesmaže."
+        cta: "Připojit schránku"
   pages:
     home:
       title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
@@ -96,6 +119,7 @@ cs:
         security: "Bezpečnost"
         built: "Jak vzniká"
         faq: "Otázky"
+        guides: "Návody"
         cta: "Připojit schránku"
         locale_cs: "CS"
         locale_en: "EN"
@@ -107,11 +131,19 @@ cs:
         heading_highlight: "srozumitelná"
         heading_after: "pro vaši AI."
         lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+        audience: "Nemáte poštu na Gmailu? Gmail a Outlook už mají v Claude a ChatGPT vlastní konektory — mcp4mail je pro všechny ostatní: hostingy, vlastní domény, Seznam, iCloud, Fastmail, Zoho a jakoukoli IMAP schránku. Zdarma, open source, jen pro čtení, dokud neřeknete jinak."
         cta_primary: "Připojit schránku"
         cta_secondary: "Kód na GitHubu"
         works_with: "Funguje s Claude Desktop i Cowork, ChatGPT, Grokem a čímkoli, co umí MCP."
         demo:
           label: "Ukázka otázky a odpovědi"
+          window_title: "Chat s vaší AI"
+          connected: "mcp4mail připojeno"
+          you: "Vy"
+          assistant: "AI asistent"
+          earlier_question: "Odeslali už ten balík z e‑shopu?"
+          earlier_answer: "Ano — odešel v úterý, podle sledovacího e‑mailu dorazí ve čtvrtek."
+          composer: "Zeptejte se na svou poštu…"
           question: "Co mi letos psali z pojišťovny? Shrň to do pár bodů."
           source: "Přečteno ze schránky · 4 zprávy"
           items:
@@ -122,6 +154,9 @@ cs:
             - label: "Srpen"
               body: "připomínka: nahlásit stav tachometru do 15. 9."
           disclaimer: "Ilustrační ukázka. Ve schránce se nic nezměnilo — ani stav „přečteno“."
+      providers:
+        label: "Funguje s"
+        all: "Všechny návody →"
       why:
         kicker: "K čemu to je"
         heading: "Zeptáte se své pošty jako člověka. Ne jako programátor."
@@ -176,6 +211,8 @@ cs:
         items:
           - question: "Musím něco instalovat?"
             answer: "Ne. Hostovaná verze běží na mcp4mail.online; stačí přidat schránku a v AI klientovi vložit adresu konektoru. Instalace (docker compose) je jen pro ty, kdo si chtějí server provozovat sami."
+          - question: "Potřebuji to pro Gmail nebo Outlook?"
+            answer: "Ne. Gmail a Outlook mají v Claude, ChatGPT i dalších AI klientech vlastní konektory — použijte ty. mcp4mail je pro všechny ostatní schránky: u vašeho hostingu, na vlastní doméně, Seznam, iCloud, Fastmail, Zoho nebo cokoli dalšího, co umí IMAP."
           - question: "Co je heslo aplikace a kde ho najdu?"
             answer: "Zvláštní heslo, které vygenerujete v nastavení zabezpečení své pošty (Gmail, iCloud, Outlook.com, Yahoo, Fastmail a další). Funguje jen pro přihlášení k poště, dá se kdykoli zrušit a nikdy neotevře celý váš účet."
           - question: "Může AI něco poslat nebo smazat?"
@@ -183,7 +220,7 @@ cs:
           - question: "Co si mcp4mail ukládá?"
             answer: "Kopii hlaviček zpráv — odesílatel, příjemci, předmět, datum, příznaky, velikost — obnovovanou každých 15 minut, aby hledání nezatěžovalo váš poštovní server. Obsah dotazů se do záznamu neukládá."
           - question: "Kolik to stojí?"
-            answer: "Kód je open source pod licencí MIT — provozovat si ho můžete zdarma. Podmínky hostované verze najdete na mcp4mail.online."
+            answer: "Nic. Kód je open source pod licencí MIT a zdarma je hostovaná verze na mcp4mail.online i provoz na vlastním serveru."
       close:
         heading: "Vaše schránka už čeká na první otázku."
         lede: "Tři kroky, pět minut, nic k instalaci."
@@ -192,6 +229,7 @@ cs:
       footer:
         license: "mcp4mail · MIT"
         github: "GitHub"
+        guides: "Návody k nastavení"
         self_hosting: "Návod k self‑hostingu"
         live: "Vzniká živě na mcptask.online"
         company: "JCHSoft"
@@ -264,6 +302,9 @@ cs:
       calls: "Volání AI dnes: %{today}, tento týden: %{week}"
       recent_activity: "Poslední aktivita"
       activity_loading: "Načítání…"
+      writable: "Povolit AI měnit tuto schránku"
+      writable_hint: "Vypnuto: AI může jen číst a hledat. Zapnuto: může také označovat, přesouvat, psát koncepty a s vaším souhlasem odesílat."
+      writable_save: "Uložit"
     activity:
       empty: "Do této schránky zatím žádná AI nesáhla."
       when: "před %{time}"
@@ -276,15 +317,24 @@ cs:
         search_limited: "limit hledání"
     new:
       title: "Přidat schránku"
-      intro: "mcp4mail čte poštu přes IMAP. Vyberte poskytovatele a nastavení serveru se vyplní samo."
-      provider: "Poskytovatel"
-      provider_other: "Jiný – server zadám sám"
+      intro: "mcp4mail čte poštu přes IMAP. Zadejte adresu a heslo – nastavení serveru najdeme sami."
       username_placeholder: "Obvykle celá e-mailová adresa"
-      password_hint: "Kde to poskytovatel umožňuje, použijte heslo pro aplikace: dá se zrušit samostatně a neotevírá celý váš účet. Ukládáme ho šifrovaně."
-      display_name_placeholder: "např. Práce"
-      submit: "Otestovat připojení a přidat"
-      submitting: "Testuji připojení…"
-      submit_hint: "Nejdřív se k serveru přihlásíme a schránku uložíme, jen když se to podaří."
+      password_hint: "Pokud to poskytovatel umožňuje, použijte heslo pro aplikace."
+      connection_details: "Podrobnosti připojení"
+      connection_details_hint: "Vyplníme je za vás, jakmile server najdeme. Zadejte je sami, jen pokud vám poskytovatel dal jiné."
+      tls_modes:
+        ssl: "SSL/TLS"
+        starttls: "STARTTLS"
+        none: "Žádné (nešifrované)"
+      submit: "Připojit"
+      submitting: "Hledám poštovní server…"
+      submit_hint: "Nejdřív se k serveru přihlásíme a schránku uložíme, jen když se to podaří. Může to trvat pár sekund."
+      detection:
+        no_server_found: "Pro %{domain} jsme nenašli poštovní server."
+        timeout: "Hledání poštovního serveru pro %{domain} trvalo příliš dlouho."
+        auth_failed: "Server odmítl heslo."
+        imap_disabled: "Server přihlášení odmítl, protože má tato schránka vypnutý přístup přes IMAP."
+        hint: "Zkontrolujte adresu a heslo, nebo otevřete Podrobnosti připojení a zadejte nastavení serveru od poskytovatele."
       outcomes:
         auth_failed:
           title: "Server odmítl uživatelské jméno nebo heslo."
@@ -296,9 +346,12 @@ cs:
           title: "Server se nepodařilo zastihnout."
           hint: "Zkontrolujte název serveru a port. Pokud poskytovatel provozuje IMAP na jiném serveru než web, najdete ho v jeho nápovědě."
     create:
-      success: "Schránka %{name} je přidaná. Zprávy se indexují na pozadí."
+      success: "Připojeno: %{address}. Zprávy se indexují na pozadí."
     destroy:
       success: "Schránka %{name} je odebraná."
+    update:
+      writable: "AI teď může měnit schránku %{name}."
+      read_only: "Schránka %{name} je znovu jen pro čtení: AI ji může jen číst a prohledávat."
     providers:
       seznam: "V nastavení Seznam Emailu zapněte přístup přes IMAP (Nastavení → POP3/IMAP). Máte-li dvoufázové ověření, vytvořte heslo pro aplikace."
       gmail: "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace (Účet Google → Zabezpečení → Hesla aplikací). Běžné heslo k Googlu nebude fungovat."
@@ -335,3 +388,60 @@ cs:
         other:
           title: "Jiný MCP klient"
           steps: "Přidejte mcp4mail jako vzdálený MCP server přes HTTP s adresou výše; není co instalovat, žádný příkaz ani balíček. Pokud se klient ptá na způsob ověření, zvolte OAuth."
+  mcp_client_alerts_mailer:
+    new_client:
+      subject: "Nový AI klient čte schránku %{account}"
+      intro: "Schránku %{account} právě poprvé přes mcp4mail použil klient %{client}."
+      client: "Klient: %{client}"
+      ip: "IP adresa: %{ip}"
+      unknown_ip: "neznámá"
+      time: "Čas: %{time}"
+      not_you: "Pokud jste to nebyli vy, odeberte schránku z mcp4mail a změňte její heslo pro aplikace:"
+      remove: "vaše schránky"
+
+  # Obrazovky souhlasu a aktivace zařízení z hitch-rails, přepsané v app/views/hitch/.
+  hitch:
+    scopes_heading: "Oč žádá"
+    scopes:
+      mcp: "Vyhledávat a číst poštu ve schránkách, které jste připojili k mcp4mail."
+    activation_alerts:
+      blank_code: "Zadejte kód, který ukazuje vaše zařízení."
+      bad_submission: "Při odeslání se něco pokazilo. Zadejte kód znovu."
+      too_many_attempts: "Příliš mnoho pokusů. Počkejte minutu a zkuste to znovu."
+      unavailable: "Zadávání kódů je dočasně nedostupné. Zkuste to za chvíli."
+      unknown_code: "Tento kód nečeká na schválení. Možná vypršel nebo už byl použit — požádejte zařízení o nový."
+    authorizations:
+      new:
+        kicker: "Připojit AI"
+        title: "Připojit %{client}"
+        request_html: "<strong>%{client}</strong> (<code>%{host}</code>) žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        localhost_warning_html: "<strong>Tato aplikace běží na vašem vlastním počítači.</strong> Přístup dostane na adrese <code>%{host}</code>, schvalte ji tedy jen tehdy, když jste ji sami spustili a poznáváte ji."
+        read_only: "Každá schránka zůstává jen ke čtení, dokud u ní v mcp4mail nezapnete „Povolit AI měnit tuto schránku“."
+        resource: "Zdroj:"
+        approve: "Schválit přístup"
+        deny: "Zamítnout přístup"
+    activations:
+      new:
+        title: "Připojit zařízení"
+        intro: "Zařízení nebo program, který jste spustili — agent pro programování, skript, server — vám ukázal krátký kód a poslal vás sem. Zadejte kód a uvidíte, oč žádá."
+        warning_html: "<strong>Zadávejte jen kód, o který jste zařízení sami požádali.</strong> Pokud vám kód někdo poslal — e-mailem, v chatu, po telefonu — zastavte se. Jeho zadáním byste <em>jeho</em> zařízení dali přístup k vašemu účtu %{brand}."
+        code_label: "Kód"
+        submit: "Ověřit kód"
+      confirm:
+        title: "Schválit toto zařízení?"
+        code_label: "Kód"
+        code_check: "Zkontrolujte, že vaše zařízení ukazuje stejný kód."
+        unverified_html: "<strong>Tuto aplikaci se teď nepodařilo ověřit.</strong> Její identifikační dokument se nenačetl, takže o žadateli nemáme nic důvěryhodného, co bychom vám ukázali. Schválení je vypnuté; kód sám vyprší. Pokud jste zařízení spustili vy, požádejte ho později o nový kód a zkuste to znovu."
+        request_html: "<strong>%{client}</strong> žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        request_operator_html: "<strong>%{client}</strong>, klient zaregistrovaný provozovatelem tohoto serveru, žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        localhost_warning_html: "<strong>Tato aplikace běží na něčím vlastním počítači.</strong> Schvalte ji jen tehdy, když je ten počítač váš a spustili jste ji sami."
+        resource: "Zdroj:"
+        approve: "Schválit přístup"
+        deny: "Zamítnout přístup"
+      done:
+        approved:
+          title: "Přístup schválen"
+          body: "Tuto stránku můžete zavřít. Zařízení si přístup vyzvedne při příštím ohlášení — obvykle během několika sekund."
+        denied:
+          title: "Přístup zamítnut"
+          body: "Zařízení dostalo odmítnutí a jeho kód už nefunguje. Pokud vám kód někdo poslal, udělali jste přesně to správné."

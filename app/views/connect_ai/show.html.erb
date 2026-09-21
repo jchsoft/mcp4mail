@@ -7,10 +7,8 @@
   <%# The address stays on the page either way: someone can paste it into their
       client now and add the mailbox afterwards. %>
   <% if authenticated? && current_user.mail_accounts.none? %>
-    <p class="mt-6 rounded-lg bg-brand-tint px-3 py-2 text-ink-soft" id="no-mailbox">
-      <%= t(".no_mailbox") %>
-      <%= link_to t(".add_mailbox"), new_mail_account_path, class: "font-semibold text-brand-deep underline hover:no-underline" %>
-    </p>
+    <%= render "shared/alert", variant: :info, id: "no-mailbox", class: "mt-6",
+          body: safe_join([ t(".no_mailbox"), link_to(t(".add_mailbox"), new_mail_account_path, class: "font-semibold text-green underline hover:text-green-deep") ], " ") %>
   <% end %>
 
   <section class="mt-8" data-controller="clipboard" data-clipboard-copied-label-value="<%= t(".copied") %>">

@@ -1,22 +1,23 @@
 require "application_system_test_case"
 
 class FaqSectionTest < ApplicationSystemTestCase
-  test "the five questions render from the locale, in either language" do
+  test "the six questions render from the locale, in either language" do
     visit root_url
 
     within "#faq" do
       # The kicker is the section's h2 since task #12708: the FAQ was the one
       # section the heading outline did not mention.
       assert_selector "h2", text: /questions/i
-      assert_selector "details", count: 5
+      assert_selector "details", count: 6
       assert_selector "summary", text: "Do I have to install anything?"
       assert_selector "summary", text: "What does it cost?"
+      assert_selector "summary", text: "Do I need this for Gmail or Outlook?"
     end
 
     visit root_url(locale: :cs)
 
     within "#faq" do
-      assert_selector "details", count: 5
+      assert_selector "details", count: 6
       assert_selector "summary", text: "Musím něco instalovat?"
       assert_selector "summary", text: "Kolik to stojí?"
     end

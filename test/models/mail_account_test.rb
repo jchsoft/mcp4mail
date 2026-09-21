@@ -16,6 +16,24 @@ class MailAccountTest < ActiveSupport::TestCase
     assert_equal "INBOX", account.default_folder
   end
 
+  test "is read-only until its owner allows changes" do
+    account = build_account
+    account.save!
+
+    assert_not account.reload.writable?
+  end
+
+  test "tls_mode sets ssl and starttls as one choice" do
+    account = build_account(tls_mode: "starttls")
+    assert_equal [ false, true ], [ account.ssl, account.starttls ]
+
+    account.tls_mode = "ssl"
+    assert_equal [ true, false, "ssl" ], [ account.ssl, account.starttls, account.tls_mode ]
+
+    account.tls_mode = "none"
+    assert_equal [ false, false, "none" ], [ account.ssl, account.starttls, account.tls_mode ]
+  end
+
   test "normalises host and username" do
     account = build_account(host: "  IMAP.Example.ORG \n", username: " bob ")
 
