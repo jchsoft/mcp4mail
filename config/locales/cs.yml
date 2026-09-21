@@ -284,6 +284,9 @@ cs:
       calls: "Volání AI dnes: %{today}, tento týden: %{week}"
       recent_activity: "Poslední aktivita"
       activity_loading: "Načítání…"
+      writable: "Povolit AI měnit tuto schránku"
+      writable_hint: "Vypnuto: AI může jen číst a hledat. Zapnuto: může také označovat, přesouvat, psát koncepty a s vaším souhlasem odesílat."
+      writable_save: "Uložit"
     activity:
       empty: "Do této schránky zatím žádná AI nesáhla."
       when: "před %{time}"
@@ -328,6 +331,9 @@ cs:
       success: "Připojeno: %{address}. Zprávy se indexují na pozadí."
     destroy:
       success: "Schránka %{name} je odebraná."
+    update:
+      writable: "AI teď může měnit schránku %{name}."
+      read_only: "Schránka %{name} je znovu jen pro čtení: AI ji může jen číst a prohledávat."
     providers:
       seznam: "V nastavení Seznam Emailu zapněte přístup přes IMAP (Nastavení → POP3/IMAP). Máte-li dvoufázové ověření, vytvořte heslo pro aplikace."
       gmail: "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace (Účet Google → Zabezpečení → Hesla aplikací). Běžné heslo k Googlu nebude fungovat."

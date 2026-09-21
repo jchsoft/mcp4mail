@@ -37,8 +37,9 @@ Hitch.configure do |config|
   config.mcp.server_info = {
     "name" => "mcp4mail",
     "version" => "1.0.0",
-    "instructions" => "mcp4mail is read-only: it lists, searches and reads mail in the accounts the user " \
-      "connected, and never sends, moves, deletes or changes flags on any message."
+    "instructions" => "mcp4mail lists, searches and reads mail in the accounts the user connected. Every " \
+      "mailbox is read-only unless its owner switched on \"Allow the AI to make changes\" for it in mcp4mail; " \
+      "a tool that changes mail is refused on any other mailbox."
   }
 
   # Per user + client. McpTools::ApplicationTool adds a per-user quota across all clients.

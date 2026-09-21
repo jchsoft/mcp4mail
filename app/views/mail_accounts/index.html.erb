@@ -21,6 +21,16 @@
             <p class="mt-1 text-sm text-gray-600" id="<%= dom_id(mail_account, :calls) %>">
               <%= t(".calls", today: @today_counts.fetch(mail_account.id, 0), week: @week_counts.fetch(mail_account.id, 0)) %>
             </p>
+            <%= form_with model: mail_account, class: "mt-2", id: dom_id(mail_account, :writable),
+                  data: { controller: "auto-submit" } do |form| %>
+              <label class="inline-flex items-center gap-2 text-sm font-medium cursor-pointer">
+                <%= form.check_box :writable, id: dom_id(mail_account, :writable_switch), role: "switch",
+                      class: "size-4 accent-blue-600", data: { action: "auto-submit#submit" } %>
+                <%= t(".writable") %>
+              </label>
+              <p class="text-sm text-gray-600"><%= t(".writable_hint") %></p>
+              <noscript><%= form.submit t(".writable_save"), class: "mt-1 text-sm text-blue-600 underline cursor-pointer" %></noscript>
+            <% end %>
             <details class="mt-2 text-sm">
               <summary class="text-blue-600 underline hover:no-underline cursor-pointer"><%= t(".recent_activity") %></summary>
               <%= turbo_frame_tag dom_id(mail_account, :activity), src: activity_mail_account_path(mail_account), loading: "lazy" do %>
