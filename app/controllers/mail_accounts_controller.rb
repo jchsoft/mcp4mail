@@ -18,22 +18,14 @@ class MailAccountsController < ApplicationController
     @mail_account = current_user.mail_accounts.build
   end
 
-  # The connection test runs before the record is saved: a mailbox that cannot be logged
-  # into is not worth storing, and the user is still on the form to fix it.
+  # Most people only know their address and password, so the server settings are detected
+  # from those. Anyone who opened "Connection details" and typed a server in knows better
+  # than the detection does, and gets their settings tested as they are. Either way the
+  # login is proven before anything is saved.
   def create
     @mail_account = current_user.mail_accounts.build(mail_account_params)
-    return render(:new, status: :unprocessable_entity) unless @mail_account.valid?
-
-    result = Imap::ConnectionTester.call(@mail_account)
-    unless result.reachable?
-      @connection_outcome = result.outcome
-      return render(:new, status: :unprocessable_entity)
-    end
-
-    @mail_account.last_connected_at = Time.current
-    @mail_account.save!
-    MailAccountSyncJob.perform_later(@mail_account)
-    redirect_to mail_accounts_path, notice: t(".success", name: @mail_account.label)
+    @mail_account.username = @mail_account.username.presence || @mail_account.email_address
+    manual_settings? ? create_with_manual_settings : create_with_detection
   end
 
   def destroy
@@ -42,6 +34,52 @@ class MailAccountsController < ApplicationController
   end
 
   private
+    def create_with_detection
+      return render_form unless detectable?
+      result = Imap::Autodetect.call(email: @mail_account.email_address, password: @mail_account.password)
+      unless result.success?
+        @detection_failure = result.reason
+        return render_form
+      end
+      # Autodetect only reports settings it has just logged in with, so there is nothing left to test.
+      @mail_account.assign_attributes(host: result.host, port: result.port, tls_mode: result.tls, username: result.username)
+      save_and_sync
+    end
+
+    def create_with_manual_settings
+      return render_form unless @mail_account.valid?
+      result = Imap::ConnectionTester.call(@mail_account)
+      unless result.reachable?
+        @connection_outcome = result.outcome
+        return render_form
+      end
+      save_and_sync
+    end
+
+    def save_and_sync
+      @mail_account.last_connected_at = Time.current
+      @mail_account.save!
+      MailAccountSyncJob.perform_later(@mail_account)
+      redirect_to mail_accounts_path, notice: t("mail_accounts.create.success", address: @mail_account.email_address.presence || @mail_account.label)
+    end
+
+    def render_form
+      render :new, status: :unprocessable_entity
+    end
+
+    def manual_settings?
+      @mail_account.host.present?
+    end
+
+    # Detection would spend its whole budget on an address without a domain before saying so.
+    def detectable?
+      unless @mail_account.email_address.to_s.match?(URI::MailTo::EMAIL_REGEXP)
+        @mail_account.errors.add(:email_address, @mail_account.email_address.blank? ? :blank : :invalid)
+      end
+      @mail_account.errors.add(:password, :blank) if @mail_account.password.blank?
+      @mail_account.errors.empty?
+    end
+
     def set_mail_account
       @mail_account = current_user.mail_accounts.find(params[:id])
     end
@@ -51,6 +89,6 @@ class MailAccountsController < ApplicationController
     end
 
     def mail_account_params
-      params.expect(mail_account: %i[ display_name host port ssl username password ])
+      params.expect(mail_account: %i[ email_address password host port tls_mode username ])
     end
 end
