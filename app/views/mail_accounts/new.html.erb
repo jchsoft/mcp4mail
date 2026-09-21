@@ -19,13 +19,7 @@
   <% end %>
 
   <%= form_with model: @mail_account, class: "contents" do |form| %>
-    <% if @mail_account.errors.any? %>
-      <ul class="mt-5 py-2 px-3 bg-red-50 text-red-500 font-medium rounded-lg" id="errors">
-        <% @mail_account.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    <% end %>
+    <%= render "shared/error_summary", model: @mail_account %>
 
     <div class="my-5">
       <%= form.label :email_address, class: "font-medium" %>

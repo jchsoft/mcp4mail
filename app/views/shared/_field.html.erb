@@ -1,0 +1,58 @@
+<%#
+  One form field: a real <label> tied to the control, the control, an optional hint
+  and the inline error for the attribute, as one unit (docs/design/GUIDELINES.md).
+
+  Locals:
+    form:      the form builder
+    attribute: the attribute / param name
+    type:      :text (default), :email, :password, :number, :select or :checkbox
+    label:     label text; defaults to the model's human attribute name
+    hint:      optional help text under the control
+    error:     inline error; defaults to the first error on form.object for the attribute
+    choices:   the options for :select
+    input:     extra HTML attributes for the control (required, autocomplete, placeholder…)
+
+  No focus:outline-* here or in `input:` — the global two-tone ring is the only focus
+  indicator (rule 2.2).
+%>
+<%
+  type = local_assigns.fetch(:type, :text).to_sym
+  hint = local_assigns[:hint]
+  error = local_assigns.fetch(:error) { form.object&.errors&.[](attribute)&.first }
+  input = local_assigns.fetch(:input, {}).dup
+  label_text = local_assigns[:label]
+
+  control_id = input[:id] || form.field_id(attribute)
+  hint_id = "#{control_id}_hint" if hint.present?
+  error_id = "#{control_id}_error" if error.present?
+  described_by = [ input.dig(:aria, :describedby), hint_id, error_id ].compact_blank.join(" ")
+
+  input[:id] = control_id
+  input[:aria] = input.fetch(:aria, {}).merge(describedby: described_by.presence, invalid: (true if error.present?)).compact
+  input[:class] = class_names(
+    type == :checkbox ? "size-4 flex-none accent-ink" : "mt-2 block w-full rounded-lg border bg-white px-3 py-2 text-ink placeholder:text-field-placeholder",
+    type == :checkbox ? nil : (error.present? ? "border-danger" : "border-field-border"),
+    input[:class]
+  )
+%>
+<div class="my-5">
+  <% if type == :checkbox %>
+    <div class="flex items-center gap-3">
+      <%= form.check_box attribute, input %>
+      <%= form.label attribute, label_text, for: control_id, class: "font-medium text-ink" %>
+    </div>
+  <% else %>
+    <%= form.label attribute, label_text, for: control_id, class: "block font-medium text-ink" %>
+    <% if type == :select %>
+      <%= form.select attribute, local_assigns.fetch(:choices), {}, input %>
+    <% else %>
+      <%= form.public_send "#{type}_field", attribute, input %>
+    <% end %>
+  <% end %>
+  <% if hint.present? %>
+    <p id="<%= hint_id %>" class="mt-2 text-sm text-ink-muted"><%= hint %></p>
+  <% end %>
+  <% if error.present? %>
+    <p id="<%= error_id %>" class="mt-2 text-sm font-medium text-danger"><%= error %></p>
+  <% end %>
+</div>
