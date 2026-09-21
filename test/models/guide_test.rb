@@ -11,6 +11,17 @@ class GuideTest < ActiveSupport::TestCase
     assert_match "<h2", guide.html
   end
 
+  test "every guide has a unique provider, a summary and the IMAP front-matter" do
+    guides = Guide.all
+
+    assert_equal guides.map(&:provider).uniq, guides.map(&:provider)
+    guides.each do |guide|
+      assert guide.summary.present?, "#{guide.provider} has no summary"
+      assert_match(/\A[a-zA-Z0-9.-]+\z/, guide.imap_host, "#{guide.provider} has no imap_host")
+      assert_includes [ true, false ], guide.needs_app_password?, "#{guide.provider} has no needs_app_password"
+    end
+  end
+
   test "all is sorted by the order field" do
     orders = Guide.all.map(&:order)
 
