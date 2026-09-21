@@ -1,0 +1,10 @@
+<%# Overrides hitch-rails' device-activation outcome. The device learns the
+    same answer on its next poll; this page only tells the person they are
+    finished. %>
+<% outcome = @decision == :approved ? "approved" : "denied" %>
+<% content_for :title, t(".#{outcome}.title") %>
+
+<div class="mx-auto my-12 max-w-[560px] rounded-[20px] border border-line bg-surface p-6 sm:p-10 max-sm:my-8">
+  <h1 class="font-heading text-4xl font-extrabold tracking-[-0.02em] text-ink"><%= t(".#{outcome}.title") %></h1>
+  <p class="mt-4 text-[17px] leading-[1.6] text-ink-soft"><%= t(".#{outcome}.body") %></p>
+</div>

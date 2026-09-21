@@ -1,0 +1,48 @@
+<%# Overrides hitch-rails' default consent screen: the gem's copy is English
+    only and ships no styling. The form below must keep what the gem's
+    template posts - every @oauth_params pair as a hidden field, Approve as a
+    submit without a decision, Deny with decision=deny - and turbo: false
+    (see the gem template: the answer is a cross-origin redirect to the
+    client, which Turbo's fetch cannot follow). %>
+<% content_for :title, t(".title", client: @client_name) %>
+
+<div class="mx-auto my-12 max-w-[560px] rounded-[20px] border border-line bg-surface p-6 sm:p-10 max-sm:my-8">
+  <span class="block text-sm font-bold tracking-[.04em] text-brand-deep uppercase"><%= t(".kicker") %></span>
+  <h1 class="mt-2 font-heading text-4xl font-extrabold tracking-[-0.02em] text-ink [overflow-wrap:anywhere]"><%= t(".title", client: @client_name) %></h1>
+
+  <p class="mt-4 text-[17px] leading-[1.6] text-ink-soft [&_code]:rounded-md [&_code]:bg-surface-hover [&_code]:px-2 [&_code]:py-0.5 [&_code]:font-code [&_code]:text-sm [&_code]:text-ink [&_code]:[overflow-wrap:anywhere]">
+    <%= t(".request_html", client: @client_name, host: @redirect_host, brand: @brand_name) %>
+  </p>
+
+  <% if @localhost_only_client %>
+    <p class="mt-5 rounded-xl border border-brand bg-brand-tint px-4 py-3 leading-[1.5] text-ink [&_code]:font-code [&_code]:[overflow-wrap:anywhere]">
+      <%= t(".localhost_warning_html", host: @redirect_host) %>
+    </p>
+  <% end %>
+
+  <% if @scopes.present? %>
+    <%= render "hitch/scopes", scopes: @scopes.split(/\s+/) %>
+  <% end %>
+
+  <p class="mt-5 text-sm leading-[1.6] text-ink-muted"><%= t(".read_only") %></p>
+
+  <% if @resource.present? %>
+    <p class="mt-2 text-sm text-ink-muted [&_code]:font-code [&_code]:[overflow-wrap:anywhere]">
+      <%= t(".resource") %> <code><%= @resource %></code>
+    </p>
+  <% end %>
+
+  <%= form_with url: oauth_authorize_path, method: :post, data: { turbo: false }, class: "mt-8 flex flex-wrap gap-3" do %>
+    <% @oauth_params.each do |key, value| %>
+      <% next if value.blank? %>
+      <%= hidden_field_tag key, value %>
+    <% end %>
+
+    <button type="submit" class="inline-flex cursor-pointer items-center justify-center rounded-full bg-brand px-[26px] py-[15px] text-[16px] font-bold text-ink no-underline hover:bg-brand-hover max-sm:w-full">
+      <%= t(".approve") %>
+    </button>
+    <button type="submit" name="decision" value="deny" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-ink px-[26px] py-[15px] text-[16px] font-semibold text-ink no-underline hover:bg-surface-hover max-sm:w-full">
+      <%= t(".deny") %>
+    </button>
+  <% end %>
+</div>

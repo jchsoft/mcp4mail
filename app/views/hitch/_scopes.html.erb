@@ -1,0 +1,18 @@
+<%# The access a client asks for, as sentences a person reads rather than a
+    list of tokens. The token stays beside its sentence, small, so a
+    technical reader can still match it against what the client asked. %>
+<div class="mt-6">
+  <p class="text-sm font-bold tracking-[.04em] text-brand-deep uppercase"><%= t("hitch.scopes_heading") %></p>
+  <ul class="mt-3 space-y-2">
+    <% scopes.each do |scope| %>
+      <li class="rounded-2xl border border-line bg-paper px-4 py-3">
+        <% if description = hitch_scope_description(scope) %>
+          <span class="block leading-[1.5] text-ink"><%= description %></span>
+          <code class="mt-1 block font-code text-[13px] text-ink-muted [overflow-wrap:anywhere]"><%= scope %></code>
+        <% else %>
+          <code class="font-code text-ink [overflow-wrap:anywhere]"><%= scope %></code>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -396,3 +396,50 @@ cs:
       time: "Čas: %{time}"
       not_you: "Pokud jste to nebyli vy, odeberte schránku z mcp4mail a změňte její heslo pro aplikace:"
       remove: "vaše schránky"
+
+  # Obrazovky souhlasu a aktivace zařízení z hitch-rails, přepsané v app/views/hitch/.
+  hitch:
+    scopes_heading: "Oč žádá"
+    scopes:
+      mcp: "Vyhledávat a číst poštu ve schránkách, které jste připojili k mcp4mail."
+    activation_alerts:
+      blank_code: "Zadejte kód, který ukazuje vaše zařízení."
+      bad_submission: "Při odeslání se něco pokazilo. Zadejte kód znovu."
+      too_many_attempts: "Příliš mnoho pokusů. Počkejte minutu a zkuste to znovu."
+      unavailable: "Zadávání kódů je dočasně nedostupné. Zkuste to za chvíli."
+      unknown_code: "Tento kód nečeká na schválení. Možná vypršel nebo už byl použit — požádejte zařízení o nový."
+    authorizations:
+      new:
+        kicker: "Připojit AI"
+        title: "Připojit %{client}"
+        request_html: "<strong>%{client}</strong> (<code>%{host}</code>) žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        localhost_warning_html: "<strong>Tato aplikace běží na vašem vlastním počítači.</strong> Přístup dostane na adrese <code>%{host}</code>, schvalte ji tedy jen tehdy, když jste ji sami spustili a poznáváte ji."
+        read_only: "Každá schránka zůstává jen ke čtení, dokud u ní v mcp4mail nezapnete „Povolit AI měnit tuto schránku“."
+        resource: "Zdroj:"
+        approve: "Schválit přístup"
+        deny: "Zamítnout přístup"
+    activations:
+      new:
+        title: "Připojit zařízení"
+        intro: "Zařízení nebo program, který jste spustili — agent pro programování, skript, server — vám ukázal krátký kód a poslal vás sem. Zadejte kód a uvidíte, oč žádá."
+        warning_html: "<strong>Zadávejte jen kód, o který jste zařízení sami požádali.</strong> Pokud vám kód někdo poslal — e-mailem, v chatu, po telefonu — zastavte se. Jeho zadáním byste <em>jeho</em> zařízení dali přístup k vašemu účtu %{brand}."
+        code_label: "Kód"
+        submit: "Ověřit kód"
+      confirm:
+        title: "Schválit toto zařízení?"
+        code_label: "Kód"
+        code_check: "Zkontrolujte, že vaše zařízení ukazuje stejný kód."
+        unverified_html: "<strong>Tuto aplikaci se teď nepodařilo ověřit.</strong> Její identifikační dokument se nenačetl, takže o žadateli nemáme nic důvěryhodného, co bychom vám ukázali. Schválení je vypnuté; kód sám vyprší. Pokud jste zařízení spustili vy, požádejte ho později o nový kód a zkuste to znovu."
+        request_html: "<strong>%{client}</strong> žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        request_operator_html: "<strong>%{client}</strong>, klient zaregistrovaný provozovatelem tohoto serveru, žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
+        localhost_warning_html: "<strong>Tato aplikace běží na něčím vlastním počítači.</strong> Schvalte ji jen tehdy, když je ten počítač váš a spustili jste ji sami."
+        resource: "Zdroj:"
+        approve: "Schválit přístup"
+        deny: "Zamítnout přístup"
+      done:
+        approved:
+          title: "Přístup schválen"
+          body: "Tuto stránku můžete zavřít. Zařízení si přístup vyzvedne při příštím ohlášení — obvykle během několika sekund."
+        denied:
+          title: "Přístup zamítnut"
+          body: "Zařízení dostalo odmítnutí a jeho kód už nefunguje. Pokud vám kód někdo poslal, udělali jste přesně to správné."
