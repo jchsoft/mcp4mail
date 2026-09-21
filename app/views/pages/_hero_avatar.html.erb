@@ -1,0 +1,12 @@
+<%# One speaker's avatar in the hero chat mock: the person in the brand tint,
+    the AI dark with a spark. Decorative — the name beside the bubble is what
+    says who is speaking. %>
+<% if speaker == :you %>
+  <span aria-hidden="true" class="inline-flex <%= size %> flex-none items-center justify-center rounded-full bg-brand-tint text-brand-deep">
+    <svg viewBox="0 0 24 24" fill="currentColor" class="size-[60%]"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0z"/></svg>
+  </span>
+<% else %>
+  <span aria-hidden="true" class="inline-flex <%= size %> flex-none items-center justify-center rounded-full bg-ink text-highlight">
+    <svg viewBox="0 0 24 24" fill="currentColor" class="size-[60%]"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+  </span>
+<% end %>

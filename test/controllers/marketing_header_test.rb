@@ -13,15 +13,15 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
     assert_select "header nav a[href='#{new_session_path}']", count: 0
   end
 
-  test "the signed-in pages keep the application layout and its nav" do
+  test "the signed-in pages keep the application layout: its nav and no marketing footer" do
     sign_in_as users(:one)
 
     get mail_accounts_url
-    assert_select "header.landing-shell", count: 0
+    assert_select "footer.landing-shell", count: 0
     assert_select "nav a[href='#{connect_ai_path}']"
 
     get connect_ai_url
-    assert_select "header.landing-shell", count: 0
+    assert_select "footer.landing-shell", count: 0
     assert_select "nav a[href='#{mail_accounts_path}']"
   end
 
@@ -31,6 +31,17 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
 
       ANCHORS.each { |anchor| assert_select "header nav a[href='#{anchor}']", count: 1 }
     end
+  end
+
+  test "the header links to the provider guides, in both locales" do
+    get root_url(locale: :en)
+    assert_select "header nav a[href=?]", guides_path, text: "Guides"
+
+    get root_url(locale: :cs)
+    assert_select "header nav a[href=?]", guides_path, text: "Návody"
+
+    get guides_url
+    assert_select "header nav a[href=?]", guides_path
   end
 
   test "the section labels are translated even though the ids are not" do

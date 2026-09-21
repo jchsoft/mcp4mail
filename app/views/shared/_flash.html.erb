@@ -1,7 +1,10 @@
+<%# Both are live regions, so a flash that arrives with a Turbo navigation is
+    read out: the alert interrupts, the notice waits its turn. Keep #alert and
+    #notice, the tests find the flash through them. %>
 <% if alert = flash[:alert] %>
-  <p class="mt-6 mb-5 inline-block rounded-xl border border-brand bg-brand-tint px-4 py-2.5 font-medium text-brand-deep" id="alert"><%= alert %></p>
+  <p class="mt-6 mb-5 inline-block rounded-xl border border-danger bg-danger-tint px-4 py-2.5 font-medium text-danger-deep" id="alert" role="alert" aria-live="assertive"><%= alert %></p>
 <% end %>
 
 <% if notice = flash[:notice] %>
-  <p class="mt-6 mb-5 inline-block rounded-xl border border-green bg-green-tint px-4 py-2.5 font-medium text-green-deep" id="notice"><%= notice %></p>
+  <p class="mt-6 mb-5 inline-block rounded-xl border border-green bg-green-tint px-4 py-2.5 font-medium text-green-deep" id="notice" role="status" aria-live="polite"><%= notice %></p>
 <% end %>

@@ -2,17 +2,26 @@
 # it is encrypted at rest and kept out of logs, inspect output and serialized forms.
 class MailAccount < ApplicationRecord
   PORT_RANGE = 1..65_535
+  # How the connection is secured: IMAPS from the first byte, a plaintext connection upgraded
+  # with STARTTLS, or - only ever typed in by hand, e.g. for a local bridge - no TLS at all.
+  TLS_MODES = %w[ ssl starttls none ].freeze
 
   belongs_to :user
   has_many :mail_folders, dependent: :delete_all
   has_many :mail_messages, dependent: :delete_all
+  has_many :mcp_client_sightings, dependent: :delete_all
 
   # Non-deterministic on purpose: nothing ever looks an account up by its password.
   encrypts :password
 
+  # What the user typed on the "add mailbox" form. Detection starts from it, but only the
+  # username the server actually accepted is stored.
+  attribute :email_address, :string
+
   normalizes :host, with: ->(host) { host.strip.downcase }
   normalizes :username, with: ->(username) { username.strip }
   normalizes :default_folder, with: ->(folder) { folder.strip }
+  normalizes :email_address, with: ->(email) { email.strip }
 
   validates :host, presence: true
   validates :port, numericality: { only_integer: true, in: PORT_RANGE }
@@ -22,6 +31,17 @@ class MailAccount < ApplicationRecord
 
   def label
     display_name.presence || username
+  end
+
+  def tls_mode
+    if ssl then "ssl" elsif starttls then "starttls" else "none" end
+  end
+
+  # ssl and starttls are two columns but one choice; setting them together keeps them from
+  # ever both being on.
+  def tls_mode=(mode)
+    self.ssl = mode.to_s == "ssl"
+    self.starttls = mode.to_s == "starttls"
   end
 
   def serializable_hash(options = nil)

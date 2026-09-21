@@ -9,9 +9,20 @@ class HomeTest < ApplicationSystemTestCase
     within_hero do
       assert_text "Open source · MIT · free to self‑host"
       assert_text "Works with Claude Desktop and Cowork"
+      assert_text "Your mail is not on Gmail?"
       assert_link "Connect a mailbox", href: new_registration_path
       assert_link "Source on GitHub", href: "https://github.com/jchsoft/mcp4mail"
     end
+  end
+
+  test "the provider strip takes a visitor to their provider's guide" do
+    visit root_url
+
+    click_link "WEDOS"
+
+    assert_current_path guide_path("wedos")
+    within("header") { click_link "Guides" }
+    assert_current_path guides_path
   end
 
   test "the primary call to action points a signed-in visitor at their mailboxes" do
@@ -41,6 +52,26 @@ class HomeTest < ApplicationSystemTestCase
       assert_selector "li strong", text: "Srpen"
       assert_text "Ilustrační ukázka."
     end
+  end
+
+  test "the answer mock reads as a chat: named speakers, an earlier exchange, a composer" do
+    visit root_url
+
+    within "[aria-label='Example question and answer']" do
+      assert_text "Chat with your AI"
+      assert_text "mcp4mail connected"
+      assert_selector "span", text: "You", exact_text: true
+      assert_selector "span", text: "AI assistant", exact_text: true
+      # The earlier exchange and the composer are scenery, kept out of the
+      # accessibility tree.
+      assert_selector "[aria-hidden=true]", text: "Has the parcel from the e‑shop shipped yet?", visible: :all
+      assert_selector "[aria-hidden=true]", text: "Ask about your mail…", visible: :all
+    end
+    screenshot!("landing-hero-en")
+
+    visit root_url(locale: :cs)
+    within("[aria-label='Ukázka otázky a odpovědi']") { assert_text "Chat s vaší AI" }
+    screenshot!("landing-hero-cs")
   end
 
   test "switching to Czech and back changes the page and survives a reload" do

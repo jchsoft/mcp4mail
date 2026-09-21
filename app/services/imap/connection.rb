@@ -32,6 +32,7 @@ module Imap
           ssl: mail_account.ssl,
           open_timeout: timeout
         )
+        imap.starttls if mail_account.starttls
         imap.login(mail_account.username, mail_account.password)
         log_capabilities(imap)
         yield imap

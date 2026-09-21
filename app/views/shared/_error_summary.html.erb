@@ -1,0 +1,15 @@
+<%#
+  The validation summary for a form's model, on the danger tokens. The #errors id
+  and the one-<li>-per-message list are what the controller and system tests hold
+  on to (docs/design/GUIDELINES.md, section 8) — keep both.
+
+  Locals:
+    model: the record whose errors to list; renders nothing when it has none
+%>
+<% if model.errors.any? %>
+  <ul id="errors" class="mt-5 rounded-xl border border-danger bg-danger-tint px-4 py-3 font-medium text-danger-deep">
+    <% model.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+<% end %>

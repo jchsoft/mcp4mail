@@ -14,16 +14,40 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     McpQuota.store_override = nil
   end
 
-  test "every listed tool declares itself read-only and non-destructive" do
+  test "every listed tool but the write tools declares itself read-only and non-destructive" do
     post_mcp(method: "tools/list", token: @token)
 
     assert_response :success
-    tools = response.parsed_body.dig("result", "tools")
-    assert_equal %w[get_attachment get_mail_account get_message list_mail_accounts search_contacts search_messages], tools.map { |tool| tool["name"] }
+    listed = response.parsed_body.dig("result", "tools")
+    assert_equal %w[create_draft create_folder get_attachment get_mail_account get_message list_folders list_mail_accounts move_message search_contacts search_messages set_flags trash_message],
+      listed.map { |tool| tool["name"] }
+    tools = listed.reject { |tool| %w[create_draft create_folder move_message set_flags trash_message].include?(tool["name"]) }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
+      assert_equal true, tool.dig("annotations", "idempotentHint"), tool["name"]
+      assert_equal false, tool.dig("annotations", "openWorldHint"), tool["name"]
     end
+  end
+
+  test "every listed tool carries its human title" do
+    post_mcp(method: "tools/list", token: @token)
+
+    titles = response.parsed_body.dig("result", "tools").to_h { |tool| [ tool["name"], tool.dig("annotations", "title") ] }
+    assert_equal({
+      "create_draft" => "Save a draft",
+      "create_folder" => "Create folder",
+      "list_folders" => "List folders",
+      "move_message" => "Move message",
+      "get_attachment" => "Download attachment",
+      "get_mail_account" => "Show mailbox",
+      "get_message" => "Read message",
+      "list_mail_accounts" => "List mailboxes",
+      "search_contacts" => "Search contacts",
+      "search_messages" => "Search messages",
+      "set_flags" => "Flag or mark read",
+      "trash_message" => "Move to Trash"
+    }, titles)
   end
 
   test "list_mail_accounts returns only the caller's accounts and audits the row count" do

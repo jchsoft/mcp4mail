@@ -41,13 +41,18 @@
   </head>
 
   <body>
-    <%= render "shared/nav" %>
+    <%# First thing in the tab order, as on the public layout. tabindex="-1" on
+        the target is what makes the jump move focus, not only the scroll. %>
+    <%= link_to t("layouts.skip_to_content"), "#main", class: "skip-link" %>
 
-    <main class="container mx-auto mt-12 px-5 flex">
-      <div class="w-full">
-        <%= render "shared/flash" %>
-        <%= yield %>
-      </div>
+    <%= render "shared/app_header" %>
+
+    <%# The same 1160px column and fluid gutter as the landing, so the header
+        and the page body share their edges. A signed-in screen has no hero to
+        carry the vertical rhythm, so the shell brings its own. %>
+    <main id="main" tabindex="-1" class="landing-shell pt-8 pb-20">
+      <%= render "shared/flash" %>
+      <%= yield %>
     </main>
   </body>
 </html>

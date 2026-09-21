@@ -25,7 +25,14 @@ class TailwindThemeTest < ActiveSupport::TestCase
     "highlight" => "#ffd166",
     "surface" => "#ffffff",
     "surface-hover" => "#f1ebe1",
-    "line" => "#ebe4d8"
+    "line" => "#ebe4d8",
+    # Added by task #12800, which had no design value to start from: chosen
+    # against paper and surface, and measured in docs/accessibility/axe-report.md.
+    "danger" => "#b8321c",
+    "danger-deep" => "#8f2613",
+    "danger-tint" => "#fbe3dc",
+    "field-border" => "#8a8378",
+    "field-placeholder" => "#6f6a63"
   }.freeze
 
   REQUIRED_HEADING_SIZES = {
