@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_080000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -117,6 +117,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_170000) do
     t.text "password", null: false
     t.integer "port", default: 993, null: false
     t.boolean "ssl", default: true, null: false
+    t.boolean "starttls", default: false, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.string "username", null: false

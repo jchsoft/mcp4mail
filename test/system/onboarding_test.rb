@@ -1,6 +1,16 @@
 require "application_system_test_case"
+require_relative "../support/fake_autodetect_network"
 
 class OnboardingTest < ApplicationSystemTestCase
+  include FakeAutodetectNetwork
+
+  # Detection has its own tests; here it only has to point at the local fake server, the way
+  # it would point at a real provider. The app server runs in this process, so the swap holds.
+  def detecting(server, &block)
+    result = Imap::Autodetect::Result.new(host: "127.0.0.1", port: server.port, tls: :none, username: "bob", source: :autoconfig)
+    replace_singleton(Imap::Autodetect, :call, ->(**) { result }, &block)
+  end
+
   test "a stranger signs up, adds a mailbox and finds the Connect AI instructions" do
     server = FakeImapServer.new.start
 
@@ -16,22 +26,14 @@ class OnboardingTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: "Add a mailbox"
 
-    select "Gmail / Google Workspace", from: "Provider"
-    assert_field "IMAP server", with: "imap.gmail.com"
-    assert_field "Port", with: "993"
-    assert_checked_field "SSL/TLS"
-    assert_text "app password"
-
-    select "Other - I will enter the server myself", from: "Provider"
-    fill_in "IMAP server", with: "127.0.0.1"
-    fill_in "Port", with: server.port
-    uncheck "SSL/TLS"
-    fill_in "Username", with: "bob"
+    assert_no_selector "#connection-details[open]"
+    assert_text "Use an app-specific password if your provider offers one."
+    fill_in "Email address", with: "bob@example.com"
     fill_in "Password", with: "app-password"
-    fill_in "Name (optional)", with: "Fake"
-    click_on "Test connection and add"
-
-    assert_text "Mailbox Fake added"
+    detecting(server) do
+      click_on "Connect"
+      assert_text "Connected bob@example.com"
+    end
     assert_selector "li", text: "bob · 127.0.0.1:#{server.port}"
 
     click_on "Next: connect your AI app"
@@ -54,14 +56,17 @@ class OnboardingTest < ApplicationSystemTestCase
     assert_current_path root_path
 
     visit new_mail_account_url
+    fill_in "Email address", with: "bob@example.com"
+    fill_in "Password", with: "wrong"
+    find("summary", text: "Connection details").click
     fill_in "IMAP server", with: "127.0.0.1"
     fill_in "Port", with: server.port
-    uncheck "SSL/TLS"
+    select "None (unencrypted)", from: "Security"
     fill_in "Username", with: "bob"
-    fill_in "Password", with: "wrong"
-    click_on "Test connection and add"
+    click_on "Connect"
 
     assert_selector "#connection-error", text: "rejected the username or password"
+    assert_selector "#connection-details[open]"
     assert_field "IMAP server", with: "127.0.0.1"
   ensure
     server&.stop

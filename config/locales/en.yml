@@ -20,10 +20,12 @@ en:
         password: "Password"
         password_confirmation: "Password confirmation"
       mail_account:
+        email_address: "Email address"
         display_name: "Name (optional)"
         host: "IMAP server"
         port: "Port"
         ssl: "SSL/TLS"
+        tls_mode: "Security"
         username: "Username"
         password: "Password"
 
@@ -230,15 +232,24 @@ en:
         search_limited: "search limited"
     new:
       title: "Add a mailbox"
-      intro: "mcp4mail reads your mail over IMAP. Pick your provider and the server settings fill themselves in."
-      provider: "Provider"
-      provider_other: "Other - I will enter the server myself"
+      intro: "mcp4mail reads your mail over IMAP. Enter your address and password - we find the server settings ourselves."
       username_placeholder: "Usually your full email address"
-      password_hint: "Use an app password wherever your provider offers one: it can be revoked on its own and is not the key to your whole account. It is stored encrypted."
-      display_name_placeholder: "e.g. Work"
-      submit: "Test connection and add"
-      submitting: "Testing connection…"
-      submit_hint: "We sign in to the server first and save the mailbox only if that works."
+      password_hint: "Use an app-specific password if your provider offers one."
+      connection_details: "Connection details"
+      connection_details_hint: "Filled in for you when we find your server. Enter them yourself only if your provider gave you different ones."
+      tls_modes:
+        ssl: "SSL/TLS"
+        starttls: "STARTTLS"
+        none: "None (unencrypted)"
+      submit: "Connect"
+      submitting: "Finding your mail server…"
+      submit_hint: "We sign in to the server first and save the mailbox only if that works. This can take a few seconds."
+      detection:
+        no_server_found: "We could not find a mail server for %{domain}."
+        timeout: "Looking for the mail server for %{domain} took too long."
+        auth_failed: "The server refused the password."
+        imap_disabled: "The server refused the login because IMAP access is switched off for this mailbox."
+        hint: "Check the address and password, or open Connection details and enter the server settings from your provider."
       outcomes:
         auth_failed:
           title: "The server rejected the username or password."
@@ -250,7 +261,7 @@ en:
           title: "The server could not be reached."
           hint: "Check the server name and port. If your provider runs IMAP on a different host than its website, look it up in their help pages."
     create:
-      success: "Mailbox %{name} added. Its messages are being indexed in the background."
+      success: "Connected %{address}. Its messages are being indexed in the background."
     destroy:
       success: "Mailbox %{name} removed."
     providers:

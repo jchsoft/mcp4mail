@@ -77,10 +77,12 @@ cs:
         password: "Heslo"
         password_confirmation: "Heslo znovu"
       mail_account:
+        email_address: "E-mailová adresa"
         display_name: "Název (nepovinné)"
         host: "IMAP server"
         port: "Port"
         ssl: "SSL/TLS"
+        tls_mode: "Zabezpečení"
         username: "Uživatelské jméno"
         password: "Heslo"
 
@@ -276,15 +278,24 @@ cs:
         search_limited: "limit hledání"
     new:
       title: "Přidat schránku"
-      intro: "mcp4mail čte poštu přes IMAP. Vyberte poskytovatele a nastavení serveru se vyplní samo."
-      provider: "Poskytovatel"
-      provider_other: "Jiný – server zadám sám"
+      intro: "mcp4mail čte poštu přes IMAP. Zadejte adresu a heslo – nastavení serveru najdeme sami."
       username_placeholder: "Obvykle celá e-mailová adresa"
-      password_hint: "Kde to poskytovatel umožňuje, použijte heslo pro aplikace: dá se zrušit samostatně a neotevírá celý váš účet. Ukládáme ho šifrovaně."
-      display_name_placeholder: "např. Práce"
-      submit: "Otestovat připojení a přidat"
-      submitting: "Testuji připojení…"
-      submit_hint: "Nejdřív se k serveru přihlásíme a schránku uložíme, jen když se to podaří."
+      password_hint: "Pokud to poskytovatel umožňuje, použijte heslo pro aplikace."
+      connection_details: "Podrobnosti připojení"
+      connection_details_hint: "Vyplníme je za vás, jakmile server najdeme. Zadejte je sami, jen pokud vám poskytovatel dal jiné."
+      tls_modes:
+        ssl: "SSL/TLS"
+        starttls: "STARTTLS"
+        none: "Žádné (nešifrované)"
+      submit: "Připojit"
+      submitting: "Hledám poštovní server…"
+      submit_hint: "Nejdřív se k serveru přihlásíme a schránku uložíme, jen když se to podaří. Může to trvat pár sekund."
+      detection:
+        no_server_found: "Pro %{domain} jsme nenašli poštovní server."
+        timeout: "Hledání poštovního serveru pro %{domain} trvalo příliš dlouho."
+        auth_failed: "Server odmítl heslo."
+        imap_disabled: "Server přihlášení odmítl, protože má tato schránka vypnutý přístup přes IMAP."
+        hint: "Zkontrolujte adresu a heslo, nebo otevřete Podrobnosti připojení a zadejte nastavení serveru od poskytovatele."
       outcomes:
         auth_failed:
           title: "Server odmítl uživatelské jméno nebo heslo."
@@ -296,7 +307,7 @@ cs:
           title: "Server se nepodařilo zastihnout."
           hint: "Zkontrolujte název serveru a port. Pokud poskytovatel provozuje IMAP na jiném serveru než web, najdete ho v jeho nápovědě."
     create:
-      success: "Schránka %{name} je přidaná. Zprávy se indexují na pozadí."
+      success: "Připojeno: %{address}. Zprávy se indexují na pozadí."
     destroy:
       success: "Schránka %{name} je odebraná."
     providers:
