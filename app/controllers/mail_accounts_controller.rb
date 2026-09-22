@@ -5,6 +5,7 @@ class MailAccountsController < ApplicationController
     @mail_accounts = current_user.mail_accounts.order(:created_at)
     @today_counts = audit_events.count_by_account(since: Time.current.beginning_of_day)
     @week_counts = audit_events.count_by_account(since: Time.current.beginning_of_week)
+    @awaiting_approval = current_user.outgoing_messages.awaiting_approval.includes(:mail_account).order(:created_at).group_by(&:mail_account_id)
   end
 
   # The frame under each mailbox, fetched when its disclosure is opened: the index itself

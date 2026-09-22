@@ -1,7 +1,8 @@
 # One row per MCP tool call: who called which tool, for which account, when, how it ended and how
 # many rows came back. Arguments are deliberately not stored - a search query is mail content too.
 class McpAuditEvent < ApplicationRecord
-  OUTCOMES = %w[ok error denied rate_limited search_limited].freeze
+  # sent and discarded are the owner's answer to a send_message waiting for approval.
+  OUTCOMES = %w[ok error denied rate_limited search_limited sent discarded].freeze
 
   # How many events the activity list shows per mailbox. Long enough to cover a session's
   # worth of calls, short enough to stay a glance rather than a log.

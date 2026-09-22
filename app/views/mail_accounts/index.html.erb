@@ -15,6 +15,9 @@
           <div class="min-w-0">
             <p class="font-medium"><%= mail_account.label %></p>
             <p class="text-sm text-gray-600"><%= mail_account.username %> · <%= mail_account.host %>:<%= mail_account.port %></p>
+            <% if mail_account.smtp_host.present? %>
+              <p class="text-sm text-gray-600" id="<%= dom_id(mail_account, :smtp) %>"><%= t(".smtp", host: mail_account.smtp_host, port: mail_account.smtp_port) %></p>
+            <% end %>
             <% if mail_account.last_error.present? %>
               <%= render "shared/alert", variant: :danger, id: dom_id(mail_account, :last_error), class: "mt-2 text-sm",
                     body: t(".last_error", error: mail_account.last_error) %>
@@ -31,6 +34,18 @@
               </label>
               <p class="text-sm text-gray-600"><%= t(".writable_hint") %></p>
               <noscript><%= form.submit t(".writable_save"), class: "mt-1 text-sm text-blue-600 underline cursor-pointer" %></noscript>
+            <% end %>
+            <% if (waiting = @awaiting_approval.fetch(mail_account.id, [])).any? %>
+              <section class="mt-3" id="<%= dom_id(mail_account, :awaiting_approval) %>" aria-labelledby="<%= dom_id(mail_account, :awaiting_approval_heading) %>">
+                <h2 class="font-semibold" id="<%= dom_id(mail_account, :awaiting_approval_heading) %>"><%= t(".awaiting_approval", number: waiting.size) %></h2>
+                <% waiting.each do |outgoing_message| %>
+                  <div class="mt-3 rounded-xl border border-line p-4" id="<%= dom_id(outgoing_message) %>">
+                    <%= render "outgoing_messages/preview", outgoing_message: %>
+                    <%= render "outgoing_messages/actions", send_url: approve_outgoing_message_path(outgoing_message),
+                          discard_url: discard_outgoing_message_path(outgoing_message) %>
+                  </div>
+                <% end %>
+              </section>
             <% end %>
             <details class="mt-2 text-sm">
               <summary class="text-blue-600 underline hover:no-underline cursor-pointer"><%= t(".recent_activity") %></summary>

@@ -17,6 +17,15 @@ Rails.application.routes.draw do
   get "sitemap.xml", to: "sitemaps#show", as: :sitemap, defaults: { format: :xml }
   get "connect-ai", to: "connect_ai#show", as: :connect_ai
   get "attachment-downloads/:token", to: "attachment_downloads#show", as: :attachment_download
+  get "outgoing/:token/approve", to: "outgoing_approvals#show", as: :outgoing_approval
+  post "outgoing/:token/approve", to: "outgoing_approvals#approve"
+  post "outgoing/:token/discard", to: "outgoing_approvals#discard", as: :outgoing_discard
+  resources :outgoing_messages, only: [] do
+    member do
+      post :approve
+      post :discard
+    end
+  end
   get "account-exports/:token", to: "account_exports#show", as: :account_export_download
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

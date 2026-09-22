@@ -10,6 +10,7 @@ class MailAccount < ApplicationRecord
   has_many :mail_folders, dependent: :delete_all
   has_many :mail_messages, dependent: :delete_all
   has_many :mcp_client_sightings, dependent: :delete_all
+  has_many :outgoing_messages, dependent: :delete_all
 
   # Non-deterministic on purpose: nothing ever looks an account up by its password.
   encrypts :password
@@ -31,6 +32,12 @@ class MailAccount < ApplicationRecord
 
   def label
     display_name.presence || username
+  end
+
+  # The From address of anything this account sends or drafts. Most logins are the address
+  # itself; a bare login is completed with the server's host.
+  def sender_address
+    username.include?("@") ? username : "#{username}@#{host}"
   end
 
   def tls_mode
