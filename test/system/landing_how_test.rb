@@ -11,6 +11,15 @@ class LandingHowTest < ApplicationSystemTestCase
   CHIP_TINT = "rgb(241, 235, 225)".freeze
   LINE = "rgb(235, 228, 216)".freeze
 
+  test "the header's anchor jumps to the section" do
+    visit root_url
+
+    click_link "How"
+
+    assert_equal "#{root_url}#how", page.current_url
+    assert_selector "section#how ol > li", count: 3
+  end
+
   test "the section renders its three steps and the client row from the locale, in either language" do
     visit root_url
 

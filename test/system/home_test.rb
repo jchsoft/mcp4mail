@@ -93,6 +93,29 @@ class HomeTest < ApplicationSystemTestCase
     assert_selector "html[lang=en]"
   end
 
+  # The one journey that crosses from the public layout into the internal one:
+  # switch_locale (app/controllers/concerns/localization.rb) stores the choice
+  # in session[:locale], so it should survive both the sign-in redirect and a
+  # trip back to the page it started on.
+  test "a locale chosen on the landing page survives signing in and going back" do
+    visit root_url
+    within("header") { click_link "CS" }
+    assert_selector "html[lang=cs]"
+
+    visit mail_accounts_url
+    assert_current_path new_session_path
+    assert_selector "html[lang=cs]"
+    fill_in placeholder: "Enter your email address", with: users(:one).email_address
+    fill_in placeholder: "Enter your password", with: "password"
+    click_button I18n.t("sessions.new.submit", locale: :cs)
+
+    assert_current_path mail_accounts_path
+    assert_selector "html[lang=cs]"
+
+    visit root_url
+    assert_selector "html[lang=cs]"
+  end
+
   test "the closing and header calls to action follow a signed-in visitor to their mailboxes" do
     visit new_session_url
     fill_in placeholder: "Enter your email address", with: users(:one).email_address
@@ -102,6 +125,28 @@ class HomeTest < ApplicationSystemTestCase
 
     within("main section:last-of-type") { assert_link "Connect a mailbox", href: mail_accounts_path }
     within("header") { assert_link "Connect a mailbox", href: mail_accounts_path }
+  end
+
+  # Headless Firefox will not give a window narrower than about 500 CSS px, so
+  # the phone width is measured inside an iframe of the exact width instead, as
+  # in landing_responsive_test.rb. The signed-in header carries a nav and an
+  # account link the signed-out one does not, so it earns its own check rather
+  # than reusing that file's signed-out measurements.
+  test "the signed-in header and closing CTA fit a 375px phone" do
+    visit new_session_url
+    fill_in placeholder: "Enter your email address", with: users(:one).email_address
+    fill_in placeholder: "Enter your password", with: "password"
+    click_button "Sign in"
+    assert_current_path root_path
+
+    open_phone_frame(root_url)
+    within_frame(find("#viewport")) do
+      overflow = evaluate_script("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+      assert_operator overflow, :<=, 0, "the signed-in landing must not scroll sideways at 375px"
+
+      within("header") { assert_link "Connect a mailbox", href: mail_accounts_path }
+      within("main section:last-of-type") { assert_link "Connect a mailbox", href: mail_accounts_path }
+    end
   end
 
   test "the highlighted word sits on a gradient behind its descenders" do
@@ -135,5 +180,23 @@ class HomeTest < ApplicationSystemTestCase
     # several sections now, hence :first-of-type.
     def within_hero(&block)
       within("main section:first-of-type", &block)
+    end
+
+    # Loads url in an iframe of exactly 375 CSS px, the width headless Firefox
+    # itself will not go below. Same origin, so the signed-in session carries
+    # over into the frame.
+    def open_phone_frame(url)
+      page.driver.browser.manage.window.resize_to(455, 900)
+      page.execute_script(<<~JS, url)
+        const [src] = arguments;
+        document.body.replaceChildren();
+        document.body.style.margin = "0";
+        const frame = document.createElement("iframe");
+        frame.id = "viewport";
+        frame.style.cssText = "width:375px;height:900px;border:0;display:block;color-scheme:light";
+        frame.src = src;
+        document.body.appendChild(frame);
+      JS
+      within_frame(find("#viewport")) { assert_selector "header" }
     end
 end

@@ -6,6 +6,15 @@ class SecuritySectionTest < ApplicationSystemTestCase
   BRAND = "rgb(242, 107, 29)".freeze
   CODE_CHIP = "rgb(52, 59, 74)".freeze
 
+  test "the header's anchor jumps to the section" do
+    visit root_url
+
+    click_link "Security"
+
+    assert_equal "#{root_url}#security", page.current_url
+    assert_selector "section#security h3", count: 4
+  end
+
   test "the panel renders its four guarantees from the locale, in either language" do
     visit root_url
 
