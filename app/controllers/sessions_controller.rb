@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to after_authentication_url
     else
-      redirect_to new_session_path, alert: t(".failure")
+      redirect_to new_session_path(email_address: params[:email_address]), alert: t(".failure")
     end
   end
 
