@@ -105,8 +105,8 @@ class HomeTest < ApplicationSystemTestCase
     visit mail_accounts_url
     assert_current_path new_session_path
     assert_selector "html[lang=cs]"
-    fill_in placeholder: "Enter your email address", with: users(:one).email_address
-    fill_in placeholder: "Enter your password", with: "password"
+    fill_in placeholder: I18n.t("sessions.new.email_placeholder", locale: :cs), with: users(:one).email_address
+    fill_in placeholder: I18n.t("sessions.new.password_placeholder", locale: :cs), with: "password"
     click_button I18n.t("sessions.new.submit", locale: :cs)
 
     assert_current_path mail_accounts_path

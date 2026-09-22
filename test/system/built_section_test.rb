@@ -9,7 +9,7 @@ class BuiltSectionTest < ApplicationSystemTestCase
   test "the header's anchor jumps to the section" do
     visit root_url
 
-    click_link "Built"
+    within("header") { click_link "How it's built" }
 
     assert_equal "#{root_url}#built", page.current_url
     assert_selector "section#built h2"
