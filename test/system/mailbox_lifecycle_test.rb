@@ -51,6 +51,10 @@ class MailboxLifecycleTest < ApplicationSystemTestCase
     fill_in "Port", with: dead_port
     select "None (unencrypted)", from: "Security"
     fill_in "Username", with: "bob"
+    # The submit button's turbo_submits_with state is not asserted here: both a
+    # loopback ECONNREFUSED and a failed local TLS handshake resolve too fast for a
+    # headless browser to reliably observe the swapped-in "Finding your mail
+    # server…" text before the error response replaces it.
     click_on "Connect"
 
     assert_selector "#connection-error", text: "could not be reached"
