@@ -19,9 +19,9 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     listed = response.parsed_body.dig("result", "tools")
-    assert_equal %w[create_draft create_folder get_attachment get_mail_account get_message list_folders list_mail_accounts move_message search_contacts search_messages set_flags trash_message],
+    assert_equal %w[create_draft create_folder get_attachment get_mail_account get_message get_outgoing_status list_folders list_mail_accounts move_message search_contacts search_messages send_message set_flags trash_message],
       listed.map { |tool| tool["name"] }
-    tools = listed.reject { |tool| %w[create_draft create_folder move_message set_flags trash_message].include?(tool["name"]) }
+    tools = listed.reject { |tool| %w[create_draft create_folder move_message send_message set_flags trash_message].include?(tool["name"]) }
     tools.each do |tool|
       assert_equal true, tool.dig("annotations", "readOnlyHint"), tool["name"]
       assert_equal false, tool.dig("annotations", "destructiveHint"), tool["name"]
@@ -42,9 +42,11 @@ class McpToolsTest < ActionDispatch::IntegrationTest
       "get_attachment" => "Download attachment",
       "get_mail_account" => "Show mailbox",
       "get_message" => "Read message",
+      "get_outgoing_status" => "Check a sent email",
       "list_mail_accounts" => "List mailboxes",
       "search_contacts" => "Search contacts",
       "search_messages" => "Search messages",
+      "send_message" => "Send email (after approval)",
       "set_flags" => "Flag or mark read",
       "trash_message" => "Move to Trash"
     }, titles)

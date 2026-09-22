@@ -1,0 +1,13 @@
+<%= t(".intro", client: @client_name, account: @mail_account.label) %>
+
+<%= t("outgoing_messages.preview.from") %>: <%= @mail_account.sender_address %>
+<%= t("outgoing_messages.preview.to") %>: <%= @outgoing_message.to_addresses.join(", ") %>
+<% if @outgoing_message.cc_addresses.any? %><%= t("outgoing_messages.preview.cc") %>: <%= @outgoing_message.cc_addresses.join(", ") %>
+<% end %><% if @outgoing_message.bcc_addresses.any? %><%= t("outgoing_messages.preview.bcc") %>: <%= @outgoing_message.bcc_addresses.join(", ") %>
+<% end %><%= t("outgoing_messages.preview.subject") %>: <%= @outgoing_message.subject %>
+
+<%= @outgoing_message.body %>
+
+<%= t(".review") %>: <%= @url %>
+<%= t(".expires", hours: OutgoingMessage::EXPIRES_IN.in_hours.to_i) %>
+<%= t(".not_you") %>

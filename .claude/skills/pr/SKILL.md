@@ -81,6 +81,21 @@ Write the body to a file rather than passing it inline whenever it has more than
 a line or two: a shell mangles newlines in an argument, and a pull-request
 description with the summary on one line is the thing a reviewer sees first.
 
+**The description follows the project's template when it has one.** On a
+GitHub project that is `.github/pull_request_template.md`, on GitLab
+`.gitlab/merge_request_templates/Default.md`, or whatever `pr_template: path:`
+in `config/mcptask_runner.yml` names — the same file the CREATE PULL REQUEST
+step points at. Read it and write the body under ITS headings, at their
+levels, not the ones you would use by habit: a body missing a mandatory
+section — any heading the template does not mark `(optional)` — is refused
+before the host is asked. The error names the missing headings and prints the
+template's skeleton; the fix is to rewrite the body around them and run the
+command again. A project with no template accepts any description that
+carries the task's link — `https://mcptask.online/<account>/tasks/<id>`, the
+whole path, which is the one shape mcptask.online reads a pull request back
+to its task by. The CREATE PULL REQUEST step prints that link finished; copy
+it. A bare domain or `(account #id)` is refused before the host is asked.
+
 ## Find
 
 ```bash

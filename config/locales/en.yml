@@ -259,6 +259,8 @@ en:
       writable: "Allow the AI to make changes to this mailbox"
       writable_hint: "Off: the AI can only read and search. On: it can also flag, move, draft and, with your approval, send."
       writable_save: "Save"
+      smtp: "Sends through %{host}:%{port}"
+      awaiting_approval: "Waiting for your approval (%{number})"
     activity:
       empty: "No AI has called this mailbox yet."
       when: "%{time} ago"
@@ -269,6 +271,8 @@ en:
         denied: "denied"
         rate_limited: "rate limited"
         search_limited: "search limited"
+        sent: "sent by you"
+        discarded: "discarded by you"
     new:
       title: "Add a mailbox"
       intro: "mcp4mail reads your mail over IMAP. Enter your address and password - we find the server settings ourselves."
@@ -343,6 +347,44 @@ en:
         other:
           title: "Other MCP client"
           steps: "Add mcp4mail as a remote MCP server over HTTP with the URL above; there is no command or package to install. If the client asks for an authentication method, choose OAuth."
+  outgoing_messages:
+    preview:
+      from: "From"
+      to: "To"
+      cc: "Cc"
+      bcc: "Bcc"
+      subject: "Subject"
+    actions:
+      send: "Send"
+      sending: "Sending…"
+      discard: "Discard"
+    approve:
+      success: "Sent to %{recipient}."
+    discard:
+      success: "Discarded. Nothing was sent."
+    not_pending: "This email is no longer waiting for approval."
+    send_failed: "The email was not sent: %{error}. Try again, or discard it."
+  outgoing_approvals:
+    show:
+      title: "Approve an email"
+      lede: "Your AI app wants to send this email from %{account}. Nothing leaves until you press Send."
+      states:
+        pending: "This email is waiting for approval."
+        sent: "This email has been sent."
+        discarded: "This email was discarded. Nothing was sent."
+        expired: "This link has expired after 24 hours. Nothing was sent."
+    approve:
+      success: "Sent."
+    discard:
+      success: "Discarded. Nothing was sent."
+  outgoing_messages_mailer:
+    approval:
+      subject: "Approve: %{subject} to %{recipient}"
+      no_subject: "(no subject)"
+      intro: "%{client} wants to send this email from your mailbox %{account}. It will not be sent unless you approve it."
+      review: "Review and send"
+      expires: "The link works once and expires in %{hours} hours; after that nothing is sent."
+      not_you: "If you did not ask your AI app for this, ignore this email or discard the message."
   mcp_client_alerts_mailer:
     new_client:
       subject: "A new AI client is reading %{account}"

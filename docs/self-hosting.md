@@ -88,7 +88,20 @@ the `mcp4mail_production*` databases, or you create them yourself.
 
 The app sends password-reset emails. No SMTP server is configured out of the box; set
 `config.action_mailer.smtp_settings` and `default_url_options` in `config/environments/production.rb` for
-your provider if you need them.
+your provider if you need them. Those settings are also how the approval emails for `send_message` reach
+mailbox owners, so set them before you let an AI send mail.
+
+### Sending mail needs the owner's approval
+
+The `send_message` tool never sends anything by itself. It stores the message, emails the mailbox owner a
+preview with a single-use link that is valid for 24 hours, and only the owner pressing Send (on that page or
+under the mailbox on the Mailboxes page) sends it over the mailbox's own SMTP server and files a copy in its
+Sent folder. The outgoing server is detected on the first send from the same sources as the IMAP settings.
+Limits are fixed: at most 10 messages waiting per mailbox and 20 recipients per message.
+
+On the hosted instance this approval is mandatory and will stay that way. A self-hoster who is the only user
+of their instance could later add an environment flag that approves messages automatically (for example by
+calling `OutgoingMessage#approve!` right after `send_message` stores one); no such flag exists today.
 
 ## Security notes
 
