@@ -4,7 +4,7 @@
 #   domains  - exact email domains
 #   messages - Imap::Autodetect reason => key under imap_problems in the locale file;
 #              "any" answers every reason not listed
-#   guide    - slug of the "Show me how" guide, filled in once the guides exist
+#   guide    - slug of the "Show me how" guide (a Guide provider key), empty when none exists
 icloud:
   name: iCloud
   domains: [icloud.com, me.com, mac.com]

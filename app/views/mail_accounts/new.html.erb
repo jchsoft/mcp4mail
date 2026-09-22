@@ -32,7 +32,7 @@
       <%= form.password_field :password, required: true, autocomplete: "new-password", class: "block shadow-sm rounded-md border border-gray-400 focus:outline-solid focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
       <p class="mt-2 text-sm text-gray-600">
         <%= t(".password_hint") %>
-        <%= link_to t(".show_me_how"), guides_path, class: "font-medium underline" %>
+        <%= link_to t(".show_me_how"), guides_path, target: "_blank", rel: "noopener", class: "font-medium underline" %>
       </p>
     </div>
 
