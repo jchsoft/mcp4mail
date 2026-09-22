@@ -74,8 +74,28 @@ class Imap::ConnectionProblemTest < ActiveSupport::TestCase
     assert_equal :unknown_host, problem(:no_server_found, "").key
   end
 
-  test "carries the guide slug, nil until a guide exists" do
-    assert_not problem(:auth_failed, "bob@icloud.com").guide?
+  test "carries the guide slug once a guide exists for the provider" do
+    result = problem(:auth_failed, "bob@icloud.com")
+
+    assert result.guide?
+    assert_equal "icloud", result.guide
+  end
+
+  test "has no guide slug for a provider without one yet" do
+    assert_not problem(:auth_failed, "bob@yandex.com").guide?
+  end
+
+  test ".guide_for looks up the provider by domain alone, no reason needed" do
+    assert_equal "icloud", Imap::ConnectionProblem.guide_for("bob@ICLOUD.com")
+    assert_nil Imap::ConnectionProblem.guide_for("bob@yandex.com")
+    assert_nil Imap::ConnectionProblem.guide_for("bob@example.com")
+  end
+
+  test "every guide slug in the providers file names an existing guide" do
+    slugs = Imap::ConnectionProblem::PROVIDERS.values.filter_map { |entry| entry["guide"] }
+
+    assert_not_empty slugs
+    slugs.each { |slug| assert Guide.find(slug), slug }
   end
 
   test "every message key used by the providers file exists in the locale" do

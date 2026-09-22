@@ -320,6 +320,7 @@ cs:
       intro: "mcp4mail čte poštu přes IMAP. Zadejte adresu a heslo – nastavení serveru najdeme sami."
       username_placeholder: "Obvykle celá e-mailová adresa"
       password_hint: "Pokud to poskytovatel umožňuje, použijte heslo pro aplikace."
+      show_me_how: "Ukázat jak na to"
       connection_details: "Podrobnosti připojení"
       connection_details_hint: "Vyplníme je za vás, jakmile server najdeme. Zadejte je sami, jen pokud vám poskytovatel dal jiné."
       tls_modes:
