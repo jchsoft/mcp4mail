@@ -6,6 +6,15 @@ class BuiltSectionTest < ApplicationSystemTestCase
   GREEN = "rgb(26, 122, 99)".freeze
   LINE = "rgb(235, 228, 216)".freeze
 
+  test "the header's anchor jumps to the section" do
+    visit root_url
+
+    within("header") { click_link "How it's built" }
+
+    assert_equal "#{root_url}#built", page.current_url
+    assert_selector "section#built h2"
+  end
+
   test "the section explains the workflow and renders its inline markup, in either language" do
     visit root_url
 
@@ -27,6 +36,18 @@ class BuiltSectionTest < ApplicationSystemTestCase
       assert_text "Merge není vydání"
     end
     screenshot!("landing-built-cs")
+  end
+
+  test "the live call to action is reachable, in both locales" do
+    [ :en, :cs ].each do |locale|
+      visit root_url(locale: locale)
+      within("#built") { click_link I18n.t("pages.home.built.cta_live", locale: locale) }
+      assert_equal "https://mcptask.online/live", page.current_url
+    end
+  ensure
+    # Leaves the browser on an external origin otherwise, which keeps the next
+    # test's session cookie (and its locale) from being cleared between tests.
+    visit root_url
   end
 
   test "both calls to action point at the live board and the contributing guide" do

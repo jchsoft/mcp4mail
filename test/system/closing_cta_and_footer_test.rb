@@ -9,6 +9,22 @@ class ClosingCtaAndFooterTest < ApplicationSystemTestCase
   # what only a browser can answer: that the footer switcher actually switches,
   # and that both blocks wrap instead of overflowing on a phone.
 
+  test "the footer's external links are reachable and land on the right page, in both locales" do
+    [ :en, :cs ].each do |locale|
+      visit root_url(locale: locale)
+      within("footer") { click_link I18n.t("pages.home.footer.self_hosting", locale: locale) }
+      assert_equal "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md", page.current_url
+
+      visit root_url(locale: locale)
+      within("footer") { click_link I18n.t("pages.home.footer.github", locale: locale) }
+      assert_equal "https://github.com/jchsoft/mcp4mail", page.current_url
+    end
+  ensure
+    # Leaves the browser on an external origin otherwise, which keeps the next
+    # test's session cookie (and its locale) from being cleared between tests.
+    visit root_url
+  end
+
   test "the footer language switcher changes the language and marks the current one" do
     visit root_url
 
