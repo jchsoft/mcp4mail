@@ -27,6 +27,7 @@ class SecuritySectionTest < ApplicationSystemTestCase
       assert_link "Self‑hosting guide",
                   href: "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md"
     end
+    screenshot!("landing-security-en")
 
     visit root_url(locale: :cs)
 
@@ -36,6 +37,7 @@ class SecuritySectionTest < ApplicationSystemTestCase
       assert_selector "h3", text: "Jen čtení, zabudované"
       assert_link "Návod k self‑hostingu"
     end
+    screenshot!("landing-security-cs")
   end
 
   test "the panel is the page's one dark surface, with a yellow kicker and link" do
