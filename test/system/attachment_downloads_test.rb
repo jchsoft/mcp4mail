@@ -10,7 +10,10 @@ require "application_system_test_case"
 class AttachmentDownloadsTest < ApplicationSystemTestCase
   DOWNLOAD_DIR = Rails.root.join("tmp/downloads/system-#{Process.pid}").to_s
 
-  driven_by :selenium, using: :headless_firefox, screen_size: [ 1400, 1400 ] do |options|
+  # Its own driver name: under the shared :selenium name Capybara would reuse whichever
+  # browser an earlier test already started, one without these preferences.
+  driven_by :selenium, using: :headless_firefox, screen_size: [ 1400, 1400 ],
+    options: { name: :headless_firefox_downloads } do |options|
     options.add_preference("intl.accept_languages", "en")
     options.add_preference("browser.download.folderList", 2)
     options.add_preference("browser.download.dir", DOWNLOAD_DIR)
