@@ -5,7 +5,7 @@ module McpTools
   # OutgoingMessage and emails the owner a link. The owner's Send is what reaches SMTP.
   class SendMessage < ApplicationTool
     tool_name "send_message"
-    title "Send an email (after the owner approves)"
+    title "Send email (after approval)"
     write_tool destructive: true
 
     WAITING = "Waiting for approval: the owner has to confirm this email before it is sent."

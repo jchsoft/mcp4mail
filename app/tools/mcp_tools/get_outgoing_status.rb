@@ -4,7 +4,7 @@ module McpTools
   # Lets the model answer "did it go out" about a message it handed to send_message.
   class GetOutgoingStatus < ApplicationTool
     tool_name "get_outgoing_status"
-    title "Check a sent email's approval"
+    title "Check a sent email"
 
     description <<~TEXT.squish
       Whether an email prepared with send_message was sent. state is "pending" (waiting for the
