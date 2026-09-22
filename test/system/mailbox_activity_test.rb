@@ -27,5 +27,6 @@ class MailboxActivityTest < ApplicationSystemTestCase
     assert_selector "li", text: "Claude Desktop"
     assert_selector "li", text: "rows: 7"
     assert_selector "li", text: "denied"
+    screenshot!("mailbox-activity-en")
   end
 end

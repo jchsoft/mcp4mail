@@ -22,12 +22,14 @@ class OnboardingTest < ApplicationSystemTestCase
     fill_in "Email address", with: "stranger@example.com"
     fill_in "Password", with: "long-enough", match: :prefer_exact
     fill_in "Password confirmation", with: "long-enough"
+    screenshot!("onboarding-register-en")
     click_on "Create account"
 
     assert_selector "h1", text: "Add a mailbox"
 
     assert_no_selector "#connection-details[open]"
     assert_text "Use an app-specific password if your provider offers one."
+    screenshot!("onboarding-add-mailbox-en")
     fill_in "Email address", with: "bob@example.com"
     fill_in "Password", with: "app-password"
     detecting(server) do
@@ -35,6 +37,7 @@ class OnboardingTest < ApplicationSystemTestCase
       assert_text "Connected bob@example.com"
     end
     assert_selector "li", text: "bob · 127.0.0.1:#{server.port}"
+    screenshot!("onboarding-mailbox-list-en")
 
     click_on "Next: connect your AI app"
     assert_selector "h1", text: "Connect AI"
@@ -68,6 +71,7 @@ class OnboardingTest < ApplicationSystemTestCase
     assert_selector "#connection-error", text: "rejected the username or password"
     assert_selector "#connection-details[open]"
     assert_field "IMAP server", with: "127.0.0.1"
+    screenshot!("onboarding-connection-error-en")
   ensure
     server&.stop
   end
@@ -78,5 +82,6 @@ class OnboardingTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: "Propojit s AI"
     assert_selector "#client-claude", text: "V claude.ai nebo Claude Desktop"
+    screenshot!("connect_ai-claude-cs")
   end
 end

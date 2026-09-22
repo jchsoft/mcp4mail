@@ -8,6 +8,11 @@ class LandingWhyTest < ApplicationSystemTestCase
 
     assert_equal "#{root_url}#why", page.current_url
     assert_selector "section#why blockquote", count: 3
+    screenshot!("landing-why-en")
+
+    visit root_url(locale: :cs)
+    click_link "K čemu"
+    screenshot!("landing-why-cs")
   end
 
   test "the cards stack on a phone and sit side by side on a desktop" do

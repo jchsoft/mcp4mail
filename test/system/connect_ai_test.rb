@@ -7,6 +7,7 @@ class ConnectAiTest < ApplicationSystemTestCase
     assert_selector "[role=tab]", count: 4
     assert_selector "#client-claude", text: "Add custom connector"
     assert_no_selector "#client-cursor"
+    screenshot!("connect_ai-claude-en")
 
     click_on "Cursor"
 
@@ -14,6 +15,13 @@ class ConnectAiTest < ApplicationSystemTestCase
     assert_no_selector "#client-claude"
     assert_selector "#tab-cursor[aria-selected=true]"
     assert_selector "#tab-claude[aria-selected=false]"
+    screenshot!("connect_ai-cursor-en")
+
+    click_on "ChatGPT"
+    screenshot!("connect_ai-chatgpt-en")
+
+    click_on "Other MCP client"
+    screenshot!("connect_ai-other-en")
   end
 
   test "the Copy button puts the server URL on the clipboard and says so" do
@@ -29,6 +37,7 @@ class ConnectAiTest < ApplicationSystemTestCase
     click_on "Copy"
 
     assert_selector "button", exact_text: "Copied"
+    screenshot!("connect_ai-copied-en")
     assert_equal page.evaluate_script("window.copied"), find("#server-url").value
     assert_selector "button", exact_text: "Copy", wait: 5
   end
