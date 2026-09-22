@@ -1,0 +1,15 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto max-w-[720px] py-10">
+  <%= render "shared/page_header", title: t(".title"),
+        lede: t(".lede", account: @outgoing_message.mail_account.label) %>
+
+  <% if @outgoing_message.awaiting_approval? %>
+    <%= render "outgoing_messages/preview", outgoing_message: @outgoing_message %>
+    <%= render "outgoing_messages/actions", send_url: outgoing_approval_path(params[:token]),
+          discard_url: outgoing_discard_path(params[:token]) %>
+  <% else %>
+    <%= render "shared/alert", id: "outgoing-state", variant: @outgoing_message.sent? ? :info : :warning,
+          body: t(".states.#{@outgoing_message.state}") %>
+  <% end %>
+</div>

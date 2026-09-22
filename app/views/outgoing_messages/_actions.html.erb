@@ -1,0 +1,10 @@
+<%# Send and Discard for one message waiting for approval.
+
+    Locals:
+      send_url:    where Send posts
+      discard_url: where Discard posts %>
+<div class="mt-4 flex flex-wrap items-center gap-3">
+  <%= button_to t("outgoing_messages.actions.send"), send_url, class: button_classes(:primary, size: :compact),
+        form: { data: { turbo_submits_with: t("outgoing_messages.actions.sending") } } %>
+  <%= button_to t("outgoing_messages.actions.discard"), discard_url, class: button_classes(:ghost, size: :compact) %>
+</div>

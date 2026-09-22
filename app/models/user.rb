@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :mcp_audit_events, dependent: :delete_all
   has_many :mcp_client_sightings, dependent: :delete_all
   has_many :account_export_files, dependent: :delete_all
+  has_many :outgoing_messages, dependent: :delete_all
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

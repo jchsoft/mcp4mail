@@ -23,11 +23,13 @@ class McpToolRegistry < Hitch::MCP::Registry
   register McpTools::GetAttachment, scopes: [ "mcp" ]
   register McpTools::GetMailAccount, scopes: [ "mcp" ]
   register McpTools::GetMessage, scopes: [ "mcp" ]
+  register McpTools::GetOutgoingStatus, scopes: [ "mcp" ]
   register McpTools::ListFolders, scopes: [ "mcp" ]
   register McpTools::ListMailAccounts, scopes: [ "mcp" ]
   register McpTools::MoveMessage, scopes: [ "mcp" ]
   register McpTools::SearchContacts, scopes: [ "mcp" ]
   register McpTools::SearchMessages, scopes: [ "mcp" ]
+  register McpTools::SendMessage, scopes: [ "mcp" ]
   register McpTools::SetFlags, scopes: [ "mcp" ]
   register McpTools::TrashMessage, scopes: [ "mcp" ]
 

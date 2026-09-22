@@ -16,6 +16,7 @@ A controller that needs the current user reads `Current.user`, not the session c
 - `Current`: request-scoped `session` (and the `user` it delegates to). Read this instead of threading the session through method calls.
 - `Session`, `User`: a session belongs to a user; `User` has `has_secure_password` and owns `mail_accounts`, `mcp_audit_events`, `mcp_client_sightings`, `account_export_files`.
 - The mail trio: `MailAccount` is one IMAP mailbox's credentials (encrypted password) and TLS settings; `MailFolder` tracks a folder's sync cursor and calls `adopt_uidvalidity!` to wipe and re-sync when the server's UIDVALIDITY changes underneath it; `MailMessage` is the locally indexed header cache (no bodies — those are fetched live over IMAP) with a diacritic- and case-insensitive `search` scope.
+- `OutgoingMessage`: an email `send_message` prepared, waiting for the owner. Only `approve!` (the emailed single-use link, or the button on the mailboxes page) hands it to `Smtp::Sender`; no tool and no job sends mail. Its caps (10 waiting per mailbox, 20 recipients) are fixed.
 - `MailProvider`: the static `PRESETS` list behind the new-mailbox form. Adding a host here is the entire feature; it is not a settings screen and must not become one.
 - The MCP guardrails, each protecting against a different failure mode:
   - `McpQuota`: a generic fixed-window rate counter (backed by Hitch's shared store). Other guards build on it rather than counting requests themselves.

@@ -1,0 +1,7 @@
+<p><%= t(".intro", client: @client_name, account: @mail_account.label) %></p>
+
+<%= render "outgoing_messages/preview", outgoing_message: @outgoing_message %>
+
+<p><%= link_to t(".review"), @url %></p>
+<p><%= t(".expires", hours: OutgoingMessage::EXPIRES_IN.in_hours.to_i) %></p>
+<p><%= t(".not_you") %></p>

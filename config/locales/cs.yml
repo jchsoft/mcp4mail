@@ -305,6 +305,8 @@ cs:
       writable: "Povolit AI měnit tuto schránku"
       writable_hint: "Vypnuto: AI může jen číst a hledat. Zapnuto: může také označovat, přesouvat, psát koncepty a s vaším souhlasem odesílat."
       writable_save: "Uložit"
+      smtp: "Odesílá přes %{host}:%{port}"
+      awaiting_approval: "Čeká na vaše schválení (%{number})"
     activity:
       empty: "Do této schránky zatím žádná AI nesáhla."
       when: "před %{time}"
@@ -315,6 +317,8 @@ cs:
         denied: "odmítnuto"
         rate_limited: "překročen limit"
         search_limited: "limit hledání"
+        sent: "odesláno vámi"
+        discarded: "zahozeno vámi"
     new:
       title: "Přidat schránku"
       intro: "mcp4mail čte poštu přes IMAP. Zadejte adresu a heslo – nastavení serveru najdeme sami."
@@ -389,6 +393,44 @@ cs:
         other:
           title: "Jiný MCP klient"
           steps: "Přidejte mcp4mail jako vzdálený MCP server přes HTTP s adresou výše; není co instalovat, žádný příkaz ani balíček. Pokud se klient ptá na způsob ověření, zvolte OAuth."
+  outgoing_messages:
+    preview:
+      from: "Od"
+      to: "Komu"
+      cc: "Kopie"
+      bcc: "Skrytá kopie"
+      subject: "Předmět"
+    actions:
+      send: "Odeslat"
+      sending: "Odesílám…"
+      discard: "Zahodit"
+    approve:
+      success: "Odesláno na %{recipient}."
+    discard:
+      success: "Zahozeno. Nic se neodeslalo."
+    not_pending: "Tento e-mail už na schválení nečeká."
+    send_failed: "E-mail se neodeslal: %{error}. Zkuste to znovu, nebo ho zahoďte."
+  outgoing_approvals:
+    show:
+      title: "Schválit e-mail"
+      lede: "Vaše AI aplikace chce ze schránky %{account} odeslat tento e-mail. Dokud nestisknete Odeslat, nic neodejde."
+      states:
+        pending: "Tento e-mail čeká na schválení."
+        sent: "Tento e-mail byl odeslán."
+        discarded: "Tento e-mail byl zahozen. Nic se neodeslalo."
+        expired: "Platnost odkazu po 24 hodinách vypršela. Nic se neodeslalo."
+    approve:
+      success: "Odesláno."
+    discard:
+      success: "Zahozeno. Nic se neodeslalo."
+  outgoing_messages_mailer:
+    approval:
+      subject: "Schválit: %{subject} pro %{recipient}"
+      no_subject: "(bez předmětu)"
+      intro: "%{client} chce ze schránky %{account} odeslat tento e-mail. Bez vašeho schválení se neodešle."
+      review: "Zkontrolovat a odeslat"
+      expires: "Odkaz funguje jednou a vyprší za %{hours} hodin; potom se nic neodešle."
+      not_you: "Pokud jste o nic takového svou AI aplikaci nežádali, tento e-mail ignorujte nebo zprávu zahoďte."
   mcp_client_alerts_mailer:
     new_client:
       subject: "Nový AI klient čte schránku %{account}"
