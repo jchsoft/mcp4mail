@@ -101,6 +101,28 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#detection-error", /The server refused the password/
   end
 
+  test "create links the matching guide when the detected provider has one" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :auth_failed, raw_response: "[AUTHENTICATIONFAILED] nope")) do
+      post mail_accounts_path, params: detection_params(email_address: "bob@icloud.com")
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#detection-error a[href='#{guide_path(:icloud)}'][target=_blank]", "Show me how"
+  end
+
+  test "create links the guides index when the detected provider has no guide" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :no_server_found)) do
+      post mail_accounts_path, params: detection_params(email_address: "bob@nowhere.example")
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#detection-error a[href='#{guides_path}'][target=_blank]", "Show me how"
+  end
+
   test "create does not run detection without a usable address" do
     sign_in_as @user
 

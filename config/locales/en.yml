@@ -274,6 +274,7 @@ en:
       intro: "mcp4mail reads your mail over IMAP. Enter your address and password - we find the server settings ourselves."
       username_placeholder: "Usually your full email address"
       password_hint: "Use an app-specific password if your provider offers one."
+      show_me_how: "Show me how"
       connection_details: "Connection details"
       connection_details_hint: "Filled in for you when we find your server. Enter them yourself only if your provider gave you different ones."
       tls_modes:

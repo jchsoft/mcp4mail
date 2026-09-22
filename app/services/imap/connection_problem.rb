@@ -22,6 +22,18 @@ module Imap
       new(reason: reason, email: email, raw_response: raw_response).call
     end
 
+    # The "Show me how" target for this email's provider, nil until a guide exists for it.
+    # Needs only the address, not a failure reason, so a view can offer it before anything
+    # has gone wrong.
+    def self.guide_for(email)
+      provider_for(email)&.fetch("guide")
+    end
+
+    def self.provider_for(email)
+      domain = email.to_s.split("@").last.to_s.strip.downcase
+      PROVIDERS.values.find { |entry| entry.fetch("domains").include?(domain) }
+    end
+
     def initialize(reason:, email:, raw_response: nil)
       @reason = reason.to_sym
       @email = email.to_s
@@ -51,8 +63,7 @@ module Imap
     def provider
       return @provider if defined?(@provider)
 
-      domain = email.split("@").last.to_s.strip.downcase
-      @provider = PROVIDERS.values.find { |entry| entry.fetch("domains").include?(domain) }
+      @provider = self.class.provider_for(email)
     end
   end
 end

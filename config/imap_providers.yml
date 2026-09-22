@@ -9,22 +9,22 @@ icloud:
   name: iCloud
   domains: [icloud.com, me.com, mac.com]
   messages: { auth_failed: app_password }
-  guide:
+  guide: icloud
 fastmail:
   name: Fastmail
   domains: [fastmail.com, fastmail.fm]
   messages: { auth_failed: app_password }
-  guide:
+  guide: fastmail
 zoho:
   name: Zoho
   domains: [zoho.com, zohomail.com, zoho.eu]
   messages: { auth_failed: app_password }
-  guide:
+  guide: zoho
 yahoo:
   name: Yahoo
   domains: [yahoo.com, ymail.com, rocketmail.com]
   messages: { auth_failed: app_password }
-  guide:
+  guide: yahoo
 yandex:
   name: Yandex
   domains: [yandex.com, yandex.ru, ya.ru]
@@ -34,7 +34,7 @@ seznam:
   name: Seznam
   domains: [seznam.cz, email.cz, post.cz]
   messages: { auth_failed: seznam_imap_off, imap_disabled: seznam_imap_off }
-  guide:
+  guide: seznam
 proton:
   name: ProtonMail
   domains: [proton.me, protonmail.com, protonmail.ch, pm.me]

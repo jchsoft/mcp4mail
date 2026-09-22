@@ -72,6 +72,7 @@ class MailAccountsController < ApplicationController
     end
 
     def render_form
+      @guide = Imap::ConnectionProblem.guide_for(@mail_account.email_address)
       render :new, status: :unprocessable_entity
     end
 
