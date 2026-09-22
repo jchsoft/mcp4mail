@@ -19,6 +19,10 @@ class ClosingCtaAndFooterTest < ApplicationSystemTestCase
       within("footer") { click_link I18n.t("pages.home.footer.github", locale: locale) }
       assert_equal "https://github.com/jchsoft/mcp4mail", page.current_url
     end
+  ensure
+    # Leaves the browser on an external origin otherwise, which keeps the next
+    # test's session cookie (and its locale) from being cleared between tests.
+    visit root_url
   end
 
   test "the footer language switcher changes the language and marks the current one" do

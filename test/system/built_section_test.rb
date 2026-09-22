@@ -42,6 +42,10 @@ class BuiltSectionTest < ApplicationSystemTestCase
       within("#built") { click_link I18n.t("pages.home.built.cta_live", locale: locale) }
       assert_equal "https://mcptask.online/live", page.current_url
     end
+  ensure
+    # Leaves the browser on an external origin otherwise, which keeps the next
+    # test's session cookie (and its locale) from being cleared between tests.
+    visit root_url
   end
 
   test "both calls to action point at the live board and the contributing guide" do
