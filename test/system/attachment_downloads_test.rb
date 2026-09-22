@@ -45,7 +45,10 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
     page.execute_script("window.location.href = arguments[0]", attachment_download_url(token:))
 
     downloaded = File.join(DOWNLOAD_DIR, "faktura.pdf")
-    assert wait_until { File.exist?(downloaded) && !File.exist?("#{downloaded}.part") }, "faktura.pdf was never saved"
+    # Firefox creates an empty placeholder under the final name before the bytes arrive,
+    # so the file only counts as saved once it has content and the .part file is gone.
+    saved = wait_until { File.size?(downloaded) && !File.exist?("#{downloaded}.part") }
+    assert saved, "faktura.pdf was never saved"
     assert_equal "pdf-bytes", File.read(downloaded).strip
   end
 
