@@ -22,6 +22,7 @@ class LandingHowTest < ApplicationSystemTestCase
       assert_selector "span", text: "Claude Desktop"
       assert_selector "span", text: "anything with MCP"
     end
+    screenshot!("landing-how-en")
 
     visit root_url(locale: :cs)
 
@@ -32,6 +33,7 @@ class LandingHowTest < ApplicationSystemTestCase
       assert_selector "strong", text: "heslo aplikace"
       assert_selector "span", text: "cokoli s MCP"
     end
+    screenshot!("landing-how-cs")
   end
 
   test "the connector chip prints the address the connector itself answers on" do

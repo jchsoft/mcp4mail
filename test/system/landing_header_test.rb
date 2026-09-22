@@ -23,11 +23,13 @@ class LandingHeaderTest < ApplicationSystemTestCase
   test "switching the language in the header sticks across a reload" do
     visit root_url
     assert_selector "html[lang=en]"
+    screenshot!("landing-header-en")
 
     # The footer carries the same switcher, so aim at the header's copy.
     within("header") { click_link "CS" }
     assert_selector "html[lang=cs]"
     assert_link "Bezpečnost"
+    screenshot!("landing-header-cs")
 
     visit root_url
     assert_selector "html[lang=cs]"

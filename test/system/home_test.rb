@@ -102,6 +102,8 @@ class HomeTest < ApplicationSystemTestCase
 
     within("main section:last-of-type") { assert_link "Connect a mailbox", href: mail_accounts_path }
     within("header") { assert_link "Connect a mailbox", href: mail_accounts_path }
+    screenshot!("landing-header-signed-in-en")
+    screenshot!("landing-closing_cta-signed-in-en")
   end
 
   test "the highlighted word sits on a gradient behind its descenders" do

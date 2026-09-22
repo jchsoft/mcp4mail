@@ -16,6 +16,7 @@ class BuiltSectionTest < ApplicationSystemTestCase
       assert_selector "code", text: "main"
       assert_text "A merge is not a release"
     end
+    screenshot!("landing-built-en")
 
     visit root_url(locale: :cs)
 
@@ -25,6 +26,7 @@ class BuiltSectionTest < ApplicationSystemTestCase
       assert_selector "code", text: "main"
       assert_text "Merge není vydání"
     end
+    screenshot!("landing-built-cs")
   end
 
   test "both calls to action point at the live board and the contributing guide" do

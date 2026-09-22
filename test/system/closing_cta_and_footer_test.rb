@@ -12,6 +12,8 @@ class ClosingCtaAndFooterTest < ApplicationSystemTestCase
   test "the footer language switcher changes the language and marks the current one" do
     visit root_url
 
+    screenshot!("landing-closing_cta-en")
+
     within "footer" do
       assert_selector "a[aria-current=page]", text: "EN"
       click_link "CS"
@@ -22,6 +24,7 @@ class ClosingCtaAndFooterTest < ApplicationSystemTestCase
     # The header's copy of the switcher agrees: both read the same I18n.locale.
     assert_selector "header a[aria-current=page]", text: "CS"
     assert_selector "main section:last-of-type h2", text: "Vaše schránka už čeká na první otázku."
+    screenshot!("landing-closing_cta-cs")
   end
 
   test "the closing CTA and the footer wrap cleanly on a 375px phone" do

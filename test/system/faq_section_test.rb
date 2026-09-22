@@ -13,6 +13,7 @@ class FaqSectionTest < ApplicationSystemTestCase
       assert_selector "summary", text: "What does it cost?"
       assert_selector "summary", text: "Do I need this for Gmail or Outlook?"
     end
+    screenshot!("landing-faq-en")
 
     visit root_url(locale: :cs)
 
@@ -21,6 +22,7 @@ class FaqSectionTest < ApplicationSystemTestCase
       assert_selector "summary", text: "Musím něco instalovat?"
       assert_selector "summary", text: "Kolik to stojí?"
     end
+    screenshot!("landing-faq-cs")
   end
 
   test "a question opens on click and closes again, and the answer follows it" do
@@ -31,6 +33,7 @@ class FaqSectionTest < ApplicationSystemTestCase
 
     find("#faq summary", text: "Do I have to install anything?").click
     assert_text answer
+    screenshot!("landing-faq-open-en")
 
     find("#faq summary", text: "Do I have to install anything?").click
     assert_no_text answer
