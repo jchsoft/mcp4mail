@@ -29,4 +29,22 @@ class MailboxActivityTest < ApplicationSystemTestCase
     assert_selector "li", text: "denied"
     screenshot!("mailbox-activity-en")
   end
+
+  test "a mailbox that has never been called shows zero counters and says so once opened" do
+    user = users(:one)
+
+    visit new_session_url
+    fill_in placeholder: "Enter your email address", with: user.email_address
+    fill_in placeholder: "Enter your password", with: "password"
+    click_button "Sign in"
+    assert_current_path root_path
+
+    visit mail_accounts_url
+    assert_text "AI calls today: 0, this week: 0"
+    assert_no_text "No AI has called this mailbox yet."
+
+    find("summary", text: "Recent activity").click
+    assert_text "No AI has called this mailbox yet."
+    screenshot!("mailbox-activity-empty-en")
+  end
 end
