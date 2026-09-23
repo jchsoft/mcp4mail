@@ -29,7 +29,7 @@ Buttons are not a partial. `ButtonHelper` (`app/helpers/button_helper.rb`) gives
 
 ## Tokens
 
-The palette is the `@theme` block in `app/assets/tailwind/application.css`: no default Tailwind palette classes, no inline hex. Everything else (recipes, type scale, hard rules, copy, extending the system) is in `docs/design/GUIDELINES.md`; read it before touching markup.
+The palette is the `@theme` block in `app/assets/tailwind/application.css`: no default Tailwind palette classes, no inline hex. `test/views/default_palette_test.rb` scans this directory and `app/helpers` for a built-in hue and fails on the class, naming the token to use instead, so a stray `text-red-700` is caught at review time rather than shipped. Everything else (recipes, type scale, hard rules, copy, extending the system) is in `docs/design/GUIDELINES.md`; read it before touching markup.
 
 ## DOM ids the tests hold on to
 
