@@ -113,3 +113,28 @@ or number inside it says the same thing at 6.0:1 or better, and the two verdict
 variants carry an edge in their own family above 4.5:1 besides. That is why the
 `:neutral` fill is allowed to sit at 1.12:1 against paper — nothing is lost if a
 reader sees only the label.
+
+## Signed-in screens (task #12827)
+
+Run by `test/system/internal_accessibility_test.rb`. Tags and viewport match the
+landing run above. The set of screens covered:
+
+- sign-in (`/session/new`)
+- registration (`/registration/new`)
+- password request (`/passwords/new`)
+- mailbox index (`/mail_accounts`)
+- new-mailbox form (`/mail_accounts/new`), including the `#errors` and
+  `#connection-error` paths
+- activity frame (`/mail_accounts/:id/activity`), opened from the mailbox index
+- connect-the-AI (`/connect-ai`)
+
+The same `WCAG AA` and `BLOCKING_IMPACTS` filters apply, and the same rule: a
+serious or critical axe finding fails the build, an incomplete one is resolved
+by hand. The keyboard walk asserts the two-tone focus ring actually draws on
+the Mailboxes nav link, the Add mailbox button, the Recent activity disclosure
+and the Remove button — the global rule is in `application.css`, and these are
+the controls that have historically overridden it.
+
+Re-run with `bin/rails test:system test/system/internal_accessibility_test.rb`
+and re-collect the run header / rule lists from axe the same way the landing
+report does — the values above are landing-page specific.
