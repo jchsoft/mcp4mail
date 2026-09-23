@@ -6,7 +6,7 @@ class LandingWhyTest < ApplicationSystemTestCase
 
     click_link "Why"
 
-    assert_equal "#{root_url}#why", page.current_url
+    assert_current_path("#{root_url}#why", url: true)
     assert_selector "section#why blockquote", count: 3
     screenshot!("landing-why-en")
 

@@ -16,7 +16,7 @@ class LandingHowTest < ApplicationSystemTestCase
 
     click_link "How"
 
-    assert_equal "#{root_url}#how", page.current_url
+    assert_current_path("#{root_url}#how", url: true)
     assert_selector "section#how ol > li", count: 3
   end
 

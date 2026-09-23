@@ -11,7 +11,7 @@ class SecuritySectionTest < ApplicationSystemTestCase
 
     click_link "Security"
 
-    assert_equal "#{root_url}#security", page.current_url
+    assert_current_path("#{root_url}#security", url: true)
     assert_selector "section#security h3", count: 4
   end
 
