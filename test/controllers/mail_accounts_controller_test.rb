@@ -49,7 +49,8 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "details#connection-details:not([open])"
     assert_select "details#connection-details input[required]", count: 0
     assert_select "details#connection-details select[name='mail_account[tls_mode]'] option", 3
-    assert_select "input[type=submit][value=Connect][data-turbo-submits-with]"
+    # ButtonHelper#button_submit renders a <button>, not the scaffold's <input type=submit>.
+    assert_select "button[type=submit][data-turbo-submits-with]", "Connect"
   end
 
   test "create detects the server settings, saves them and starts a sync" do
