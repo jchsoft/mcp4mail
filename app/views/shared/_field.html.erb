@@ -11,6 +11,8 @@
     error:     inline error; defaults to the first error on form.object for the attribute
     choices:   the options for :select
     input:     extra HTML attributes for the control (required, autocomplete, placeholder…)
+    class:     the wrapper's classes; defaults to "my-5". Pass the grid cell
+               ("my-5 sm:col-span-3") when the field sits in a row of fields.
 
   No focus:outline-* here or in `input:` — the global two-tone ring is the only focus
   indicator (rule 2.2).
@@ -21,6 +23,7 @@
   error = local_assigns.fetch(:error) { form.object&.errors&.[](attribute)&.first }
   input = local_assigns.fetch(:input, {}).dup
   label_text = local_assigns[:label]
+  wrapper_class = local_assigns.fetch(:class, "my-5")
 
   control_id = input[:id] || form.field_id(attribute)
   hint_id = "#{control_id}_hint" if hint.present?
@@ -35,7 +38,7 @@
     input[:class]
   )
 %>
-<div class="my-5">
+<div class="<%= wrapper_class %>">
   <% if type == :checkbox %>
     <div class="flex items-center gap-3">
       <%= form.check_box attribute, input %>
