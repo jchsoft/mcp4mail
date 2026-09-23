@@ -49,7 +49,7 @@ class CzechLocaleTest < ApplicationSystemTestCase
       assert_button "Odhlásit se"
     end
     assert_selector "#mail_account_#{work.id}", text: work.label
-    assert_text "Volání AI dnes: 0, tento týden: 0"
+    assert_text "Volání AI 0 dnes 0 tento týden", normalize_ws: true
     assert_selector "label", text: "Povolit AI měnit tuto schránku"
     screenshot!("mailboxes-list-cs")
 

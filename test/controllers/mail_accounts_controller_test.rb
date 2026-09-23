@@ -289,14 +289,14 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
     get mail_accounts_path
 
-    assert_select "#calls_mail_account_#{work.id}", /today: 2.*this week: 3/
+    assert_select "#calls_mail_account_#{work.id}", /2\s+today.*3\s+this week/m
   end
 
   test "index shows no calls for a mailbox nothing has asked for" do
     sign_in_as @user
     get mail_accounts_path
 
-    assert_select "#calls_mail_account_#{mail_accounts(:work).id}", /today: 0, this week: 0/
+    assert_select "#calls_mail_account_#{mail_accounts(:work).id}", /0\s+today.*0\s+this week/m
   end
 
   test "activity lists the recent calls with their tool titles, clients and outcomes" do
