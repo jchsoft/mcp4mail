@@ -237,6 +237,7 @@ cs:
   sessions:
     new:
       title: "Přihlášení"
+      lede: "Přihlaste se ke svým schránkám a k adrese, kterou zadáváte do AI aplikace."
       email_placeholder: "Zadejte e-mailovou adresu"
       password_placeholder: "Zadejte heslo"
       submit: "Přihlásit se"
@@ -249,11 +250,14 @@ cs:
     invalid_token: "Odkaz pro obnovení hesla je neplatný nebo vypršel."
     new:
       title: "Zapomněli jste heslo?"
+      lede: "Zadejte adresu, se kterou jste se registrovali, a pošleme vám e-mailem odkaz na nastavení nového hesla."
       submit: "Poslat pokyny k obnovení"
+      sign_in: "Zpět na přihlášení"
     create:
       success: "Pokyny k obnovení hesla jsme poslali (pokud účet s touto adresou existuje)."
     edit:
       title: "Nastavte nové heslo"
+      lede: "Zvolte nové heslo. Uložením se odhlásíte na všech ostatních zařízeních a novým heslem se pak přihlásíte znovu."
       password_placeholder: "Zadejte nové heslo"
       password_confirmation_placeholder: "Zopakujte nové heslo"
       submit: "Uložit"
