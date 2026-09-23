@@ -16,8 +16,13 @@
       <%= button_link t(".add"), new_mail_account_path, class: "mt-6" %>
     </div>
   <% else %>
-    <%= render "shared/page_header", title: t(".title"), lede: t(".lede") do %>
-      <%= button_link t(".add"), new_mail_account_path %>
+    <%# The action slot is filled by rendering the header as a layout: that is what
+        captures the block from a template. A bare `render "…" do` loses it. And
+        the block is compiled into this template but lazy t(".key") lookups inside
+        it resolve against the rendered partial's path, so the key here is spelled
+        out in full. %>
+    <%= render layout: "shared/page_header", locals: { title: t(".title"), lede: t(".lede") } do %>
+      <%= button_link t("mail_accounts.index.add"), new_mail_account_path %>
     <% end %>
 
     <ul class="grid gap-5">
