@@ -172,15 +172,15 @@ GEM
     matrix (0.4.3)
     mcp (1.6.0)
       json_schemer (>= 2.4)
-    mcptask-rails-runner (0.3.31)
+    mcptask-rails-runner (0.3.32)
       railties (>= 6.0)
-    mcptask-rails-runner (0.3.31-aarch64-linux)
+    mcptask-rails-runner (0.3.32-aarch64-linux)
       railties (>= 6.0)
-    mcptask-rails-runner (0.3.31-arm64-darwin)
+    mcptask-rails-runner (0.3.32-arm64-darwin)
       railties (>= 6.0)
-    mcptask-rails-runner (0.3.31-x86_64-darwin)
+    mcptask-rails-runner (0.3.32-x86_64-darwin)
       railties (>= 6.0)
-    mcptask-rails-runner (0.3.31-x86_64-linux)
+    mcptask-rails-runner (0.3.32-x86_64-linux)
       railties (>= 6.0)
     mini_magick (5.4.0)
       logger
@@ -500,11 +500,11 @@ CHECKSUMS
   marcel (1.2.1) sha256=1678e9360e32f9eafa917c80029e2f6d10b2715c66a4b87b6d0da9b9cd1f859f
   matrix (0.4.3) sha256=a0d5ab7ddcc1973ff690ab361b67f359acbb16958d1dc072b8b956a286564c5b
   mcp (1.6.0) sha256=73fe3be93df68cffd6e73c852e7a1182a0a5eacdaff586b864bfeac22ae6f7be
-  mcptask-rails-runner (0.3.31) sha256=d03bc08009223e0453ac3491bc3f2555f1e18644f1fa7e138dacd2b9e4518763
-  mcptask-rails-runner (0.3.31-aarch64-linux) sha256=6aeb8cfadfb6302debf84d5b6ffd9d5e4559a4a3bebde47b3a19bbd2fbd61cb2
-  mcptask-rails-runner (0.3.31-arm64-darwin) sha256=36f108a78dd9297601eb7081475442e55059909592d6d00e08bf3a18b33e4fae
-  mcptask-rails-runner (0.3.31-x86_64-darwin) sha256=24a815370f4202e1fe320d391ff5185f1a4d46e69e330033b74389aa1af4d8db
-  mcptask-rails-runner (0.3.31-x86_64-linux) sha256=925324084e920727e463e2764d66856da56cacfee002f3c2482755b440332063
+  mcptask-rails-runner (0.3.32) sha256=c3e2f7111662a9ca1f90f86fb684307f4f9da473b11a5d10aea874855899979e
+  mcptask-rails-runner (0.3.32-aarch64-linux) sha256=d26cd9bbed350b786778e774f87517c668854cd2eefeef3a4ce87d578a2b01c0
+  mcptask-rails-runner (0.3.32-arm64-darwin) sha256=6eb217a144d8457a0635207650622ac684c767f34a808ec252bca688e41cf34e
+  mcptask-rails-runner (0.3.32-x86_64-darwin) sha256=c434ace981d1764d351e66e49e239ec70d71585ad8d19fdcb6fbf746b6b2434c
+  mcptask-rails-runner (0.3.32-x86_64-linux) sha256=369ac7307300da803600e91edc4557d66f65905838792c1703dccd8b6406c314
   mini_magick (5.4.0) sha256=f120af581d9ed4ec52c57f35a67a605d112bb1d8f582d1415b147fda42d11d78
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   minitest (6.0.6) sha256=153ea36d1d987a62942382b61075745042a2b3123b1cd48f4c3675af9cc7d6f1
