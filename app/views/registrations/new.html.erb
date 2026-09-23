@@ -1,8 +1,7 @@
 <% content_for :title, t(".title") %>
 
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl"><%= t(".title") %></h1>
-  <p class="mt-3 text-gray-600"><%= t(".intro") %></p>
+<div class="mx-auto max-w-[520px]">
+  <%= render "shared/page_header", title: t(".title"), lede: t(".intro") %>
 
   <%= form_with model: @user, url: registration_path, class: "contents" do |form| %>
     <%= render "shared/error_summary", model: @user %>
@@ -11,11 +10,12 @@
     <%= render "shared/field", form: form, attribute: :password, type: :password, input: { required: true, autocomplete: "new-password", minlength: 8, maxlength: 72 } %>
     <%= render "shared/field", form: form, attribute: :password_confirmation, type: :password, input: { required: true, autocomplete: "new-password", maxlength: 72 } %>
 
-    <div class="sm:flex sm:items-center sm:gap-4">
-      <%= form.submit t(".submit"), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-      <div class="mt-4 text-sm text-gray-500 sm:mt-0">
-        <%= link_to t(".sign_in"), new_session_path, class: "text-gray-700 underline hover:no-underline" %>
-      </div>
+    <div class="mt-8 sm:flex sm:items-center sm:gap-5">
+      <%= button_submit form, t(".submit"), class: "w-full justify-center sm:w-auto" %>
+
+      <p class="mt-4 text-[15px] text-ink-soft sm:mt-0">
+        <%= link_to t(".sign_in"), new_session_path, class: "inline-flex items-center font-semibold text-green underline hover:text-green-deep max-lg:min-h-11" %>
+      </p>
     </div>
   <% end %>
 </div>
