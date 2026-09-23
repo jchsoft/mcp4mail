@@ -50,6 +50,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # too heavy to run eight at a time.
   parallelize(workers: 1)
 
+  # Capybara's 2s default is enough on a developer machine and short on GitHub's
+  # shared runner: the system-test job failed twice on the landing header anchors
+  # (task #12817), once with a click that never registered and once with the link
+  # not found at all, in tests the pull request did not touch, and neither
+  # reproduced locally. The finders get room instead; a passing test still waits
+  # no longer than it did.
+  Capybara.default_max_wait_time = 5
+
   # Pages follow Accept-Language, so pin the browser to English instead of the machine's locale.
   driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400] do |options|
     options.add_preference("intl.accept_languages", "en")

@@ -11,7 +11,7 @@ class BuiltSectionTest < ApplicationSystemTestCase
 
     within("header") { click_link "How it's built" }
 
-    assert_equal "#{root_url}#built", page.current_url
+    assert_current_path("#{root_url}#built", url: true)
     assert_selector "section#built h2"
   end
 
