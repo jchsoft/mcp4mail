@@ -1,8 +1,14 @@
 <%# The top of every signed-in screen: the page h1, an optional lede and an
     optional action on the right (the "Add a mailbox" button on the index).
 
-    Render it with title: and, if the screen has one, lede:. A block passed to
-    render fills the action slot; leave it off and the heading runs full width.
+    Render it with title: and, if the screen has one, lede:; leave the action off
+    and the heading runs full width. The action slot is a block, and a block is
+    only captured when the header is rendered as a layout, so the call that fills
+    it reads `render layout: "shared/page_header", locals: { title: ... } do`
+    with the button inside the block. A bare `render "shared/page_header" do`
+    loses the block instead. Inside that block, lazy t(".key") lookups resolve
+    against this partial's scope, not the caller's — spell i18n keys in full.
+
     The h1 is the internal-page size from GUIDELINES.md section 4, not the fluid
     landing text-h1. %>
 <% action = yield %>

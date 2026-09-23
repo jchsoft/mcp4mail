@@ -17,7 +17,7 @@ class MailboxActivityTest < ApplicationSystemTestCase
     assert_current_path root_path
 
     visit mail_accounts_url
-    assert_text "AI calls today: 2, this week: 2"
+    assert_text "AI calls 2 today 2 this week", normalize_ws: true
     # The frame is fetched only once the disclosure opens, so nothing of the list
     # is on the page before the click.
     assert_no_text "Search messages"
@@ -40,7 +40,7 @@ class MailboxActivityTest < ApplicationSystemTestCase
     assert_current_path root_path
 
     visit mail_accounts_url
-    assert_text "AI calls today: 0, this week: 0"
+    assert_text "AI calls 0 today 0 this week", normalize_ws: true
     assert_no_text "No AI has called this mailbox yet."
 
     find("summary", text: "Recent activity").click

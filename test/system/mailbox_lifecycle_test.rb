@@ -7,7 +7,7 @@ class MailboxLifecycleTest < ApplicationSystemTestCase
     sign_in(user)
     visit mail_accounts_url
 
-    assert_selector "#empty", text: "You have not added a mailbox yet."
+    assert_selector "#empty", text: "Connect your first mailbox"
     assert_link "Add mailbox"
     assert_no_selector "summary", text: "Recent activity"
     screenshot!("mailbox-empty-en")
