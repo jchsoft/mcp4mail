@@ -210,6 +210,23 @@ is announced. `shared/_alert` is the in-page callout that belongs to a section:
 (danger tokens, `role="alert"`). Content comes in as `title:`/`body:` rather than
 a block, so the caller's relative `t(".key")` keeps its own scope.
 
+**Badge** — `shared/_badge`, not a class string: a status pill carrying one word
+or one number beside the thing it describes. `render "shared/badge", variant:,
+label:, id:, class:` with variants `:ok` (green: the call did what was asked),
+`:denied` (danger: refused or failed) and `:neutral` (a fact with no verdict — a
+counter, a limit that was hit). Smaller than a chip, because it sits inside a
+dense list rather than beside a heading; border plus fill in one family, as
+`shared/_alert` has, so the three variants are one box in three colours. The
+colour repeats what the label says, so the badge is never the only carrier of
+the meaning and needs no `aria-label` of its own.
+
+```
+inline-flex items-center rounded-full border px-2.5 py-0.5 text-[13px] font-semibold
+border-green bg-green-tint text-green-deep
+border-danger bg-danger-tint text-danger-deep
+border-line bg-surface-hover text-ink-soft
+```
+
 **Text link** — `text-green hover:text-green-deep` with an underline in running
 text on paper; `text-highlight` on the dark panel (rule 2.4).
 

@@ -22,9 +22,10 @@ A new screen composes these. A new inline button, alert box or form field is a b
 | `shared/_error_summary` | Validation list for a model (`model:`); renders `#errors` |
 | `shared/_flash` | Per-request `notice` / `alert` (owned by the layout) |
 | `shared/_alert` | In-page callout, `variant:` `:info`, `:warning` or `:danger` |
+| `shared/_badge` | Status pill, `variant:` `:ok`, `:denied` or `:neutral` (counters) |
 | `shared/_locale_switcher` | Language switch; header and footer render it |
 
-Buttons are not a partial. `ButtonHelper` (`app/helpers/button_helper.rb`) gives `button_link`, `button_submit` and `button_classes(:variant)` for `link_to` / `button_to`. There is no badge partial; a status chip uses the tokens from `docs/design/GUIDELINES.md`. Each partial documents its own locals in the comment at its top.
+Buttons are not a partial. `ButtonHelper` (`app/helpers/button_helper.rb`) gives `button_link`, `button_submit` and `button_classes(:variant)` for `link_to` / `button_to`. A status pill is `shared/_badge`, not an inline class string. Each partial documents its own locals in the comment at its top.
 
 ## Tokens
 
