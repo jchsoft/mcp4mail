@@ -92,3 +92,24 @@ clear 4.5:1, component edges 3:1.
 The tint is a fill, not a boundary: at 1.16:1 it cannot mark an alert's edge by
 itself, so an alert on the tint carries a `danger` border (4.88:1 against the
 tint) and its message in text.
+
+## The badge (task #12821)
+
+`shared/_badge` reuses the families above; only the green pair was not already
+measured. The badge appears on `paper` today and on `surface` once the mailbox
+list becomes cards, so both grounds are given.
+
+| pair | where | on paper | on surface |
+|---|---|---|---|
+| `--color-green-deep` `#15654f` on `--color-green-tint` `#dff3ec` | `:ok` label | 6.04 (on tint) | — |
+| `--color-green` `#1a7a63` on `--color-green-tint` | `:ok` border | 4.53 (on tint) | — |
+| `--color-danger-deep` on `--color-danger-tint` | `:denied` label | 6.98 (on tint) | — |
+| `--color-danger` on `--color-danger-tint` | `:denied` border | 4.88 (on tint) | — |
+| `--color-ink-soft` `#4a515f` on `--color-surface-hover` `#f1ebe1` | `:neutral` label | 6.73 (on fill) | — |
+| `--color-surface-hover` against the ground | `:neutral` fill | 1.12 | 1.19 |
+
+The pill's outline is decoration, not a boundary a person has to find: the word
+or number inside it says the same thing at 6.0:1 or better, and the two verdict
+variants carry an edge in their own family above 4.5:1 besides. That is why the
+`:neutral` fill is allowed to sit at 1.12:1 against paper — nothing is lost if a
+reader sees only the label.

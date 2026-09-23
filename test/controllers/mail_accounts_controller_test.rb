@@ -313,7 +313,7 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "li", /Search messages/
     assert_select "li", /Claude Desktop/
     assert_select "li", /rows: 7/
-    assert_select "li span.text-red-700", "denied"
+    assert_select "li span.text-danger-deep", "denied"
     assert_select "li", /5 minutes ago/
   end
 
