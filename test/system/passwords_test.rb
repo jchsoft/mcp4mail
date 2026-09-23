@@ -25,6 +25,7 @@ class PasswordsTest < ApplicationSystemTestCase
 
     visit edit_password_path(token)
     assert_field placeholder: "Enter new password"
+    screenshot!("passwords-edit-en")
 
     fill_in placeholder: "Enter new password", with: "new-password"
     fill_in placeholder: "Repeat new password", with: "new-password"
@@ -62,6 +63,7 @@ class PasswordsTest < ApplicationSystemTestCase
 
     assert_current_path edit_password_path(token)
     assert_selector "#alert", text: "Passwords did not match."
+    screenshot!("passwords-edit-mismatch-en")
   end
 
   test "rapid reset requests trip the rate limiter" do
