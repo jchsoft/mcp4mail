@@ -306,7 +306,9 @@ Every string goes through I18n and exists in both `cs` and `en`.
 
 - No default Tailwind palette classes: `gray-*`, `blue-*`, `red-*`, `slate-*`,
   `zinc-*`, `neutral-*` (or any other built-in hue). They are not our colours and
-  were never measured against our grounds.
+  were never measured against our grounds. `test/views/default_palette_test.rb`
+  reads every view and helper for one and fails on the class, with the token to
+  use instead in the message.
 - No inline hex, `rgb()` or `style="color: …"` in a view. If the colour is not a
   token, it is not in the design.
 - No per-component focus styles (`focus:outline-*`, `focus:ring-*`,
