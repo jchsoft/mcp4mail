@@ -53,7 +53,7 @@ class CzechLocaleTest < ApplicationSystemTestCase
     assert_selector "label", text: "Povolit AI měnit tuto schránku"
     screenshot!("mailboxes-list-cs")
 
-    find("summary", text: "Poslední aktivita").click
+    open_activity_disclosure "Poslední aktivita"
     assert_text "Do této schránky zatím žádná AI nesáhla."
     screenshot!("mailbox-activity-empty-cs")
 
