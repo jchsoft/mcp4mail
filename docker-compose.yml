@@ -25,6 +25,8 @@ services:
       # Runs Solid Queue (mail index refresh) inside the web process, so one container is enough.
       SOLID_QUEUE_IN_PUMA: "true"
       RAILS_LOG_LEVEL: ${RAILS_LOG_LEVEL:-info}
+      # Where unhandled errors and 500s are emailed; empty switches the emails off. See docs/self-hosting.md.
+      EXCEPTION_NOTIFICATION_RECIPIENTS: ${EXCEPTION_NOTIFICATION_RECIPIENTS:-chmel@jchsoft.cz}
     volumes:
       - storage:/rails/storage
 

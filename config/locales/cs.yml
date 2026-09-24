@@ -237,6 +237,7 @@ cs:
   sessions:
     new:
       title: "Přihlášení"
+      lede: "Přihlaste se ke svým schránkám a k adrese, kterou zadáváte do AI aplikace."
       email_placeholder: "Zadejte e-mailovou adresu"
       password_placeholder: "Zadejte heslo"
       submit: "Přihlásit se"
@@ -249,11 +250,14 @@ cs:
     invalid_token: "Odkaz pro obnovení hesla je neplatný nebo vypršel."
     new:
       title: "Zapomněli jste heslo?"
+      lede: "Zadejte adresu, se kterou jste se registrovali, a pošleme vám e-mailem odkaz na nastavení nového hesla."
       submit: "Poslat pokyny k obnovení"
+      sign_in: "Zpět na přihlášení"
     create:
       success: "Pokyny k obnovení hesla jsme poslali (pokud účet s touto adresou existuje)."
     edit:
       title: "Nastavte nové heslo"
+      lede: "Zvolte nové heslo. Uložením se odhlásíte na všech ostatních zařízeních a novým heslem se pak přihlásíte znovu."
       password_placeholder: "Zadejte nové heslo"
       password_confirmation_placeholder: "Zopakujte nové heslo"
       submit: "Uložit"
@@ -293,13 +297,18 @@ cs:
   mail_accounts:
     index:
       title: "Schránky"
+      lede: "Schránky, ke kterým se dostane vaše AI. Každá je jen pro čtení, dokud nepovolíte změny."
       add: "Přidat schránku"
-      empty: "Zatím nemáte přidanou žádnou schránku. Přidejte ji a pak propojte svou AI aplikaci."
+      empty_title: "Připojte svou první schránku"
+      empty: "Přidejte schránku, se kterou má vaše AI pracovat. Bude ji pak moci přes IMAP prohledávat a číst – a nic jiného, dokud nepovolíte změny."
       last_error: "Poslední připojení selhalo: %{error}"
+      last_error_hint: "Schránka je stále připojená, ale poslední synchronizace selhala. Zkontrolujte, že je server dostupný; pokud se změnilo heslo, schránku odeberte a přidejte znovu."
       remove: "Odebrat"
       remove_confirm: "Odebrat schránku %{name}? mcp4mail zapomene její heslo i index zpráv; pošta na serveru zůstane beze změny."
       connect_ai: "Dál: propojte svou AI aplikaci →"
-      calls: "Volání AI dnes: %{today}, tento týden: %{week}"
+      calls: "Volání AI"
+      calls_today: "dnes"
+      calls_week: "tento týden"
       recent_activity: "Poslední aktivita"
       activity_loading: "Načítání…"
       writable: "Povolit AI měnit tuto schránku"

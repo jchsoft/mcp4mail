@@ -190,6 +190,28 @@ reduced-motion opt-out; the span must keep the `faq-mark` class and
 </details>
 ```
 
+**Switch** — `shared/_switch` for a single on/off control that is not a form
+checkbox (`role="switch"`, not a checkbox, so screen readers do not say
+"Allow… checked, checkbox"). The input stays a real `<input type="checkbox">`
+so `form.check_box` still emits the hidden `0` field the controller needs to
+turn it off, and the same controller tests keep asserting on
+`[role=switch][checked]`. The input is `appearance: none` and fills the
+track, so the global two-tone focus ring in `application.css` draws AROUND
+the visible switch when the control has keyboard focus — no per-component
+focus style, which rule 2.2 bans. The thumb is a `::before` pseudo-element
+on the input itself, animated on the `checked` state, with one
+reduced-motion opt-out (the same one that already covers the FAQ marker).
+
+```erb
+<%= render "shared/switch", form: form, attribute: :writable, label: t(".writable"),
+      input: { id: dom_id(mail_account, :writable_switch),
+               data: { action: "auto-submit#submit" } } %>
+```
+
+On-state fill is `bg-ink` (the orange CTA stays rule-2.1-only); off-state is
+`bg-surface-hover` (the same track the language switch already uses, so
+people recognise it).
+
 **Tabs** — the `tabs` Stimulus controller over a real `role="tablist"`
 (`connect_ai/show.html.erb`). The strip and a tab:
 
@@ -209,6 +231,23 @@ is announced. `shared/_alert` is the in-page callout that belongs to a section:
 `:info` (surface and line: guidance), `:warning` (brand tint) and `:danger`
 (danger tokens, `role="alert"`). Content comes in as `title:`/`body:` rather than
 a block, so the caller's relative `t(".key")` keeps its own scope.
+
+**Badge** — `shared/_badge`, not a class string: a status pill carrying one word
+or one number beside the thing it describes. `render "shared/badge", variant:,
+label:, id:, class:` with variants `:ok` (green: the call did what was asked),
+`:denied` (danger: refused or failed) and `:neutral` (a fact with no verdict — a
+counter, a limit that was hit). Smaller than a chip, because it sits inside a
+dense list rather than beside a heading; border plus fill in one family, as
+`shared/_alert` has, so the three variants are one box in three colours. The
+colour repeats what the label says, so the badge is never the only carrier of
+the meaning and needs no `aria-label` of its own.
+
+```
+inline-flex items-center rounded-full border px-2.5 py-0.5 text-[13px] font-semibold
+border-green bg-green-tint text-green-deep
+border-danger bg-danger-tint text-danger-deep
+border-line bg-surface-hover text-ink-soft
+```
 
 **Text link** — `text-green hover:text-green-deep` with an underline in running
 text on paper; `text-highlight` on the dark panel (rule 2.4).
@@ -289,7 +328,9 @@ Every string goes through I18n and exists in both `cs` and `en`.
 
 - No default Tailwind palette classes: `gray-*`, `blue-*`, `red-*`, `slate-*`,
   `zinc-*`, `neutral-*` (or any other built-in hue). They are not our colours and
-  were never measured against our grounds.
+  were never measured against our grounds. `test/views/default_palette_test.rb`
+  reads every view and helper for one and fails on the class, with the token to
+  use instead in the message.
 - No inline hex, `rgb()` or `style="color: …"` in a view. If the colour is not a
   token, it is not in the design.
 - No per-component focus styles (`focus:outline-*`, `focus:ring-*`,

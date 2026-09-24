@@ -92,3 +92,78 @@ clear 4.5:1, component edges 3:1.
 The tint is a fill, not a boundary: at 1.16:1 it cannot mark an alert's edge by
 itself, so an alert on the tint carries a `danger` border (4.88:1 against the
 tint) and its message in text.
+
+## The badge (task #12821)
+
+`shared/_badge` reuses the families above; only the green pair was not already
+measured. The badge appears on `paper` today and on `surface` once the mailbox
+list becomes cards, so both grounds are given.
+
+| pair | where | on paper | on surface |
+|---|---|---|---|
+| `--color-green-deep` `#15654f` on `--color-green-tint` `#dff3ec` | `:ok` label | 6.04 (on tint) | — |
+| `--color-green` `#1a7a63` on `--color-green-tint` | `:ok` border | 4.53 (on tint) | — |
+| `--color-danger-deep` on `--color-danger-tint` | `:denied` label | 6.98 (on tint) | — |
+| `--color-danger` on `--color-danger-tint` | `:denied` border | 4.88 (on tint) | — |
+| `--color-ink-soft` `#4a515f` on `--color-surface-hover` `#f1ebe1` | `:neutral` label | 6.73 (on fill) | — |
+| `--color-surface-hover` against the ground | `:neutral` fill | 1.12 | 1.19 |
+
+The pill's outline is decoration, not a boundary a person has to find: the word
+or number inside it says the same thing at 6.0:1 or better, and the two verdict
+variants carry an edge in their own family above 4.5:1 besides. That is why the
+`:neutral` fill is allowed to sit at 1.12:1 against paper — nothing is lost if a
+reader sees only the label.
+
+## Signed-in screens (task #12827)
+
+Run by `test/system/internal_accessibility_test.rb`. Tags and viewport match the
+landing run above. The set of screens covered:
+
+- sign-in (`/session/new`)
+- registration (`/registration/new`)
+- password request (`/passwords/new`)
+- mailbox index (`/mail_accounts`)
+- new-mailbox form (`/mail_accounts/new`), including the `#errors` and
+  `#connection-error` paths
+- activity frame (`/mail_accounts/:id/activity`), opened from the mailbox index
+- connect-the-AI (`/connect-ai`)
+
+The same `WCAG AA` and `BLOCKING_IMPACTS` filters apply, and the same rule: a
+serious or critical axe finding fails the build, an incomplete one is resolved
+by hand. The keyboard walk asserts the two-tone focus ring actually draws on
+the Mailboxes nav link, the Add mailbox button, the Recent activity disclosure
+and the Remove button — the global rule is in `application.css`, and these are
+the controls that have historically overridden it.
+
+Re-run with `bin/rails test:system test/system/internal_accessibility_test.rb`
+and re-collect the run header / rule lists from axe the same way the landing
+report does — the values above are landing-page specific.
+
+## The guard's sweep (task #12825)
+
+The regression guard for this story reads every view and helper for off-palette
+classes, and checking what it left behind against this file turned up three
+pairs in use that the tables above did not name: the dark pill's white label
+(`#ffffff` on `ink` and on its `code-chip` hover) and the nav/tab label on its
+`surface-hover` hover. A white label is right here and wrong on `brand` — rule
+2.1 is about the ratio, not the colour, and `ink` carries white at 15.52:1 where
+orange carries it at 3.05:1.
+
+The same sweep moved the account page's destructive control off `red-700` /
+`red-50` and onto the danger tokens, so its two grounds are worth stating: the
+control is an outline, and its border stays drawn while the tint fills under the
+pointer.
+
+| pair | where | ratio |
+|---|---|---|
+| `#ffffff` on `--color-ink` `#1f2430` | dark pill label; selected tab label | 15.52 |
+| `#ffffff` on `--color-code-chip` `#343b4a` | dark pill label, hover | 11.23 |
+| `--color-ink` on `--color-surface-hover` `#f1ebe1` | nav and tab label, hover | 13.09 |
+| `--color-danger` `#b8321c` as text on `--color-paper` | "Delete my account" heading | 5.65 |
+| `--color-danger` as an edge on `--color-paper` | the destroy button's border | 5.65 |
+| `--color-danger` as text on `--color-danger-tint` `#fbe3dc` | the destroy button's label, hover | 4.88 |
+| `--color-danger-tint` against `--color-paper` | the destroy button's hover fill | 1.16 |
+
+The last row is the alert's reasoning again: at 1.16:1 the tint cannot mark the
+control by itself, and it does not have to — the border (5.65:1 on paper) and
+the label (5.65:1, 4.88:1 while the tint is under it) carry it.

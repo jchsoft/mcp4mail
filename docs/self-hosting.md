@@ -36,6 +36,7 @@ Then open your public URL, create an account, connect a mailbox and follow the *
 | `MCP4MAIL_PORT` | no | Host port the app is published on (Compose only). Default `8080`. |
 | `SOLID_QUEUE_IN_PUMA` | no | Run background jobs inside the web process. Compose sets it. |
 | `RAILS_LOG_LEVEL` | no | Default `info`. |
+| `EXCEPTION_NOTIFICATION_RECIPIENTS` | no | Where error emails go. Default `chmel@jchsoft.cz`. See [Email](#email). |
 
 Generate the three encryption values once, with any Ruby checkout of the app:
 
@@ -90,6 +91,15 @@ The app sends password-reset emails. No SMTP server is configured out of the box
 `config.action_mailer.smtp_settings` and `default_url_options` in `config/environments/production.rb` for
 your provider if you need them. Those settings are also how the approval emails for `send_message` reach
 mailbox owners, so set them before you let an AI send mail.
+
+### Error emails
+
+Every unhandled error and 500 is emailed to the operators, since nothing else watches a self-hosted
+instance's logs. `EXCEPTION_NOTIFICATION_RECIPIENTS` takes one or more comma-separated addresses; empty
+switches the emails off; unset sends them to `chmel@jchsoft.cz`, the hosted instance's operator — set your
+own address unless you are that instance. The emails go out through the ActionMailer settings above, so an
+instance with no SMTP configured sends none of them (the failure is logged instead of turning one error
+into two), and nothing is sent in development or test.
 
 ### Sending mail needs the owner's approval
 

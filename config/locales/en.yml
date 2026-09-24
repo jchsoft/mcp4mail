@@ -191,6 +191,7 @@ en:
   sessions:
     new:
       title: "Sign in"
+      lede: "Sign in to reach your mailboxes and the address your AI app connects to."
       email_placeholder: "Enter your email address"
       password_placeholder: "Enter your password"
       submit: "Sign in"
@@ -203,11 +204,14 @@ en:
     invalid_token: "Password reset link is invalid or has expired."
     new:
       title: "Forgot your password?"
+      lede: "Give us the address you signed up with and we will email you a link that sets a new password."
       submit: "Email reset instructions"
+      sign_in: "Sign in instead"
     create:
       success: "Password reset instructions sent (if user with that email address exists)."
     edit:
       title: "Update your password"
+      lede: "Choose a new password. Saving it signs you out everywhere else, and you sign in again with the new one."
       password_placeholder: "Enter new password"
       password_confirmation_placeholder: "Repeat new password"
       submit: "Save"
@@ -247,13 +251,18 @@ en:
   mail_accounts:
     index:
       title: "Mailboxes"
+      lede: "The mailboxes your AI can reach. Each one is read-only until you allow changes."
       add: "Add mailbox"
-      empty: "You have not added a mailbox yet. Add one, then connect your AI app."
+      empty_title: "Connect your first mailbox"
+      empty: "Add the mailbox you want your AI to work with. It can then search and read it over IMAP - and nothing else, until you allow changes."
       last_error: "Last connection failed: %{error}"
+      last_error_hint: "The mailbox is still connected, but its last sync failed. Check that the server is reachable; if the password changed, remove the mailbox and add it again."
       remove: "Remove"
       remove_confirm: "Remove %{name}? mcp4mail forgets its password and the message index; your mail on the server is not touched."
       connect_ai: "Next: connect your AI app →"
-      calls: "AI calls today: %{today}, this week: %{week}"
+      calls: "AI calls"
+      calls_today: "today"
+      calls_week: "this week"
       recent_activity: "Recent activity"
       activity_loading: "Loading…"
       writable: "Allow the AI to make changes to this mailbox"

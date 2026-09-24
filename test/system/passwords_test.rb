@@ -8,6 +8,7 @@ class PasswordsTest < ApplicationSystemTestCase
 
     visit new_password_url
     assert_field placeholder: "Enter your email address"
+    assert_field "Email address", type: "email"
 
     perform_enqueued_jobs do
       fill_in placeholder: "Enter your email address", with: user.email_address
@@ -25,6 +26,9 @@ class PasswordsTest < ApplicationSystemTestCase
 
     visit edit_password_path(token)
     assert_field placeholder: "Enter new password"
+    assert_field "Password", type: "password"
+    assert_field "Password confirmation", type: "password"
+    screenshot!("passwords-edit-en")
 
     fill_in placeholder: "Enter new password", with: "new-password"
     fill_in placeholder: "Repeat new password", with: "new-password"
@@ -62,6 +66,7 @@ class PasswordsTest < ApplicationSystemTestCase
 
     assert_current_path edit_password_path(token)
     assert_selector "#alert", text: "Passwords did not match."
+    screenshot!("passwords-edit-mismatch-en")
   end
 
   test "rapid reset requests trip the rate limiter" do

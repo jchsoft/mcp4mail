@@ -57,6 +57,12 @@ class SharedFieldTest < ActionView::TestCase
     assert_select "#mail_account_host_error", 0
   end
 
+  test "the wrapper takes the caller's classes, so a field can be a grid cell" do
+    render_field MailAccount.new, attribute: :port, type: :number, class: "my-5 sm:col-span-1"
+
+    assert_select "div.sm\\:col-span-1 input#mail_account_port"
+  end
+
   test "it never sets a local focus style or a gray border" do
     render_field MailAccount.new, attribute: :host, input: { placeholder: "imap.example.com" }
 

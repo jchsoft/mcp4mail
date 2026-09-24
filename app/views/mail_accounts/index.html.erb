@@ -1,68 +1,109 @@
 <% content_for :title, t(".title") %>
 
-<div class="mx-auto md:w-2/3 w-full">
-  <div class="flex items-center justify-between gap-4">
-    <h1 class="font-bold text-4xl"><%= t(".title") %></h1>
-    <%= link_to t(".add"), new_mail_account_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
-  </div>
-
+<%# The home screen of the signed-in product. Each mailbox is a card
+    (GUIDELINES.md section 3), not a divided row, so everything that belongs to
+    one mailbox - its address, its counters, its error, its switch and its
+    activity - sits inside one border. %>
+<div class="max-w-[840px]">
   <% if @mail_accounts.empty? %>
-    <p class="mt-8 text-gray-600" id="empty"><%= t(".empty") %></p>
+    <%# The empty state carries the only "Add mailbox" on the page, so the header
+        does not ask a second time three hundred pixels away. %>
+    <%= render "shared/page_header", title: t(".title"), lede: t(".lede") %>
+
+    <div class="rounded-[20px] border border-line bg-surface p-6" id="empty">
+      <h2 class="font-heading text-2xl font-bold tracking-[-0.015em] text-ink"><%= t(".empty_title") %></h2>
+      <p class="mt-3 text-[17px] leading-[1.6] text-ink-soft"><%= t(".empty") %></p>
+      <%= button_link t(".add"), new_mail_account_path, class: "mt-6" %>
+    </div>
   <% else %>
-    <ul class="mt-8 divide-y divide-gray-200 border-y border-gray-200">
+    <%# The action slot is filled by rendering the header as a layout: that is what
+        captures the block from a template. A bare `render "…" do` loses it. And
+        the block is compiled into this template but lazy t(".key") lookups inside
+        it resolve against the rendered partial's path, so the key here is spelled
+        out in full. %>
+    <%= render layout: "shared/page_header", locals: { title: t(".title"), lede: t(".lede") } do %>
+      <%= button_link t("mail_accounts.index.add"), new_mail_account_path %>
+    <% end %>
+
+    <ul class="grid gap-5">
       <% @mail_accounts.each do |mail_account| %>
-        <li class="py-4 flex items-start justify-between gap-4" id="<%= dom_id(mail_account) %>">
-          <div class="min-w-0">
-            <p class="font-medium"><%= mail_account.label %></p>
-            <p class="text-sm text-gray-600"><%= mail_account.username %> · <%= mail_account.host %>:<%= mail_account.port %></p>
-            <% if mail_account.smtp_host.present? %>
-              <p class="text-sm text-gray-600" id="<%= dom_id(mail_account, :smtp) %>"><%= t(".smtp", host: mail_account.smtp_host, port: mail_account.smtp_port) %></p>
-            <% end %>
-            <% if mail_account.last_error.present? %>
-              <%= render "shared/alert", variant: :danger, id: dom_id(mail_account, :last_error), class: "mt-2 text-sm",
-                    body: t(".last_error", error: mail_account.last_error) %>
-            <% end %>
-            <p class="mt-1 text-sm text-gray-600" id="<%= dom_id(mail_account, :calls) %>">
-              <%= t(".calls", today: @today_counts.fetch(mail_account.id, 0), week: @week_counts.fetch(mail_account.id, 0)) %>
-            </p>
-            <%= form_with model: mail_account, class: "mt-2", id: dom_id(mail_account, :writable),
-                  data: { controller: "auto-submit" } do |form| %>
-              <label class="inline-flex items-center gap-2 text-sm font-medium cursor-pointer">
-                <%= form.check_box :writable, id: dom_id(mail_account, :writable_switch), role: "switch",
-                      class: "size-4 accent-blue-600", data: { action: "auto-submit#submit" } %>
-                <%= t(".writable") %>
-              </label>
-              <p class="text-sm text-gray-600"><%= t(".writable_hint") %></p>
-              <noscript><%= form.submit t(".writable_save"), class: "mt-1 text-sm text-blue-600 underline cursor-pointer" %></noscript>
-            <% end %>
-            <% if (waiting = @awaiting_approval.fetch(mail_account.id, [])).any? %>
-              <section class="mt-3" id="<%= dom_id(mail_account, :awaiting_approval) %>" aria-labelledby="<%= dom_id(mail_account, :awaiting_approval_heading) %>">
-                <h2 class="font-semibold" id="<%= dom_id(mail_account, :awaiting_approval_heading) %>"><%= t(".awaiting_approval", number: waiting.size) %></h2>
-                <% waiting.each do |outgoing_message| %>
-                  <div class="mt-3 rounded-xl border border-line p-4" id="<%= dom_id(outgoing_message) %>">
-                    <%= render "outgoing_messages/preview", outgoing_message: %>
-                    <%= render "outgoing_messages/actions", send_url: approve_outgoing_message_path(outgoing_message),
-                          discard_url: discard_outgoing_message_path(outgoing_message) %>
-                  </div>
-                <% end %>
-              </section>
-            <% end %>
-            <details class="mt-2 text-sm">
-              <summary class="text-blue-600 underline hover:no-underline cursor-pointer"><%= t(".recent_activity") %></summary>
-              <%= turbo_frame_tag dom_id(mail_account, :activity), src: activity_mail_account_path(mail_account), loading: "lazy" do %>
-                <p class="mt-2 text-gray-500"><%= t(".activity_loading") %></p>
+        <li class="rounded-[20px] border border-line bg-surface p-6" id="<%= dom_id(mail_account) %>">
+          <div class="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
+            <div class="min-w-0">
+              <h2 class="font-heading text-[20px] font-bold tracking-[-0.015em] text-ink [overflow-wrap:anywhere]"><%= mail_account.label %></h2>
+              <%# The host and port are what a person checks against their provider's
+                  help page, so they are set in the code face like the MCP URL. %>
+              <p class="mt-1.5 text-sm text-ink-soft [overflow-wrap:anywhere]">
+                <%= mail_account.username %> · <span class="font-code"><%= mail_account.host %>:<%= mail_account.port %></span>
+              </p>
+              <% if mail_account.smtp_host.present? %>
+                <p class="mt-1 text-sm text-ink-muted [overflow-wrap:anywhere]" id="<%= dom_id(mail_account, :smtp) %>"><%= t(".smtp", host: mail_account.smtp_host, port: mail_account.smtp_port) %></p>
               <% end %>
-            </details>
+            </div>
+            <%# turbo_confirm is the browser's own dialog: it cannot be styled, and a
+                custom one would have to re-earn the keyboard and focus handling it
+                already has. %>
+            <%= button_to t(".remove"), mail_account, method: :delete,
+                  form: { data: { turbo_confirm: t(".remove_confirm", name: mail_account.label) } },
+                  class: button_classes(:destructive, size: :compact) %>
           </div>
-          <%= button_to t(".remove"), mail_account, method: :delete,
-                form: { data: { turbo_confirm: t(".remove_confirm", name: mail_account.label) } },
-                class: "text-sm text-red-600 underline hover:no-underline cursor-pointer" %>
+
+          <% if mail_account.last_error.present? %>
+            <%= render "shared/alert", variant: :danger, id: dom_id(mail_account, :last_error), class: "mt-5",
+                  title: t(".last_error", error: mail_account.last_error), body: t(".last_error_hint") %>
+          <% end %>
+
+          <%# The counters are data, so the numbers are badges rather than a sentence. %>
+          <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-muted" id="<%= dom_id(mail_account, :calls) %>">
+            <span class="font-semibold text-ink-soft"><%= t(".calls") %></span>
+            <span class="inline-flex items-center gap-1.5">
+              <%= render "shared/badge", label: @today_counts.fetch(mail_account.id, 0) %>
+              <%= t(".calls_today") %>
+            </span>
+            <span class="inline-flex items-center gap-1.5">
+              <%= render "shared/badge", label: @week_counts.fetch(mail_account.id, 0) %>
+              <%= t(".calls_week") %>
+            </span>
+          </div>
+
+          <%= form_with model: mail_account, class: "mt-5 border-t border-line pt-5", id: dom_id(mail_account, :writable),
+                data: { controller: "auto-submit" } do |form| %>
+            <%= render "shared/switch", form: form, attribute: :writable, label: t(".writable"),
+                  input: { id: dom_id(mail_account, :writable_switch), data: { action: "auto-submit#submit" } } %>
+            <p class="mt-1.5 text-sm text-ink-muted"><%= t(".writable_hint") %></p>
+            <noscript><%= form.submit t(".writable_save"), class: "#{button_classes(:secondary, size: :compact)} mt-3" %></noscript>
+          <% end %>
+
+          <% if (waiting = @awaiting_approval.fetch(mail_account.id, [])).any? %>
+            <section class="mt-5 border-t border-line pt-5" id="<%= dom_id(mail_account, :awaiting_approval) %>" aria-labelledby="<%= dom_id(mail_account, :awaiting_approval_heading) %>">
+              <h3 class="font-heading text-[17px] font-bold text-ink" id="<%= dom_id(mail_account, :awaiting_approval_heading) %>"><%= t(".awaiting_approval", number: waiting.size) %></h3>
+              <% waiting.each do |outgoing_message| %>
+                <div class="mt-3 rounded-2xl border border-line bg-paper p-4" id="<%= dom_id(outgoing_message) %>">
+                  <%= render "outgoing_messages/preview", outgoing_message: %>
+                  <%= render "outgoing_messages/actions", send_url: approve_outgoing_message_path(outgoing_message),
+                        discard_url: discard_outgoing_message_path(outgoing_message) %>
+                </div>
+              <% end %>
+            </section>
+          <% end %>
+
+          <%# The disclosure recipe from GUIDELINES section 3: the summary keeps the
+              text "Recent activity" the activity tests find it by (section 8). %>
+          <details class="mt-5 rounded-2xl border border-line bg-paper px-[22px] py-[18px]">
+            <summary class="flex cursor-pointer items-center gap-3.5 font-heading text-[17px] font-bold max-lg:min-h-11">
+              <span aria-hidden="true" class="faq-mark inline-flex size-[26px] flex-none items-center justify-center rounded-full bg-brand-tint text-[18px] text-brand-deep">+</span>
+              <%= t(".recent_activity") %>
+            </summary>
+            <%= turbo_frame_tag dom_id(mail_account, :activity), src: activity_mail_account_path(mail_account), loading: "lazy" do %>
+              <p class="mt-3 text-sm text-ink-muted" role="status"><%= t(".activity_loading") %></p>
+            <% end %>
+          </details>
         </li>
       <% end %>
     </ul>
 
     <p class="mt-8">
-      <%= link_to t(".connect_ai"), connect_ai_path, class: "text-blue-600 underline hover:no-underline" %>
+      <%= button_link t(".connect_ai"), connect_ai_path, variant: :secondary %>
     </p>
   <% end %>
 </div>

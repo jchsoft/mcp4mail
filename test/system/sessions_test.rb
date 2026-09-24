@@ -5,6 +5,10 @@ class SessionsTest < ApplicationSystemTestCase
     visit new_session_url
     assert_field placeholder: "Enter your email address"
     assert_field placeholder: "Enter your password"
+    # The placeholders stay for the tests that fill by them; the labels are what
+    # names the fields for a screen reader, and only shared/_field supplies them.
+    assert_field "Email address", type: "email"
+    assert_field "Password", type: "password"
 
     fill_in placeholder: "Enter your email address", with: users(:one).email_address
     fill_in placeholder: "Enter your password", with: "password"

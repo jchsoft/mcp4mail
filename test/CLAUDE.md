@@ -10,6 +10,7 @@ How this suite is written and run, for whoever adds the next test. Minitest, fix
 | `controllers` | One request, one response: status, redirect, flash, `assert_select` on the rendered HTML. Also the per-section landing tests (`how_section_test.rb`, `why_section_test.rb`, ...) |
 | `integration` | Several requests in one story, or anything through the MCP endpoint and OAuth (`mcp_*_test.rb`, `hitch_*_test.rb`, `account_deletion_test.rb`) |
 | `views/shared` | The shared partials rendered on their own (`_alert`, `_field`, `_flash`, `_error_summary`) |
+| `views` | View-level tests that are not about one partial: `shared_headers_test.rb` renders the two headers, `default_palette_test.rb` scans the markup for off-palette classes. |
 | `system` | A real browser: JavaScript, layout, focus, what a person actually sees and clicks |
 | `assets` | The stylesheet source (`tailwind_theme_test.rb`) and the image assets |
 | `locales` | `locale_parity_test.rb`: `cs` and `en` carry the same keys |
@@ -74,4 +75,4 @@ Prefer roles and visible text (`click_button "Sign in"`, `assert_selector "h1"`)
 
 ## Assertions about the design
 
-`test/assets/tailwind_theme_test.rb` pins every token value in the `@theme` block of `app/assets/tailwind/application.css`, and `test/system/design_tokens_test.rb` checks in the browser that pages actually render on them (paper background, Instrument Sans). A design change that moves a token without updating both tests, and the reason in the comment beside the value, is not finished.
+`test/assets/tailwind_theme_test.rb` pins every token value in the `@theme` block of `app/assets/tailwind/application.css`, and `test/system/design_tokens_test.rb` checks in the browser that pages actually render on them (paper background, Instrument Sans, and the signed-in shell — `main#main` in the 1160px column, the app header on the same gutter, the skip link off-screen until focused). `test/views/default_palette_test.rb` is the third guard: it reads `app/views/**/*.erb` and `app/helpers/**/*.rb` for a built-in Tailwind hue (`text-red-700`, `divide-gray-200`) and fails on the class itself, so an off-palette utility is caught where it is typed rather than in a screenshot. A design change that moves a token without updating the first two, and the reason in the comment beside the value, is not finished.

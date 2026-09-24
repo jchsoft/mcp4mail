@@ -1,0 +1,26 @@
+<%#
+  A status pill: one word or one number, read at a glance beside the thing it
+  describes (docs/design/GUIDELINES.md section 3, "Badge").
+
+  Locals:
+    label:   the text — an outcome ("denied"), a count ("7"). Keep it to a word.
+    variant: :ok (the call did what was asked), :denied (refused or failed) or
+             :neutral (a plain fact with no verdict, e.g. a counter). Defaults
+             to :neutral.
+    id:      the element id, if tests or links hold on to it
+    class:   extra classes for the pill, usually spacing
+
+  Border plus fill in one family, like shared/_alert, so the three variants are
+  one box in three colours rather than three differently sized pills — and so
+  danger-tint never appears without its danger border (section 1).
+
+  The colour is decoration: it repeats what the label already says, so nothing
+  here is announced separately and a screen reader hears the word on its own.
+%>
+<% variant = local_assigns.fetch(:variant, :neutral).to_sym %>
+<%= tag.span id: local_assigns[:id],
+      class: [ "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[13px] font-semibold",
+               { ok: "border-green bg-green-tint text-green-deep",
+                 denied: "border-danger bg-danger-tint text-danger-deep",
+                 neutral: "border-line bg-surface-hover text-ink-soft" }.fetch(variant),
+               local_assigns[:class] ] do %><%= label %><% end %>

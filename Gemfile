@@ -31,6 +31,11 @@ gem "bcrypt", "~> 3.1.7"
 # OAuth 2.1 authorization server + authenticated /mcp endpoint for AI connectors; pre-1.0, upgrade via its docs/upgrading/*
 gem "hitch-rails", "~> 0.5.0"
 
+# Emails unhandled production errors and 500s to EXCEPTION_NOTIFICATION_RECIPIENTS
+# (chmel@jchsoft.cz when unset); nothing else watches a self-hosted instance's logs.
+# See config/initializers/exception_notification.rb and docs/self-hosting.md "Email".
+gem "exception_notification", "~> 5.0"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

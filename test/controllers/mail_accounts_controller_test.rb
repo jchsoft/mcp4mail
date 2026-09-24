@@ -49,7 +49,8 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "details#connection-details:not([open])"
     assert_select "details#connection-details input[required]", count: 0
     assert_select "details#connection-details select[name='mail_account[tls_mode]'] option", 3
-    assert_select "input[type=submit][value=Connect][data-turbo-submits-with]"
+    # ButtonHelper#button_submit renders a <button>, not the scaffold's <input type=submit>.
+    assert_select "button[type=submit][data-turbo-submits-with]", "Connect"
   end
 
   test "create detects the server settings, saves them and starts a sync" do
@@ -288,14 +289,14 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
     get mail_accounts_path
 
-    assert_select "#calls_mail_account_#{work.id}", /today: 2.*this week: 3/
+    assert_select "#calls_mail_account_#{work.id}", /2\s+today.*3\s+this week/m
   end
 
   test "index shows no calls for a mailbox nothing has asked for" do
     sign_in_as @user
     get mail_accounts_path
 
-    assert_select "#calls_mail_account_#{mail_accounts(:work).id}", /today: 0, this week: 0/
+    assert_select "#calls_mail_account_#{mail_accounts(:work).id}", /0\s+today.*0\s+this week/m
   end
 
   test "activity lists the recent calls with their tool titles, clients and outcomes" do
@@ -312,7 +313,7 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "li", /Search messages/
     assert_select "li", /Claude Desktop/
     assert_select "li", /rows: 7/
-    assert_select "li span.text-red-700", "denied"
+    assert_select "li span.text-danger-deep", "denied"
     assert_select "li", /5 minutes ago/
   end
 
