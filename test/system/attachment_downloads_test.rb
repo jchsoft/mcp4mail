@@ -8,7 +8,14 @@ require "application_system_test_case"
 # status of the response Firefox navigated to and by that directory staying empty: the
 # refused URL renders an empty page and no file.
 class AttachmentDownloadsTest < ApplicationSystemTestCase
+  # The download dir lives on the worker process, because Firefox's `browser.download.dir`
+  # is set when the driver starts and reused across every test in the class. The path is
+  # created up front so the driver can hand it to Firefox before any test runs, and
+  # cleared (not removed) between tests so the directory itself never disappears mid-run
+  # - on macOS an open file handle on a child of DOWNLOAD_DIR makes `rm_rf` leave a phantom
+  # entry behind, and `mkdir_p` then refuses to recreate the path with EEXIST.
   DOWNLOAD_DIR = Rails.root.join("tmp/downloads/system-#{Process.pid}").to_s
+  FileUtils.mkdir_p(DOWNLOAD_DIR)
 
   # Its own driver name: under the shared :selenium name Capybara would reuse whichever
   # browser an earlier test already started, one without these preferences.
@@ -26,13 +33,12 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
 
   setup do
     @user = users(:one)
-    FileUtils.rm_rf(DOWNLOAD_DIR)
-    FileUtils.mkdir_p(DOWNLOAD_DIR)
+    FileUtils.rm_rf(Dir.glob("#{DOWNLOAD_DIR}/*"))
   end
 
   teardown do
     @server&.stop
-    FileUtils.rm_rf(DOWNLOAD_DIR)
+    FileUtils.rm_rf(Dir.glob("#{DOWNLOAD_DIR}/*"))
   end
 
   test "a valid token downloads the attachment's bytes under its filename" do
