@@ -61,8 +61,9 @@ class InternalResponsiveTest < ApplicationSystemTestCase
                    "#{name} #{locale} at #{width}px: the mailbox cards must stack, one per row"
       assert_empty undersized_targets, "#{name} #{locale} at #{width}px has a tap target under 44px: #{undersized_targets.to_sentence}"
 
-      # Two mailboxes means two summaries — click the first one's.
-      all("summary", text: I18n.t("mail_accounts.index.recent_activity", locale: locale)).first.click
+      # Two mailboxes means two summaries — click the first one's. The list has
+      # to have landed before measuring: the placeholder is not the list.
+      open_activity_disclosure I18n.t("mail_accounts.index.recent_activity", locale: locale)
       assert_selector "li", text: "Claude Desktop"
       assert_no_sideways_scroll("#{name} with the activity open", width, locale)
     end

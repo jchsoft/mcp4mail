@@ -22,7 +22,7 @@ class MailboxActivityTest < ApplicationSystemTestCase
     # is on the page before the click.
     assert_no_text "Search messages"
 
-    find("summary", text: "Recent activity").click
+    open_activity_disclosure "Recent activity"
     assert_selector "li", text: "Search messages"
     assert_selector "li", text: "Claude Desktop"
     assert_selector "li", text: "rows: 7"
@@ -43,7 +43,7 @@ class MailboxActivityTest < ApplicationSystemTestCase
     assert_text "AI calls 0 today 0 this week", normalize_ws: true
     assert_no_text "No AI has called this mailbox yet."
 
-    find("summary", text: "Recent activity").click
+    open_activity_disclosure "Recent activity"
     assert_text "No AI has called this mailbox yet."
     screenshot!("mailbox-activity-empty-en")
   end

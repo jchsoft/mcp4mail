@@ -41,6 +41,24 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     Pathname.new(Capybara.save_path).join("#{name}.png")
   end
 
+  # The activity list is a turbo-frame with loading: "lazy", so opening the
+  # disclosure only starts the fetch: the frame keeps its role="status"
+  # placeholder until the response lands, and a test that reads the list right
+  # after the click is racing it. The 5s default lost that race on GitHub's
+  # runner in the system-test job of pull request #98 (task #12826): the failure
+  # screenshot still showed the placeholder. Waiting for the placeholder to go
+  # is waiting for the fetch, whenever it started, and a poll that arrives after
+  # the response landed passes straight away.
+  #
+  # The wait is scoped to the card that was opened: every other card's frame is
+  # lazy too and keeps its placeholder until its own disclosure is clicked, so a
+  # page-wide wait would never finish.
+  def open_activity_disclosure(label)
+    summary = find("summary", text: label, match: :first)
+    summary.click
+    summary.ancestor("details").assert_no_selector "turbo-frame [role='status']", wait: 15
+  end
+
   # One process, however many tests there are. Minitest parallelises a file set
   # over 50 tests by default, and the accessibility pass of task #12708 took the
   # system suite past that line: eight headless Firefoxes on one machine started
