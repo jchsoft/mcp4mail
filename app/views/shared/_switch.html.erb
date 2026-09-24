@@ -1,0 +1,45 @@
+<%#
+  A real checkbox styled as a track + thumb, with `role="switch"` so assistive
+  tech hears a switch, not a checkbox (GUIDELINES §3). The native input still
+  drives the form: form.check_box emits the `writable=0` hidden field that
+  flips the switch off, and the controller test still asserts on
+  `[role=switch][checked]` / `[role=switch]:not([checked])`.
+
+  The input is `appearance: none` and fills the track, so the global two-tone
+  focus ring in application.css draws AROUND THE VISIBLE SWITCH when the
+  control has keyboard focus — no per-component focus style, which rule 2.2
+  bans. The track + thumb are drawn from `::before` on the input and shifted
+  with the `peer-checked` modifier (the checked state is read off the input
+  itself, so no second control is needed).
+
+  Locals:
+    form:      the form builder
+    attribute: the attribute / param name
+    label:     label text; defaults to the model's human attribute name
+    input:     extra HTML attributes for the control (data-action, aria-*, …)
+    class:     classes for the wrapper <label>
+
+  No focus:outline-* / focus:ring-* here or in the styles below — the global
+  ring is the only focus indicator (rule 2.2).
+%>
+<%
+  input = local_assigns.fetch(:input, {}).dup
+  label_text = local_assigns[:label]
+  wrapper_class = local_assigns.fetch(:class, "")
+
+  control_id = input[:id] || form.field_id(attribute)
+  input[:id] = control_id
+  input[:role] = "switch"
+  input[:class] = class_names(
+    "switch-input peer relative inline-block h-6 w-11 flex-none cursor-pointer appearance-none rounded-full border border-line bg-surface-hover transition-colors",
+    "checked:bg-ink checked:border-ink",
+    input[:class]
+  )
+%>
+<label for="<%= control_id %>" class="flex cursor-pointer items-center gap-3 text-sm font-semibold text-ink max-lg:min-h-11 <%= wrapper_class %>">
+  <%= form.check_box attribute, input %>
+  <%# The thumb is drawn from ::before on the input so it moves with the
+      checked state, and stays out of the a11y tree (aria-hidden because the
+      input itself is the one assistive tech focuses on). %>
+  <span><%= label_text %></span>
+</label>

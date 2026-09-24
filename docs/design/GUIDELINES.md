@@ -190,6 +190,28 @@ reduced-motion opt-out; the span must keep the `faq-mark` class and
 </details>
 ```
 
+**Switch** — `shared/_switch` for a single on/off control that is not a form
+checkbox (`role="switch"`, not a checkbox, so screen readers do not say
+"Allow… checked, checkbox"). The input stays a real `<input type="checkbox">`
+so `form.check_box` still emits the hidden `0` field the controller needs to
+turn it off, and the same controller tests keep asserting on
+`[role=switch][checked]`. The input is `appearance: none` and fills the
+track, so the global two-tone focus ring in `application.css` draws AROUND
+the visible switch when the control has keyboard focus — no per-component
+focus style, which rule 2.2 bans. The thumb is a `::before` pseudo-element
+on the input itself, animated on the `checked` state, with one
+reduced-motion opt-out (the same one that already covers the FAQ marker).
+
+```erb
+<%= render "shared/switch", form: form, attribute: :writable, label: t(".writable"),
+      input: { id: dom_id(mail_account, :writable_switch),
+               data: { action: "auto-submit#submit" } } %>
+```
+
+On-state fill is `bg-ink` (the orange CTA stays rule-2.1-only); off-state is
+`bg-surface-hover` (the same track the language switch already uses, so
+people recognise it).
+
 **Tabs** — the `tabs` Stimulus controller over a real `role="tablist"`
 (`connect_ai/show.html.erb`). The strip and a tab:
 
