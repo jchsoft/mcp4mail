@@ -1,12 +1,19 @@
 <%# The signed-in header, built on the same frame as shared/_marketing_header:
-    the wordmark, a row of links, and a group that wraps as one at 375px.
+    the wordmark, a row of tabs, and a right-aligned group.
 
     Route helpers go through main_app for the same reason as in the marketing
     header: the layouts also dress screens rendered inside the Hitch engine.
 
     Sign out is a button_to DELETE. The submit itself carries the pill classes;
     wrapping it in a link would turn the request into a GET. The form is made
-    inline-flex so it sits in the row instead of breaking it like a block. %>
+    inline-flex so it sits in the row instead of breaking it like a block.
+
+    At tablet width the chrome is dense enough that wordmark + tabs + locale +
+    email + sign-out do not share one row: the wordmark ran to the left edge
+    ("mcp4mai") and the rightmost tab past the right edge. From sm up the tabs
+    therefore drop to their own row beneath the wordmark with the column's
+    gutter on both sides; from lg up the whole chrome returns to one row with
+    the design's looser rhythm. %>
 <header class="landing-shell flex flex-wrap items-center gap-x-7 gap-y-3 py-[22px]">
   <%= link_to main_app.root_path, class: "mr-auto inline-flex items-center gap-2.5 max-lg:min-h-11 font-heading text-[22px] font-extrabold tracking-[-0.02em] text-ink no-underline" do %>
     <span aria-hidden="true" class="inline-grid size-[34px] place-items-center rounded-[10px] bg-brand text-[15px] font-extrabold text-ink">@</span>
@@ -14,7 +21,7 @@
   <% end %>
 
   <% if authenticated? %>
-    <nav aria-label="<%= t("nav.label") %>" class="flex flex-wrap items-center gap-1 text-[15px] font-medium">
+    <nav aria-label="<%= t("nav.label") %>" class="flex flex-wrap items-center gap-1 text-[15px] font-medium max-lg:basis-full lg:order-2">
       <% { mailboxes: main_app.mail_accounts_path, connect_ai: main_app.connect_ai_path }.each do |key, path| %>
         <%= link_to t("nav.#{key}"), path,
                     aria: { current: ("page" if current_page?(path)) },
@@ -23,7 +30,7 @@
     </nav>
   <% end %>
 
-  <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+  <div class="flex flex-wrap items-center gap-x-5 gap-y-2 lg:order-3">
     <%= render "shared/locale_switcher", id: "language-switcher" %>
 
     <% if authenticated? %>
