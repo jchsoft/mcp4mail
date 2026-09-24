@@ -37,7 +37,7 @@
         <button type="button" role="tab" id="tab-<%= client %>" aria-controls="client-<%= client %>"
                 aria-selected="false" tabindex="-1" data-tabs-target="tab"
                 data-action="tabs#select keydown->tabs#navigate"
-                class="grow cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold text-ink-soft hover:bg-surface-hover aria-selected:bg-ink aria-selected:text-white aria-selected:hover:bg-ink">
+                class="grow cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold text-ink-soft hover:bg-surface-hover aria-selected:bg-ink aria-selected:text-white aria-selected:hover:bg-ink max-lg:min-h-11">
           <%= t(".clients.#{client}.title") %>
         </button>
       <% end %>
