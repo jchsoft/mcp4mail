@@ -68,11 +68,8 @@
 
           <%= form_with model: mail_account, class: "mt-5 border-t border-line pt-5", id: dom_id(mail_account, :writable),
                 data: { controller: "auto-submit" } do |form| %>
-            <label class="flex cursor-pointer items-center gap-3 text-sm font-semibold text-ink max-lg:min-h-11">
-              <%= form.check_box :writable, id: dom_id(mail_account, :writable_switch), role: "switch",
-                    class: "size-4 flex-none cursor-pointer accent-ink", data: { action: "auto-submit#submit" } %>
-              <%= t(".writable") %>
-            </label>
+            <%= render "shared/switch", form: form, attribute: :writable, label: t(".writable"),
+                  input: { id: dom_id(mail_account, :writable_switch), data: { action: "auto-submit#submit" } } %>
             <p class="mt-1.5 text-sm text-ink-muted"><%= t(".writable_hint") %></p>
             <noscript><%= form.submit t(".writable_save"), class: "#{button_classes(:secondary, size: :compact)} mt-3" %></noscript>
           <% end %>
