@@ -66,7 +66,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # left the URL unchanged, in tests that had nothing to do with the change.
   # The unit suite in test/test_helper.rb keeps its workers; only browsers are
   # too heavy to run eight at a time.
-  parallelize(workers: 1)
+  if ENV["GH_CI"]
+    parallelize(workers: 1)
+  else
+    parallelize(workers: [(Etc.nprocessors / 2.5).round, 1].max)
+  end
 
   # Capybara's 2s default is enough on a developer machine and short on GitHub's
   # shared runner: the system-test job failed twice on the landing header anchors

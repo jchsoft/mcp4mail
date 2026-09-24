@@ -137,6 +137,7 @@ jobs:
 
       - name: Run System Tests
         env:
+          GH_CI: true
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
