@@ -30,6 +30,8 @@
   <div class="flex flex-wrap items-center gap-x-7 gap-y-2">
     <%= render "shared/locale_switcher" %>
 
+    <%= render "shared/account_link" if authenticated? %>
+
     <%= button_link t("pages.home.nav.cta"),
                     authenticated? ? main_app.mail_accounts_path : main_app.new_registration_path,
                     variant: :dark, size: :compact %>

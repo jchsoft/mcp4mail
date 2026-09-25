@@ -34,11 +34,7 @@
     <%= render "shared/locale_switcher", id: "language-switcher" %>
 
     <% if authenticated? %>
-      <%# The address is the identity, and it leads to the account page. Long
-          addresses break anywhere rather than push a phone layout sideways. %>
-      <%= link_to current_user.email_address, main_app.account_path,
-                  aria: { label: t("nav.account_for", email: current_user.email_address) },
-                  class: "inline-flex items-center text-[15px] text-ink-soft no-underline [overflow-wrap:anywhere] hover:text-brand-deep max-lg:min-h-11" %>
+      <%= render "shared/account_link" %>
       <%= button_to t("nav.sign_out"), main_app.session_path,
                     method: :delete,
                     form_class: "inline-flex",
