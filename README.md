@@ -40,8 +40,22 @@ here, not something free or unlimited.
 | --- | --- |
 | `list_mail_accounts` | Lists the mail accounts you connected, with the ids the other tools take. |
 | `get_mail_account` | Shows the connection details of one account (never its password). |
+| `list_folders` | Lists the folders of one account. |
+| `search_messages` | Searches by subject, sender, recipients and date. |
+| `get_message` | Reads one message. |
+| `get_attachment` | Downloads an attachment of a message. |
+| `search_contacts` | Finds addresses you have corresponded with. |
+| `get_outgoing_status` | Tells whether an email handed to `send_message` has gone out. |
+| `set_flags` | Flags a message or marks it read / unread. *Write.* |
+| `move_message` | Moves a message to another folder. *Write.* |
+| `trash_message` | Moves a message to Trash. *Write.* |
+| `create_folder` | Creates a folder. *Write.* |
+| `create_draft` | Saves a draft. *Write.* |
+| `send_message` | Prepares an email; it is sent only after you approve it. *Write.* |
 
-That is the whole list today. Every tool is read-only, see [below](#mcp-endpoint-read-only-by-design).
+Write tools work only on a mailbox whose owner switched on "Allow the AI to make changes to this mailbox";
+everywhere else they are refused, see [below](#mcp-endpoint-read-only-by-design). `send_message` never sends
+on its own: you get an email with a link and the message leaves only when you press Send.
 
 ## Self-hosting
 

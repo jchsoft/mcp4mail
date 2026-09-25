@@ -19,10 +19,10 @@ class SecuritySectionTest < ApplicationSystemTestCase
     visit root_url
 
     within "#security" do
-      assert_selector "h2", text: "It reads. It never writes."
+      assert_selector "h2", text: "Read-only until you allow more."
       assert_selector "span", text: /security/i
       assert_selector "h3", count: 4
-      assert_selector "h3", text: "Read‑only, built in"
+      assert_selector "h3", text: "Read‑only by default"
       assert_selector "code", text: "docker compose up"
       assert_link "Self‑hosting guide",
                   href: "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md"
@@ -32,9 +32,9 @@ class SecuritySectionTest < ApplicationSystemTestCase
     visit root_url(locale: :cs)
 
     within "#security" do
-      assert_selector "h2", text: "Čte. Nikdy nepíše."
+      assert_selector "h2", text: "Jen čtení, dokud nedovolíte víc."
       assert_selector "h3", count: 4
-      assert_selector "h3", text: "Jen čtení, zabudované"
+      assert_selector "h3", text: "Ve výchozím stavu jen čtení"
       assert_link "Návod k self‑hostingu"
     end
     screenshot!("landing-security-cs")
