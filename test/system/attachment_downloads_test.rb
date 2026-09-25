@@ -9,13 +9,17 @@ require "application_system_test_case"
 # refused URL renders an empty page and no file.
 class AttachmentDownloadsTest < ApplicationSystemTestCase
   # The download dir lives on the worker process, because Firefox's `browser.download.dir`
-  # is set when the driver starts and reused across every test in the class. The path is
-  # created up front so the driver can hand it to Firefox before any test runs, and
-  # cleared (not removed) between tests so the directory itself never disappears mid-run
-  # - on macOS an open file handle on a child of DOWNLOAD_DIR makes `rm_rf` leave a phantom
-  # entry behind, and `mkdir_p` then refuses to recreate the path with EEXIST.
-  DOWNLOAD_DIR = Rails.root.join("tmp/downloads/system-#{Process.pid}").to_s
-  FileUtils.mkdir_p(DOWNLOAD_DIR)
+  # is set when the driver starts and reused across every test in the class. It is named
+  # after the worker's pid when first asked for, inside the worker: a path fixed at class
+  # load would be the parent's pid, shared by every parallel worker, and one worker's setup
+  # would wipe the file another worker's Firefox had just saved. The path is created before
+  # the driver hands it to Firefox, and cleared (not removed) between tests so the directory
+  # itself never disappears mid-run - on macOS an open file handle on a child of it makes
+  # `rm_rf` leave a phantom entry behind, and `mkdir_p` then refuses to recreate the path
+  # with EEXIST.
+  def self.download_dir
+    Rails.root.join("tmp/downloads/system-#{Process.pid}").to_s.tap { |dir| FileUtils.mkdir_p(dir) }
+  end
 
   # Its own driver name: under the shared :selenium name Capybara would reuse whichever
   # browser an earlier test already started, one without these preferences.
@@ -23,7 +27,7 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
     options: { name: :headless_firefox_downloads } do |options|
     options.add_preference("intl.accept_languages", "en")
     options.add_preference("browser.download.folderList", 2)
-    options.add_preference("browser.download.dir", DOWNLOAD_DIR)
+    options.add_preference("browser.download.dir", download_dir)
     options.add_preference("browser.download.useDownloadDir", true)
     options.add_preference("browser.download.always_ask_before_handling_new_types", false)
     options.add_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")
@@ -33,12 +37,12 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
 
   setup do
     @user = users(:one)
-    FileUtils.rm_rf(Dir.glob("#{DOWNLOAD_DIR}/*"))
+    FileUtils.rm_rf(Dir.glob("#{download_dir}/*"))
   end
 
   teardown do
     @server&.stop
-    FileUtils.rm_rf(Dir.glob("#{DOWNLOAD_DIR}/*"))
+    FileUtils.rm_rf(Dir.glob("#{download_dir}/*"))
   end
 
   test "a valid token downloads the attachment's bytes under its filename" do
@@ -50,7 +54,7 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
     visit root_url
     page.execute_script("window.location.href = arguments[0]", attachment_download_url(token:))
 
-    downloaded = File.join(DOWNLOAD_DIR, "faktura.pdf")
+    downloaded = File.join(download_dir, "faktura.pdf")
     # Firefox creates an empty placeholder under the final name before the bytes arrive,
     # so the file only counts as saved once it has content and the .part file is gone.
     saved = wait_until { File.size?(downloaded) && !File.exist?("#{downloaded}.part") }
@@ -104,6 +108,8 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
   end
 
   private
+    def download_dir = self.class.download_dir
+
     def index_message_on_fake_server(content:, filename:)
       @mailboxes = { "INBOX" => { uidvalidity: 1, messages: [ { uid: 1, body: multipart_body(content:, filename:) } ] } }
       @server = FakeImapServer.new(mailboxes: @mailboxes).start
@@ -123,7 +129,7 @@ class AttachmentDownloadsTest < ApplicationSystemTestCase
     def assert_refused(status)
       assert_equal status, page.evaluate_script("performance.getEntriesByType('navigation')[0].responseStatus")
       assert_equal "", page.text.strip
-      assert_empty Dir.children(DOWNLOAD_DIR), "a refused token must not save a file"
+      assert_empty Dir.children(download_dir), "a refused token must not save a file"
     end
 
     def wait_until(timeout: Capybara.default_max_wait_time)
