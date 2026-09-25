@@ -2,7 +2,7 @@ cs:
   buttons:
     submitting: "Pracuji…"
   meta:
-    description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+    description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Ve výchozím stavu jen čtení — změny jen tam, kde je povolíte, a nic se neodešle bez vašeho schválení. Bez instalace."
   nav:
     label: "Hlavní"
     account_for: "Účet (%{email})"
@@ -106,12 +106,12 @@ cs:
       app_password_note: "Běžné heslo přes IMAP nefunguje — nejdřív si vytvořte heslo pro aplikaci."
       connect:
         heading: "Teď ji připojte v mcp4mail"
-        body: "IMAP je zapnutý a server znáte. Přidejte schránku a vaše AI ji bude umět číst — nic se neodešle ani nesmaže."
+        body: "IMAP je zapnutý a server znáte. Přidejte schránku a vaše AI ji bude umět číst — jen pro čtení, dokud nepovolíte změny."
         cta: "Připojit schránku"
   pages:
     home:
       title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
-      meta_description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+      meta_description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Ve výchozím stavu jen čtení — změny jen tam, kde je povolíte, a nic se neodešle bez vašeho schválení. Bez instalace."
       nav:
         label: "Sekce stránky"
         brand: "mcp4mail"
@@ -131,7 +131,7 @@ cs:
         heading_before: "Vaše pošta,"
         heading_highlight: "srozumitelná"
         heading_after: "pro vaši AI."
-        lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Jen čtení — nic se neodešle ani nesmaže. Bez instalace."
+        lede: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Ve výchozím stavu jen čtení — změny jen tam, kde je povolíte, a nic se neodešle bez vašeho schválení. Bez instalace."
         audience: "Nemáte poštu na Gmailu? Gmail a Outlook už mají v Claude a ChatGPT vlastní konektory — mcp4mail je pro všechny ostatní: hostingy, vlastní domény, Seznam, iCloud, Fastmail, Zoho a jakoukoli IMAP schránku. Zdarma, open source, jen pro čtení, dokud neřeknete jinak."
         cta_primary: "Připojit schránku"
         cta_secondary: "Kód na GitHubu"
@@ -178,7 +178,7 @@ cs:
           - title: "Propojte svou AI"
             body_html: "V Claude, ChatGPT nebo Groku otevřete nastavení konektorů a vložte jednu adresu: <code>%{connector_url}</code>. Přihlásíte se, potvrdíte přístup — hotovo. Jako když povolíte přihlášení přes Google."
           - title: "Zeptejte se"
-            body_html: "Napište otázku, jak byste ji řekli kolegovi. AI si přečte, co potřebuje, a odpoví. Vidí jen schránky, které jste připojili, a nemůže v nich nic změnit — ani označit zprávu jako přečtenou."
+            body_html: "Napište otázku, jak byste ji řekli kolegovi. AI si přečte, co potřebuje, a odpoví. Vidí jen schránky, které jste připojili, a dokud u schránky nepovolíte změny, nemůže v ní nic změnit — ani označit zprávu jako přečtenou."
         works_with_label: "Funguje s"
         clients:
           - "Claude Desktop"
@@ -188,11 +188,11 @@ cs:
           - "cokoli s MCP"
       security:
         kicker: "Bezpečnost"
-        heading: "Čte. Nikdy nepíše."
-        lede: "Do schránky se dostane jen to, co jí dovolíte, a nic v ní nemůže změnit. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami."
+        heading: "Jen čtení, dokud nedovolíte víc."
+        lede: "Do schránky se dostane jen to, co jí dovolíte. Každá schránka začíná jen pro čtení a nic se neodešle bez vašeho schválení. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami."
         points:
-          - title: "Jen čtení, zabudované"
-            body_html: "Žádný nástroj neodesílá, nepřesouvá, nemaže ani nepřeznačuje zprávy. Server se odmítne spustit s nástrojem, který nedeklaruje, že je jen pro čtení."
+          - title: "Ve výchozím stavu jen čtení"
+            body_html: "Dokud nezapnete „Povolit AI měnit tuto schránku“, AI ji může jen procházet, prohledávat a číst — nic se neodešle, nepřesune, nesmaže ani neoznačí jako přečtené. Po zapnutí může také označovat, přesouvat, psát koncepty a mazat do koše; e‑mail, který chce odeslat, počká, až stisknete Odeslat ve zprávě, kterou vám pošleme."
           - title: "Heslo aplikace, šifrované"
             body_html: "Zadáváte heslo aplikace, ne heslo k účtu — kdykoli ho zrušíte. V databázi leží šifrované a AI klient ho nikdy neuvidí; přístup dostává přes OAuth 2.1."
           - title: "Nebo úplně u vás"

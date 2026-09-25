@@ -2,7 +2,7 @@ en:
   buttons:
     submitting: "Working…"
   meta:
-    description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+    description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read-only by default — changes only where you allow them, and nothing is sent without your approval. Nothing to install."
   nav:
     label: "Main"
     account_for: "Account (%{email})"
@@ -60,12 +60,12 @@ en:
       app_password_note: "Your normal password will not work over IMAP — create an app password first."
       connect:
         heading: "Now connect it in mcp4mail"
-        body: "IMAP is on and you know your server. Add the mailbox and your AI can read it — nothing gets sent or deleted."
+        body: "IMAP is on and you know your server. Add the mailbox and your AI can read it — read-only until you allow changes."
         cta: "Connect a mailbox"
   pages:
     home:
       title: "mcp4mail - your mail, readable by your AI"
-      meta_description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+      meta_description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read-only by default — changes only where you allow them, and nothing is sent without your approval. Nothing to install."
       nav:
         label: "Page sections"
         brand: "mcp4mail"
@@ -85,7 +85,7 @@ en:
         heading_before: "Your mail,"
         heading_highlight: "readable"
         heading_after: "by your AI."
-        lede: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read only — nothing gets sent or deleted. Nothing to install."
+        lede: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read-only by default — changes only where you allow them, and nothing is sent without your approval. Nothing to install."
         audience: "Your mail is not on Gmail? Gmail and Outlook already have native connectors in Claude and ChatGPT — mcp4mail is for everyone else: hosting providers, your own domain, Seznam, iCloud, Fastmail, Zoho and any IMAP mailbox. Free, open source, read-only unless you say otherwise."
         cta_primary: "Connect a mailbox"
         cta_secondary: "Source on GitHub"
@@ -132,7 +132,7 @@ en:
           - title: "Connect your AI"
             body_html: "In Claude, ChatGPT or Grok, open the connector settings and paste one address: <code>%{connector_url}</code>. Sign in, approve access — done. It works like “Sign in with Google”."
           - title: "Ask"
-            body_html: "Type the question the way you'd say it to a colleague. The AI reads what it needs and answers. It sees only the mailboxes you connected and can't change anything — not even mark a message as read."
+            body_html: "Type the question the way you'd say it to a colleague. The AI reads what it needs and answers. It sees only the mailboxes you connected, and until you allow changes for a mailbox it can't change anything there — not even mark a message as read."
         works_with_label: "Works with"
         clients:
           - "Claude Desktop"
@@ -142,11 +142,11 @@ en:
           - "anything with MCP"
       security:
         kicker: "Security"
-        heading: "It reads. It never writes."
-        lede: "It only reaches what you allow, and it can't change anything in your mailbox. And if you don't want your password on someone else's server, run mcp4mail yourself."
+        heading: "Read-only until you allow more."
+        lede: "It only reaches what you allow. Every mailbox starts read-only, and nothing is sent without your approval. And if you don't want your password on someone else's server, run mcp4mail yourself."
         points:
-          - title: "Read‑only, built in"
-            body_html: "No tool sends, moves, deletes or re‑flags mail. The server refuses to boot with a tool that doesn't declare itself read‑only."
+          - title: "Read‑only by default"
+            body_html: "Until you switch on “Allow the AI to make changes to this mailbox”, the AI can only list, search and read it — nothing is sent, moved, deleted or marked as read. Switched on, it can also flag, move, draft and trash; an email it wants to send waits until you press Send in the message we email you."
           - title: "App password, encrypted"
             body_html: "You enter an app password, not your account password — revoke it any time. It's stored encrypted and your AI client never sees it: access goes through OAuth 2.1."
           - title: "Or entirely on your machine"

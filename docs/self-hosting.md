@@ -124,8 +124,9 @@ calling `OutgoingMessage#approve!` right after `send_message` stores one); no su
   connection, and is never shown in the UI, returned by an MCP tool, written to the audit log or logged.
 - **Use an app-specific password.** Gmail, iCloud, Fastmail, Outlook.com, Yahoo and others offer them. It can
   be revoked on its own, without changing your main password, and it does not unlock the rest of your account.
-- **Read-only.** The MCP endpoint can list, search and read mail; nothing can send, move, delete or re-flag a
-  message. See the README.
+- **Read-only by default.** Until its owner switches on "Allow the AI to make changes to this mailbox", the
+  MCP endpoint can only list, search and read a mailbox; any tool that would change it is refused. Sending
+  always waits for the owner's approval (see above). See the README.
 - **Keep secrets out of git.** `.env` is git-ignored. Never commit it, `config/master.key`, a real mailbox host
   or a database dump.
 - **Backups.** A database backup contains the encrypted passwords; keep the encryption keys in a separate place.
