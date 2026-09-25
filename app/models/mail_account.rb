@@ -18,6 +18,9 @@ class MailAccount < ApplicationRecord
   # What the user typed on the "add mailbox" form. Detection starts from it, but only the
   # username the server actually accepted is stored.
   attribute :email_address, :string
+  # The MailProvider preset picked on the form, for an address whose domain does not give its
+  # provider away. Never stored: only the settings it fills in are.
+  attribute :provider, :string
 
   normalizes :host, with: ->(host) { host.strip.downcase }
   normalizes :username, with: ->(username) { username.strip }

@@ -20,6 +20,12 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     Imap::Autodetect::Result.new(**attributes)
   end
 
+  def connection_test(outcome, &block)
+    tested = []
+    result = Imap::ConnectionTester::Result.new(outcome: outcome)
+    replace_singleton(Imap::ConnectionTester, :call, ->(account) { tested << account.attributes.slice("host", "port", "ssl", "starttls"); result }) { block.call(tested) }
+  end
+
   def autodetect(result, &block)
     calls = []
     replace_singleton(Imap::Autodetect, :call, ->(**args) { calls << args; result }) { block.call(calls) }
@@ -39,7 +45,7 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#mail_account_#{mail_accounts(:personal).id}", count: 0
   end
 
-  test "new shows only the address and password, with the connection details closed" do
+  test "new shows the address, password and provider, with the connection details closed" do
     sign_in_as @user
     get new_mail_account_path
 
@@ -49,6 +55,9 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "details#connection-details:not([open])"
     assert_select "details#connection-details input[required]", count: 0
     assert_select "details#connection-details select[name='mail_account[tls_mode]'] option", 3
+    assert_select "select[name='mail_account[provider]'] option[value=''][selected]", "Detect from my address"
+    assert_select "select[name='mail_account[provider]'] option[value=gmail]", "Gmail / Google Workspace"
+    assert_select "select[name='mail_account[provider]'] option[value=cpanel]", count: 0
     # ButtonHelper#button_submit renders a <button>, not the scaffold's <input type=submit>.
     assert_select "button[type=submit][data-turbo-submits-with]", "Connect"
   end
@@ -145,6 +154,53 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
       post mail_accounts_path, params: account_params(port: server.port)
       assert_empty calls
     end
+
+    assert_redirected_to mail_accounts_path
+    assert_equal "127.0.0.1", @user.mail_accounts.order(:created_at).last.host
+  ensure
+    server&.stop
+  end
+
+  test "create with a provider picked uses its server for an address on another domain" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :no_server_found)) do |calls|
+      connection_test(:reachable) do |tested|
+        assert_difference -> { @user.mail_accounts.count } do
+          post mail_accounts_path, params: { mail_account: detection_params(email_address: "bob@company.example")[:mail_account].merge(provider: "gmail", tls_mode: "none") }
+        end
+        assert_equal [ { "host" => "imap.gmail.com", "port" => 993, "ssl" => true, "starttls" => false } ], tested
+      end
+      assert_empty calls
+    end
+
+    assert_redirected_to mail_accounts_path
+    account = @user.mail_accounts.order(:created_at).last
+    assert_equal [ "imap.gmail.com", 993, "ssl", "bob@company.example" ], [ account.host, account.port, account.tls_mode, account.username ]
+  end
+
+  test "create with a provider picked keeps the form as sent when the login fails" do
+    sign_in_as @user
+
+    connection_test(:auth_failed) do
+      assert_no_difference -> { MailAccount.count } do
+        post mail_accounts_path, params: { mail_account: detection_params(email_address: "bob@company.example")[:mail_account].merge(provider: "icloud") }
+      end
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#connection-error", /rejected the username or password/
+    assert_select "#connection-error a[href='#{guide_path(:icloud)}']", "Show me how"
+    assert_select "select[name='mail_account[provider]'] option[value=icloud][selected]"
+    assert_select "input[name='mail_account[host]']:not([value])"
+    assert_select "details#connection-details:not([open])"
+  end
+
+  test "create with a provider picked still tests a server typed in by hand" do
+    server = FakeImapServer.new.start
+    sign_in_as @user
+
+    post mail_accounts_path, params: account_params(port: server.port, provider: "gmail")
 
     assert_redirected_to mail_accounts_path
     assert_equal "127.0.0.1", @user.mail_accounts.order(:created_at).last.host

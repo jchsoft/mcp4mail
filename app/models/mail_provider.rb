@@ -25,4 +25,10 @@ class MailProvider
   def self.find(key)
     PRESETS.find { |preset| preset.key == key }
   end
+
+  # The presets the new-mailbox form offers: an address on its own domain can live at one of
+  # these, and detection cannot tell from the domain. A preset without a host has nothing to fill in.
+  def self.selectable
+    PRESETS.select(&:host)
+  end
 end

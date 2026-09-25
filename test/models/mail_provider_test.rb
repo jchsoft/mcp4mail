@@ -15,4 +15,9 @@ class MailProviderTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "the form offers only presets with a server to fill in" do
+    assert_includes MailProvider.selectable.map(&:key), "gmail"
+    assert_not_includes MailProvider.selectable.map(&:key), "cpanel"
+  end
 end

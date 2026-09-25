@@ -34,6 +34,10 @@
                                     class: "inline-flex items-center font-semibold text-green underline hover:text-green-deep max-lg:min-h-11") ]),
           input: { required: true, autocomplete: "new-password" } %>
 
+    <%# Blank means "find it from the address", which is right for most people and stays the default. %>
+    <%= render "shared/field", form: form, attribute: :provider, type: :select, hint: t(".provider_hint"),
+          choices: [ [ t(".provider_detect"), "" ] ] + MailProvider.selectable.map { |preset| [ preset.name, preset.key ] } %>
+
     <%# Native disclosure, like the FAQ: closed for everyone detection works for, opened
         whenever the person has to see or type the settings themselves. None of the fields
         inside is `required`, or a closed disclosure would block the submit. %>

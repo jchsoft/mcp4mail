@@ -23,6 +23,7 @@ en:
         password: "Password"
         password_confirmation: "Password confirmation"
       mail_account:
+        provider: "Mail provider"
         email_address: "Email address"
         display_name: "Name (optional)"
         host: "IMAP server"
@@ -287,6 +288,8 @@ en:
       intro: "mcp4mail reads your mail over IMAP. Enter your address and password - we find the server settings ourselves."
       username_placeholder: "Usually your full email address"
       password_hint: "Use an app-specific password if your provider offers one."
+      provider_hint: "On your own domain, but the mailbox is at Google, Microsoft or another provider? Pick it here."
+      provider_detect: "Detect from my address"
       show_me_how: "Show me how"
       connection_details: "Connection details"
       connection_details_hint: "Filled in for you when we find your server. Enter them yourself only if your provider gave you different ones."
