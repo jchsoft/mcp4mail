@@ -34,16 +34,22 @@ Hitch.configure do |config|
 
   config.mcp.enabled = true
   config.mcp.registry = "McpToolRegistry"
-  config.mcp.server_info = {
-    "name" => "mcp4mail",
-    "version" => "1.0.0",
-    "instructions" => "mcp4mail lists, searches and reads mail in the accounts the user connected. Every " \
-      "mailbox is read-only unless its owner switched on \"Allow the AI to make changes\" for it in mcp4mail; " \
-      "a tool that changes mail is refused on any other mailbox."
-  }
-
   # Per user + client. McpTools::ApplicationTool adds a per-user quota across all clients.
   config.mcp.request_limit = { to: 120, within: 1.minute }
+end
+
+# What every MCP client shows the person (and the model reads) after
+# `initialize`. Set after boot so the app's locale files are loaded; the texts
+# live under mcp_server: in both locales, but the wire is always English.
+Rails.application.config.after_initialize do
+  Hitch.configuration.mcp.server_info = I18n.with_locale(:en) do
+    {
+      "name" => "mcp4mail",
+      "title" => I18n.t("mcp_server.title"),
+      "version" => Mcp4mail::VERSION,
+      "instructions" => I18n.t("mcp_server.instructions")
+    }
+  end
 end
 
 # /oauth/authorize has no account-scoped URL, so Hitch screens (consent,

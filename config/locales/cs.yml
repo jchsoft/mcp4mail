@@ -500,3 +500,8 @@ cs:
         denied:
           title: "Přístup zamítnut"
           body: "Zařízení dostalo odmítnutí a jeho kód už nefunguje. Pokud vám kód někdo poslal, udělali jste přesně to správné."
+
+  # Odpověď MCP `initialize` (config/initializers/hitch.rb). Klientům jde vždy anglická verze.
+  mcp_server:
+    title: "mcp4mail — vaše IMAP schránka pro AI asistenty"
+    instructions: "mcp4mail čte a vyhledává poštu v IMAP účtech, které uživatel připojil. Nejdřív zavolejte list_mail_accounts a jeho account_id předávejte všem ostatním nástrojům. Schránky jsou jen ke čtení: nástroje, které poštu mění, fungují jen tam, kde vlastník zapnul „Povolit AI měnit tuto schránku“, a odeslání vždy čeká na schválení vlastníkem. mcp4mail je zdarma a open source (MIT). Vzniká veřejně, vyvíjejí ho AI vývojáři řízení přes mcptask.online; sledujte to živě na https://mcptask.online/live?utm_source=mcp&utm_medium=initialize a kód najdete na https://github.com/jchsoft/mcp4mail."

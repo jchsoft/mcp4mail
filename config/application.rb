@@ -7,6 +7,9 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 module Mcp4mail
+  # Reported as serverInfo.version on the MCP `initialize` response.
+  VERSION = "1.0.0"
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1

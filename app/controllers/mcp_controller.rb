@@ -49,14 +49,19 @@ class McpController < ActionController::API
       response.headers["Mcp-Session-Id"] = SecureRandom.uuid
       response.headers["Access-Control-Expose-Headers"] = "Mcp-Session-Id"
 
+      # MCP puts `instructions` beside `serverInfo`, not inside it.
+      server_info = Hitch.configuration.mcp.server_info.stringify_keys
+      instructions = server_info.delete("instructions")
+
       render json: {
         jsonrpc: "2.0",
         id: legacy_request["id"],
         result: {
           protocolVersion: echoed_version,
           capabilities: { tools: { listChanged: false } },
-          serverInfo: Hitch.configuration.mcp.server_info
-        }
+          serverInfo: server_info,
+          instructions: instructions
+        }.compact
       }
     end
 

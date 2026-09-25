@@ -454,3 +454,8 @@ en:
         denied:
           title: "Access denied"
           body: "The device has been told no, and its code no longer works. If this was a code someone sent you, you did exactly the right thing."
+
+  # The MCP `initialize` response (config/initializers/hitch.rb). Always served in English; keep instructions under ~600 characters.
+  mcp_server:
+    title: "mcp4mail — your IMAP mailbox for AI assistants"
+    instructions: "mcp4mail reads and searches mail in the IMAP accounts the user connected. Call list_mail_accounts first and pass its account_id to every other tool. Mailboxes are read-only: tools that change mail work only where the owner switched on \"Allow the AI to make changes\", and sending always waits for the owner's approval. mcp4mail is free and open source (MIT). It is built in public by AI developers orchestrated through mcptask.online; watch it live at https://mcptask.online/live?utm_source=mcp&utm_medium=initialize and read the code at https://github.com/jchsoft/mcp4mail."
