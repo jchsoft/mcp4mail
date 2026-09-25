@@ -1,0 +1,15 @@
+<%# Who is signed in, in both headers: the person avatar of the hero mock and
+    the address beside it, one link to the account page. Task #13087: on the
+    public screens (landing, guides, the consent screen) nothing showed that a
+    session was live. The address is the identity; long ones break anywhere
+    rather than push a phone layout sideways. %>
+<%= link_to main_app.account_path,
+            id: "account-link",
+            aria: { label: t("nav.account_for", email: current_user.email_address),
+                    current: ("page" if current_page?(main_app.account_path)) },
+            class: "group inline-flex min-w-0 items-center gap-2 text-[15px] text-ink-soft no-underline [overflow-wrap:anywhere] hover:text-brand-deep aria-[current=page]:text-ink max-lg:min-h-11" do %>
+  <span aria-hidden="true" class="inline-flex size-8 flex-none items-center justify-center rounded-full bg-brand-tint text-brand-deep group-hover:bg-brand">
+    <svg viewBox="0 0 24 24" fill="currentColor" class="size-[60%]"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0z"/></svg>
+  </span>
+  <span class="min-w-0"><%= current_user.email_address %></span>
+<% end %>

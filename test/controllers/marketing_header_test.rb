@@ -25,6 +25,34 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
     assert_select "nav a[href='#{mail_accounts_path}']"
   end
 
+  test "a visitor sees no account link on the public header" do
+    get root_url
+
+    assert_select "#account-link", count: 0
+  end
+
+  test "a signed-in person sees who they are on the public screens, linking to the account page" do
+    user = users(:one)
+    sign_in_as user
+
+    [ root_url, guides_url ].each do |url|
+      get url
+      assert_select "header #account-link[href=?]", account_path, text: user.email_address
+      assert_select "header #account-link[aria-label=?]", "Account (#{user.email_address})"
+      assert_select "header #account-link svg", count: 1
+    end
+  end
+
+  test "the signed-in chrome shows the same account link, marked current on the account page" do
+    sign_in_as users(:one)
+
+    get mail_accounts_url
+    assert_select "header #account-link[href=?]:not([aria-current])", account_path
+
+    get account_url
+    assert_select "header #account-link[aria-current=page]"
+  end
+
   test "the header links to every landing section, with the same ids in both locales" do
     I18n.available_locales.each do |locale|
       get root_url(locale: locale)

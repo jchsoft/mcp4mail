@@ -25,6 +25,17 @@ class AccountTest < ApplicationSystemTestCase
     assert_not User.exists?(@user.id)
   end
 
+  test "the landing page shows who is signed in, one click from the account page" do
+    visit root_url
+
+    within("header") { assert_link @user.email_address }
+    screenshot!("landing-header-signed-in")
+
+    within("header") { click_link @user.email_address }
+    assert_current_path account_path
+    assert_selector "h1", text: "Your account"
+  end
+
   private
     def sign_in
       visit new_session_url
