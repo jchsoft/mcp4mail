@@ -22,13 +22,22 @@ module ExceptionNotificationRecipients
   end
 end
 
-if Rails.env.production?
-  Rails.application.config.middleware.use ExceptionNotification::Rack,
-    email: {
+module ExceptionNotificationEmail
+  def self.options
+    {
       email_prefix: "[mcp4mail] ",
       # On the hosted domain so the mail is not a spoofed From; a self-hoster changes this line
       # together with the recipients above.
       sender_address: %("mcp4mail errors" <no-reply@mcp4mail.online>),
-      exception_recipients: ExceptionNotificationRecipients.call
+      exception_recipients: ExceptionNotificationRecipients.call,
+      # Only the filtered request parameters and the backtrace. The gem's "environment" section dumps
+      # the raw Rack env, whose rack.request.form_pairs carries the unfiltered form, so a failed
+      # "Connect mailbox" mailed the mailbox password in clear text; "session" adds the cookies.
+      sections: %w[request backtrace]
     }
+  end
+end
+
+if Rails.env.production?
+  Rails.application.config.middleware.use ExceptionNotification::Rack, email: ExceptionNotificationEmail.options
 end

@@ -26,6 +26,19 @@ class ExceptionNotificationTest < ActiveSupport::TestCase
     end
   end
 
+  test "the error email leaves out the raw form, so a mailbox password is never mailed" do
+    env = Rack::MockRequest.env_for("https://mcp4mail.example/mail_accounts",
+      method: "POST", params: { mail_account: { host: "imap.example.org", password: "s3cret-app-password" } })
+      .merge(Rails.application.env_config) # the parameter filter the app installs
+    Rack::Request.new(env).POST # what the exception report showed: rack.request.form_pairs
+    exception = RuntimeError.new("boom").tap { |e| e.set_backtrace([ "app/controllers/mail_accounts_controller.rb:70" ]) }
+
+    email = ExceptionNotifier::EmailNotifier.new(ExceptionNotificationEmail.options).create_email(exception, env: env)
+
+    assert_includes email.body.to_s, "imap.example.org"
+    assert_not_includes email.body.to_s, "s3cret-app-password"
+  end
+
   private
     # Minitest 6 has no Object#stub; the variable is swapped by hand, as in FakeAutodetectNetwork.
     def with_recipients(value)

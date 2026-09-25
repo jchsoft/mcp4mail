@@ -29,9 +29,9 @@ Then open your public URL, create an account, connect a mailbox and follow the *
 | `HITCH_RESOURCE_URI` | yes | The public URL of the MCP endpoint, e.g. `https://mail.example.org/mcp`. See below. |
 | `SECRET_KEY_BASE` | yes | Signs sessions and cookies. `openssl rand -hex 64`. |
 | `MCP4MAIL_DATABASE_PASSWORD` | yes | Password of the `mcp4mail` PostgreSQL user. `openssl rand -hex 32`. |
-| `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY` | yes | Encrypts stored mailbox passwords. |
-| `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` | yes | Generated together with the primary key. |
-| `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` | yes | Generated together with the primary key. |
+| `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY` | recommended | Encrypts stored mailbox passwords. Unset, derived from `SECRET_KEY_BASE`. |
+| `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` | recommended | Generated together with the primary key. |
+| `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` | recommended | Generated together with the primary key. |
 | `MCP4MAIL_DATABASE_HOST` | outside Compose | PostgreSQL host; Compose sets it to `db`. Empty means the local socket. |
 | `MCP4MAIL_PORT` | no | Host port the app is published on (Compose only). Default `8080`. |
 | `SOLID_QUEUE_IN_PUMA` | no | Run background jobs inside the web process. Compose sets it. |
@@ -49,6 +49,10 @@ or, without Ruby on the host, from the built image:
 ```bash
 docker compose run --rm --no-deps app bin/rails db:encryption:init
 ```
+
+Without them the app derives the three keys from `SECRET_KEY_BASE`, so it still works, but then rotating
+`SECRET_KEY_BASE` (or setting the three variables later) makes every stored mailbox password unreadable and
+each mailbox has to be connected again. Set them before the first mailbox is connected.
 
 **Back them up.** If they are lost, every stored mailbox password becomes unreadable and each mailbox has to be
 connected again. If they leak together with a database dump, the mailbox passwords can be decrypted.
