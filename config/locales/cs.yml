@@ -80,6 +80,7 @@ cs:
         password: "Heslo"
         password_confirmation: "Heslo znovu"
       mail_account:
+        provider: "Poskytovatel e-mailu"
         email_address: "E-mailová adresa"
         display_name: "Název (nepovinné)"
         host: "IMAP server"
@@ -333,6 +334,8 @@ cs:
       intro: "mcp4mail čte poštu přes IMAP. Zadejte adresu a heslo – nastavení serveru najdeme sami."
       username_placeholder: "Obvykle celá e-mailová adresa"
       password_hint: "Pokud to poskytovatel umožňuje, použijte heslo pro aplikace."
+      provider_hint: "Máte adresu na vlastní doméně, ale schránku u Googlu, Microsoftu nebo jiného poskytovatele? Vyberte ho tady."
+      provider_detect: "Zjistit podle adresy"
       show_me_how: "Ukázat jak na to"
       connection_details: "Podrobnosti připojení"
       connection_details_hint: "Vyplníme je za vás, jakmile server najdeme. Zadejte je sami, jen pokud vám poskytovatel dal jiné."

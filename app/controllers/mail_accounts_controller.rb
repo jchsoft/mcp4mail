@@ -26,6 +26,7 @@ class MailAccountsController < ApplicationController
   def create
     @mail_account = current_user.mail_accounts.build(mail_account_params)
     @mail_account.username = @mail_account.username.presence || @mail_account.email_address
+    apply_provider_preset
     manual_settings? ? create_with_manual_settings : create_with_detection
   end
 
@@ -72,9 +73,26 @@ class MailAccountsController < ApplicationController
       redirect_to mail_accounts_path, notice: t("mail_accounts.create.success", address: @mail_account.email_address.presence || @mail_account.label)
     end
 
+    # A company address at Google Workspace or Microsoft 365 has its own domain, so detection
+    # may not find the provider behind it; picking the provider fills in the server it documents.
+    # A server typed into "Connection details" still wins.
+    def apply_provider_preset
+      preset = MailProvider.find(@mail_account.provider)
+      return if preset&.host.blank? || @mail_account.host.present?
+
+      @applied_preset = preset
+      @mail_account.assign_attributes(host: preset.host, port: preset.port, tls_mode: preset.ssl ? "ssl" : "starttls")
+    end
+
     def render_form
-      @guide = Imap::ConnectionProblem.guide_for(@mail_account.email_address)
+      # Show the form as it was sent: the preset's server stays behind the select, not in the fields.
+      @mail_account.host = nil if @applied_preset
+      @guide = Imap::ConnectionProblem.guide_for(@mail_account.email_address) || provider_guide
       render :new, status: :unprocessable_entity
+    end
+
+    def provider_guide
+      Guide.all.find { |guide| guide.provider == @mail_account.provider }&.provider
     end
 
     def manual_settings?
@@ -99,6 +117,6 @@ class MailAccountsController < ApplicationController
     end
 
     def mail_account_params
-      params.expect(mail_account: %i[ email_address password host port tls_mode username ])
+      params.expect(mail_account: %i[ email_address password provider host port tls_mode username ])
     end
 end
