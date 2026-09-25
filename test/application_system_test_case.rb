@@ -53,10 +53,30 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # The wait is scoped to the card that was opened: every other card's frame is
   # lazy too and keeps its placeholder until its own disclosure is clicked, so a
   # page-wide wait would never finish.
+  #
+  # With several Firefoxes running side by side (pull request #102) the first
+  # fetch was sometimes never made or never landed, and the placeholder was
+  # still there after the full 15s (task #13034). So the frame is asked once
+  # more, the same way Turbo reloads a frame, before the test gives up on it.
   def open_activity_disclosure(label)
     summary = find("summary", text: label, match: :first)
     summary.click
-    summary.ancestor("details").assert_no_selector "turbo-frame [role='status']", wait: 15
+    details = summary.ancestor("details")
+    return if details.has_no_selector?("turbo-frame [role='status']", wait: 15)
+
+    details.find("turbo-frame", match: :first).execute_script("this.reload()")
+    details.assert_no_selector "turbo-frame [role='status']", wait: 15
+  end
+
+  # Under the same load geckodriver now and then gives up on a navigation
+  # before the page even starts to unload ("Navigation timed out after 1000
+  # ms", task #13034), in whichever test happens to be visiting at the time.
+  # The page was never reached, so asking for it again is safe; a second
+  # timeout is a real one and fails the test.
+  def visit(...)
+    super(...)
+  rescue Selenium::WebDriver::Error::TimeoutError
+    super(...)
   end
 
   # One process, however many tests there are. Minitest parallelises a file set

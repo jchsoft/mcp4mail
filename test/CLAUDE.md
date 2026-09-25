@@ -49,7 +49,7 @@ Every failure is produced locally, never by reaching the network:
 
 - Selenium with `headless_firefox`, `screen_size: [1400, 1400]`.
 - `intl.accept_languages = "en"`: pages follow `Accept-Language`, so the browser is pinned to English rather than the machine's locale. Test Czech by passing it in the URL: `visit root_url(locale: :cs)`.
-- `parallelize(workers: 1)`: eight Firefoxes at once dropped clicks and sign-ins. The unit suite keeps its workers; only the browsers run one at a time.
+- `parallelize(workers: 1)` on GitHub (`GH_CI`), about one Firefox per 2.5 cores locally: eight Firefoxes at once dropped clicks and sign-ins. Under that local load `visit` is retried once on a geckodriver navigation timeout, and `open_activity_disclosure` re-requests a lazy activity frame whose first fetch never landed.
 - If `app/assets/builds/tailwind.css` is missing (e.g. after `bin/ci` clobbered it), the class builds it before running, so a single system file still runs against real CSS.
 
 **Narrow widths.** Headless Firefox will not make a window narrower than about 500 CSS px, so a resized "375px" test really measures 500px. `landing_responsive_test.rb` and `hitch_screens_phone_test.rb` load the page inside an iframe `#viewport` of the exact width instead: an iframe is its own viewport, so `vw`, `clamp()` and media queries resolve against 375. Use that pattern for anything below ~500px.
