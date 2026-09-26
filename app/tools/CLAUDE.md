@@ -52,7 +52,7 @@ Every lookup goes through the caller: `mail_accounts` for accounts, `MailMessage
 | `search_messages` | Header rows from the local index, never bodies | read |
 | `get_message` | One message's text, fetched live over IMAP | read |
 | `search_contacts` | Addresses seen in the index | read |
-| `get_attachment` | A signed download URL for one attachment | read |
+| `get_attachment` | A signed download URL for one attachment, or with `inline: true` its base64 bytes | read |
 | `get_outgoing_status` | Whether a prepared email was sent | read |
 | `create_draft`, `create_folder`, `move_message`, `set_flags` | | write |
 | `trash_message`, `send_message` | | write, destructive |
@@ -69,6 +69,8 @@ The name, `title`, `description` and every `input_schema` description are read b
 
 Keep results small. `search_messages` returns headers only because one answer full of bodies would fill the model's context and leave it useless for the rest of the conversation.
 
-## Attachments leave through a signed URL
+## Attachments: a signed URL, or inline bytes
 
-`get_attachment` never returns bytes. It reads the attachment metadata already in the index and returns a URL carrying an `AttachmentDownloadToken` (`app/services/attachment_download_token.rb`): signed, 5 minutes, bound to one user, one message and one attachment index. Visiting it re-fetches the attachment over IMAP. No tool puts file content in a result.
+By default `get_attachment` never returns bytes. It reads the attachment metadata already in the index and returns a URL carrying an `AttachmentDownloadToken` (`app/services/attachment_download_token.rb`): signed, 5 minutes, bound to one user, one message and one attachment index. Visiting it re-fetches the attachment over IMAP.
+
+With `inline: true` it fetches the attachment over IMAP itself and returns it as `content_base64`. That is for sandboxed agents whose network allowlist does not include this server, so a URL on it is unreachable; the bytes travel over the MCP connection that is already authenticated, and no bearer URL exists to leak. Same lookup as every read tool (`MailMessage.for_user`), and a lower cap (`MAX_INLINE_BYTES`, 5 MB) than the URL mode (10 MB), because the whole file lands in the model's context. Over the cap it refuses and tells the model to call again without `inline`. It is the only tool that puts file content in a result, and like every tool it is audited by metadata only.

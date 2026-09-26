@@ -354,6 +354,71 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "get_attachment", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
   end
 
+  test "get_attachment with inline returns the bytes as base64 over the MCP connection, no url" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: multipart_body(content: "%PDF-1.4 faktura", filename: "faktura.pdf"),
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 16 } ])
+
+    payload = get_attachment(message_id: message.id, attachment_index: 0, inline: true)
+
+    assert_equal %w[attachment_index content_base64 content_type filename message_id size], payload.keys.sort
+    assert_equal "%PDF-1.4 faktura", Base64.strict_decode64(payload["content_base64"])
+    assert_equal [ "faktura.pdf", "application/pdf", 16 ], payload.values_at("filename", "content_type", "size")
+    audit = McpAuditEvent.sole
+    assert_equal [ "get_attachment", "ok", 1 ], audit.values_at(:tool_name, :outcome, :rows_returned)
+    assert_not_includes audit.attributes.to_json, payload["content_base64"]
+  ensure
+    server&.stop
+  end
+
+  test "get_attachment with inline refuses above the inline limit before touching IMAP, pointing at the url mode" do
+    message = index_message(mail_accounts(:work), uid: 1, subject: "Faktura",
+      attachments: [ { "filename" => "scan.pdf", "content_type" => "application/pdf", "size" => McpTools::GetAttachment::MAX_INLINE_BYTES + 1 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0, inline: true)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "without inline"
+  end
+
+  test "get_attachment with inline refuses a fetched file larger than the index said" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1,
+      body: multipart_body(content: "a" * (McpTools::GetAttachment::MAX_INLINE_BYTES + 1), filename: "scan.pdf"),
+      attachments: [ { "filename" => "scan.pdf", "content_type" => "application/pdf", "size" => 1 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0, inline: true)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "without inline"
+  ensure
+    server&.stop
+  end
+
+  test "get_attachment with inline says so when the message is gone from the server" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: multipart_body(content: "abc", filename: "faktura.pdf"),
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 3 } ])
+    @fake_mailboxes["INBOX"][:messages].clear
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0, inline: true)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "no longer on the server"
+  ensure
+    server&.stop
+  end
+
+  test "get_attachment with inline never reaches another user's mail" do
+    message = index_message(mail_accounts(:personal), uid: 1, subject: "Not yours",
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 100 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0, inline: true)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "No message"
+  end
+
   test "get_attachment refuses an attachment above its size limit" do
     message = index_message(mail_accounts(:work), uid: 1, subject: "Faktura",
       attachments: [ { "filename" => "big.zip", "content_type" => "application/zip", "size" => McpTools::GetAttachment::MAX_ATTACHMENT_BYTES + 1 } ])
@@ -480,5 +545,23 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     def html_body(html)
       "Content-Type: text/html; charset=UTF-8\r\n\r\n#{html}".b
+    end
+
+    def multipart_body(content:, filename:)
+      <<~RAW.b
+        Content-Type: multipart/mixed; boundary="BOUNDARY123"
+
+        --BOUNDARY123
+        Content-Type: text/plain; charset=UTF-8
+
+        See attached.
+        --BOUNDARY123
+        Content-Type: application/pdf
+        Content-Disposition: attachment; filename="#{filename}"
+        Content-Transfer-Encoding: 7bit
+
+        #{content}
+        --BOUNDARY123--
+      RAW
     end
 end
