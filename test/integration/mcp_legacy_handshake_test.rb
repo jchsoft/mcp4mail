@@ -28,6 +28,38 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
     assert_includes response.headers["Access-Control-Expose-Headers"], "Mcp-Session-Id"
   end
 
+  test "initialize says what mcp4mail is, how to start and where it is built" do
+    post_legacy(
+      {
+        "jsonrpc" => "2.0",
+        "id" => "init-3",
+        "method" => "initialize",
+        "params" => { "protocolVersion" => "2025-06-18", "capabilities" => {} }
+      }
+    )
+
+    assert_response :success
+    result = response.parsed_body["result"]
+    assert_equal "mcp4mail", result.dig("serverInfo", "name")
+    assert_equal "mcp4mail — your IMAP mailbox for AI assistants", result.dig("serverInfo", "title")
+    assert result.dig("serverInfo", "version").present?
+    assert_not result["serverInfo"].key?("instructions")
+
+    instructions = result["instructions"]
+    assert_includes instructions, "list_mail_accounts"
+    assert_includes instructions, "mcptask.online"
+    assert_includes instructions, "utm_source=mcp&utm_medium=initialize"
+    assert_operator instructions.length, :<=, 600
+  end
+
+  test "initialize instructions are English even when the Czech locale is active" do
+    I18n.with_locale(:cs) do
+      post_legacy({ "jsonrpc" => "2.0", "id" => "init-4", "method" => "initialize", "params" => {} })
+    end
+
+    assert_includes response.parsed_body.dig("result", "instructions"), "Call list_mail_accounts first"
+  end
+
   test "legacy initialize handshake falls back to the default version when unknown" do
     post_legacy(
       {
