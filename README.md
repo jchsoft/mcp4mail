@@ -43,7 +43,7 @@ here, not something free or unlimited.
 | `list_folders` | Lists the folders of one account. |
 | `search_messages` | Searches by subject, sender, recipients and date. |
 | `get_message` | Reads one message. |
-| `get_attachment` | Downloads an attachment of a message. |
+| `get_attachment` | Downloads an attachment of a message: a short-lived link, or with `inline: true` the file itself (up to 5 MB) inside the MCP answer. |
 | `search_contacts` | Finds addresses you have corresponded with. |
 | `get_outgoing_status` | Tells whether an email handed to `send_message` has gone out. |
 | `set_flags` | Flags a message or marks it read / unread. *Write.* |
