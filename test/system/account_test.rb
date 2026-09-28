@@ -39,7 +39,7 @@ class AccountTest < ApplicationSystemTestCase
   test "the envelope beside the account link counts the mailboxes and opens their list" do
     visit root_url
 
-    within("header") { click_link "Connected mailboxes: #{@user.mail_accounts.count}" }
+    within("header") { find("#mailboxes-link[aria-label='Connected mailboxes: #{@user.mail_accounts.count}']").click }
     assert_current_path mail_accounts_path
     screenshot!("header-mailbox-counter")
   end
