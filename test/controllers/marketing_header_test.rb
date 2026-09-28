@@ -53,6 +53,40 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
     assert_select "header #account-link[aria-current=page]"
   end
 
+  test "a visitor sees no mailbox counter" do
+    get root_url
+
+    assert_select "#mailboxes-link", count: 0
+  end
+
+  test "both headers show an envelope with the number of connected mailboxes, linking to the mailbox list" do
+    user = users(:one)
+    sign_in_as user
+    mail_accounts(:personal).update_column(:user_id, user.id)
+
+    [ root_url, guides_url, connect_ai_url ].each do |url|
+      get url
+      assert_select "header #mailboxes-link[href=?]", mail_accounts_path, text: "2"
+      assert_select "header #mailboxes-link[aria-label=?]", "Connected mailboxes: 2"
+      assert_select "header #mailboxes-link svg", count: 1
+    end
+
+    get mail_accounts_url
+    assert_select "header #mailboxes-link[aria-current=page]"
+
+    get root_url(locale: :cs)
+    assert_select "header #mailboxes-link[aria-label=?]", "Připojené schránky: 2"
+  end
+
+  test "the mailbox counter shows zero before any mailbox is connected" do
+    user = users(:one)
+    user.mail_accounts.destroy_all
+    sign_in_as user
+
+    get root_url
+    assert_select "header #mailboxes-link", text: "0"
+  end
+
   test "the header links to every landing section, with the same ids in both locales" do
     I18n.available_locales.each do |locale|
       get root_url(locale: locale)

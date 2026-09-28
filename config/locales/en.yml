@@ -8,6 +8,7 @@ en:
     account_for: "Account (%{email})"
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
+    mailboxes_count: "Connected mailboxes: %{count}"
     sign_in: "Sign in"
     sign_up: "Sign up"
     sign_out: "Sign out"

@@ -36,6 +36,14 @@ class AccountTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Your account"
   end
 
+  test "the envelope beside the account link counts the mailboxes and opens their list" do
+    visit root_url
+
+    within("header") { click_link "Connected mailboxes: #{@user.mail_accounts.count}" }
+    assert_current_path mail_accounts_path
+    screenshot!("header-mailbox-counter")
+  end
+
   private
     def sign_in
       visit new_session_url
