@@ -8,6 +8,7 @@ cs:
     account_for: "Účet (%{email})"
     connect_ai: "Propojit s AI"
     mailboxes: "Schránky"
+    mailboxes_count: "Připojené schránky: %{count}"
     sign_in: "Přihlásit se"
     sign_up: "Registrovat"
     sign_out: "Odhlásit se"
