@@ -415,3 +415,23 @@
     scale: 1;
   }
 }
+
+/* The controller already leaves a visitor who asked for less motion on the
+   finished conversation, and drops back to it when they ask mid-sequence. This
+   is the CSS half of that opt-out, for the frames before it hears about the
+   change: nothing stays hidden, slides, blinks or pulses. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-demo-reveal {
+    transition: none;
+  }
+
+  .hero-demo-pending {
+    opacity: 1;
+    translate: none;
+  }
+
+  .hero-demo-caret::after,
+  .hero-demo-pulse {
+    animation: none;
+  }
+}

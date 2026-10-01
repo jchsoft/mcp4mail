@@ -17,15 +17,35 @@ export default class extends Controller {
   static HOLD_MS = 6000
 
   connect() {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return
-
     this.placeholder = this.composerTarget.textContent
     this.run = 0
+    this.sync = this.sync.bind(this)
+    this.resume = this.resume.bind(this)
+    this.motion = matchMedia("(prefers-reduced-motion: reduce)")
+    this.motion.addEventListener("change", this.sync)
+    this.sync()
+  }
+
+  disconnect() {
+    this.motion.removeEventListener("change", this.sync)
+    this.unwatch()
+  }
+
+  // The visitor can ask the OS for less motion while the page is open: the mock
+  // then jumps to the finished conversation and stays there, and asking for
+  // motion again starts it from the top the next time it is in view.
+  sync() {
+    if (this.motion.matches) this.unwatch()
+    else this.watch()
+  }
+
+  watch() {
+    if (this.observer) return
+
     this.due = true
     this.revealed.forEach(element => element.classList.add("hero-demo-reveal"))
     this.rewind()
 
-    this.resume = this.resume.bind(this)
     this.observer = new IntersectionObserver(([ entry ]) => {
       this.inView = entry.isIntersecting
       this.resume()
@@ -34,10 +54,11 @@ export default class extends Controller {
     document.addEventListener("visibilitychange", this.resume)
   }
 
-  disconnect() {
+  unwatch() {
     if (!this.observer) return
 
     this.observer.disconnect()
+    this.observer = null
     document.removeEventListener("visibilitychange", this.resume)
     this.run++
     clearTimeout(this.timer)

@@ -127,4 +127,18 @@ class LandingPageTest < ActionDispatch::IntegrationTest
       assert_select "[data-hero-demo-target=answer] [data-hero-demo-target=item]", count: 3
     end
   end
+
+  # What a screen reader gets while the mock plays: the label and the finished
+  # question and answer, never the frames in between, and nothing announced.
+  test "the hero mock hides its animated states from screen readers and announces nothing" do
+    get root_url(locale: :en)
+
+    assert_select "figure[data-controller=hero-demo][aria-label]", count: 1 do
+      assert_select "[data-hero-demo-target=working][aria-hidden=true]", count: 1
+      assert_select "[aria-hidden=true] [data-hero-demo-target=composer]", count: 1
+      assert_select "[aria-live], [role=status], [role=alert], [role=log]", count: 0
+      assert_select "[data-hero-demo-target=question] [aria-hidden=true] [data-hero-demo-target=questionText]", count: 0
+      assert_select "[data-hero-demo-target=answer][aria-hidden]", count: 0
+    end
+  end
 end
