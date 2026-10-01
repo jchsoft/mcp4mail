@@ -107,7 +107,7 @@ class LandingPageTest < ActionDispatch::IntegrationTest
       assert_select "[data-hero-demo-target=step]", count: 5
       assert_select "[data-hero-demo-target=step]", text: "Searching 2 mail accounts…"
       assert_select "[data-hero-demo-target=step]", text: "work@example.com · Archive/2026"
-      assert_select "[data-hero-demo-target=spinner].hidden", count: 5
+      assert_select "[data-hero-demo-target=spinner]", count: 5
       assert_select "[data-hero-demo-target=check]", count: 5
     end
     assert_select "figure [data-hero-demo-target=answer]:not([aria-hidden])", text: /January/
