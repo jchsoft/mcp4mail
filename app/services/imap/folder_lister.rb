@@ -13,7 +13,7 @@ module Imap
     # normalized to a shared vocabulary.
     SPECIAL_USE = {
       "Sent" => :sent, "Trash" => :trash, "Archive" => :archive, "Junk" => :junk,
-      "Drafts" => :drafts, "All" => :all, "Flagged" => :flagged,
+      "Drafts" => :drafts, "All" => :all, "Flagged" => :flagged, "Important" => :important,
       # net-imap capitalizes parsed flags (String#capitalize), so the Gmail XLIST
       # attribute "\AllMail" comes through as :Allmail, not :AllMail.
       "Allmail" => :all, "Spam" => :junk, "Starred" => :flagged

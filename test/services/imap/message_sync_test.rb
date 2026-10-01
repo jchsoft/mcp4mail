@@ -208,4 +208,67 @@ class Imap::MessageSyncTest < ActiveSupport::TestCase
     assert_equal [ "Sent" ], result.folders_failed
     assert_empty uids_in("Sent")
   end
+
+  def start_gmail_server
+    @mailboxes = { "Work" => { uidvalidity: 42, messages: [] } }
+    @server = FakeImapServer.new(gmail: true, mailboxes: @mailboxes).start
+    @server.add_gmail_message(labels: %w[INBOX Work], message_id: "<labelled@example.com>", envelope: { subject: "Labelled twice" })
+    @server.add_gmail_message(labels: [ "INBOX", "[Gmail]/Starred", "[Gmail]/Important" ], message_id: "<starred@example.com>", envelope: { subject: "Starred and important" })
+    @server.add_gmail_message(labels: [], message_id: "<archived@example.com>", envelope: { subject: "Archived quarterly report" })
+  end
+
+  def subjects_in(folder_name)
+    account.mail_messages.joins(:mail_folder).where(mail_folders: { name: folder_name }).order(:subject).pluck(:subject)
+  end
+
+  test "on Gmail indexes each message once per label, skips the virtual views and keeps archived mail" do
+    start_gmail_server
+
+    result = Imap::MessageSync.call(account)
+
+    assert_equal [ "Labelled twice", "Starred and important" ], subjects_in("INBOX")
+    assert_equal [ "Labelled twice" ], subjects_in("Work")
+    assert_equal [ "Archived quarterly report" ], subjects_in("[Gmail]/All Mail")
+    assert_not account.mail_folders.exists?(name: [ "[Gmail]/Starred", "[Gmail]/Important" ])
+    assert_equal 4, result.messages_imported
+    assert_equal 1, account.mail_messages.search("quarterly").count
+    assert_equal 3, account.mail_messages.distinct.count(:gm_msgid)
+    assert_equal 3, account.mail_folders.find_by!(name: "[Gmail]/All Mail").last_synced_uid
+  end
+
+  test "on Gmail new mail is indexed once and an archived message that gets a label leaves All Mail" do
+    start_gmail_server
+    Imap::MessageSync.call(account)
+
+    @server.add_gmail_message(labels: %w[INBOX], message_id: "<new@example.com>", envelope: { subject: "New arrival" })
+    archived = @mailboxes["[Gmail]/All Mail"][:messages].find { |m| m.dig(:envelope, :message_id) == "<archived@example.com>" }
+    @mailboxes["INBOX"][:messages] << archived.merge(uid: 99)
+    Imap::MessageSync.call(account)
+
+    assert_equal [ "Archived quarterly report", "Labelled twice", "New arrival", "Starred and important" ], subjects_in("INBOX")
+    assert_empty subjects_in("[Gmail]/All Mail")
+    assert_equal 1, account.mail_messages.search("quarterly").count
+  end
+
+  test "a server without X-GM-EXT-1 still syncs its All and Flagged folders" do
+    @mailboxes["All"] = { uidvalidity: 333, messages: [ imap_message(1), imap_message(3) ] }
+    @mailboxes["Flagged"] = { uidvalidity: 444, messages: [ imap_message(1) ] }
+    @server = FakeImapServer.new(
+      capabilities: "IMAP4rev1 SPECIAL-USE",
+      folders: [
+        { name: "INBOX", attrs: %w[HasNoChildren] },
+        { name: "Sent", attrs: %w[HasNoChildren Sent] },
+        { name: "All", attrs: %w[HasNoChildren All] },
+        { name: "Flagged", attrs: %w[HasNoChildren Flagged] }
+      ],
+      mailboxes: @mailboxes
+    ).start
+
+    result = Imap::MessageSync.call(account)
+
+    assert_equal 4, result.folders_synced
+    assert_equal [ 1, 3 ], uids_in("All")
+    assert_equal [ 1 ], uids_in("Flagged")
+    assert_nil account.mail_messages.first.gm_msgid
+  end
 end
