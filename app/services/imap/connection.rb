@@ -42,6 +42,9 @@ module Imap
       result
     rescue StandardError => e
       record_failure(e)
+      limited = ServiceLimited.from(e)
+      raise limited if limited
+
       raise
     ensure
       close(imap)

@@ -20,7 +20,12 @@ module McpTools
     # person has to do, not an error code.
     READ_ONLY_MAILBOX = "This mailbox is read-only. The owner can allow changes in mcp4mail under Mail accounts."
 
-    USER_CALLS = McpQuota.new("tool-calls", to: 240, within: 1.minute)
+    # Imap::ServiceLimited is not a Net::IMAP::Error, so it passes every tool's own rescue and
+    # lands here: the mail server (Gmail, in practice) is limiting access, nothing is broken.
+    SERVICE_LIMITED = "Gmail temporarily limited access to this mailbox (too many simultaneous connections, " \
+      "or today's download limit is used up). Nothing is wrong with the mailbox; try again later."
+
+    USER_CALLS =McpQuota.new("tool-calls", to: 240, within: 1.minute)
 
     class << self
       def inherited(subclass)
@@ -109,6 +114,8 @@ module McpTools
     rescue McpSearchGuard::Exhausted => exhausted
       outcome = "search_limited"
       Hitch::MCP::Result.error(exhausted.message)
+    rescue Imap::ServiceLimited
+      Hitch::MCP::Result.error(SERVICE_LIMITED)
     ensure
       mail_account_id = @mail_account&.id || arguments["account_id"]
       McpAuditEvent.record!(

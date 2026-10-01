@@ -15,6 +15,17 @@ class MailAccountSyncJobTest < ActiveJob::TestCase
     server&.stop
   end
 
+  test "a Gmail usage limit schedules a retry instead of failing the job" do
+    server = FakeImapServer.new(over_limit: :connections).start
+    account = users(:one).mail_accounts.create!(host: "127.0.0.1", port: server.port, ssl: false, username: "bob", password: "x")
+
+    assert_enqueued_with(job: MailAccountSyncJob, args: [ account ]) do
+      MailAccountSyncJob.perform_now(account)
+    end
+  ensure
+    server&.stop
+  end
+
   test "the refresh job enqueues a sync for every account" do
     assert_enqueued_jobs MailAccount.count, only: MailAccountSyncJob do
       MailIndexRefreshJob.perform_now

@@ -328,6 +328,32 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     server&.stop
   end
 
+  test "get_message says Gmail is limiting access when the bandwidth limit is hit" do
+    server, account = start_fake_account(over_limit: :bandwidth)
+    message = index_body_message(account, uid: 1, body: plain_body("hi"))
+
+    result = call_tool("get_message", id: message.id)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "Gmail temporarily limited access"
+    assert_equal [ "get_message", "error" ], McpAuditEvent.sole.values_at(:tool_name, :outcome)
+  ensure
+    server&.stop
+  end
+
+  test "get_attachment says Gmail is limiting access when there are too many connections" do
+    server, account = start_fake_account(over_limit: :connections)
+    message = index_body_message(account, uid: 1, body: multipart_body(content: "PDF", filename: "a.pdf"),
+      attachments: [ { "filename" => "a.pdf", "content_type" => "application/pdf", "size" => 3 } ])
+
+    result = call_tool("get_attachment", message_id: message.id, attachment_index: 0, inline: true)
+
+    assert result["isError"]
+    assert_includes result.dig("content", 0, "text"), "try again later"
+  ensure
+    server&.stop
+  end
+
   test "get_message truncates a very long body and says so" do
     server, account = start_fake_account
     message = index_body_message(account, uid: 1, body: plain_body("a" * (McpTools::GetMessage::BODY_CHAR_LIMIT + 500)))
@@ -516,9 +542,9 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     # A MailAccount pointed at a real, in-process FakeImapServer, so get_message can actually
     # fetch a body over IMAP instead of just reading the local index. index_body_message adds
     # messages to the same mailboxes hash the server was started with.
-    def start_fake_account
+    def start_fake_account(over_limit: nil)
       @fake_mailboxes = { "INBOX" => { uidvalidity: 1, messages: [] } }
-      server = FakeImapServer.new(mailboxes: @fake_mailboxes).start
+      server = FakeImapServer.new(mailboxes: @fake_mailboxes, over_limit:).start
       account = @user.mail_accounts.create!(
         host: "127.0.0.1", port: server.port, ssl: false, username: "bob", password: "fixture-app-password"
       )

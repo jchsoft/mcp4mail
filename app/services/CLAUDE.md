@@ -39,11 +39,11 @@ Each source yields `Candidate`s, and `Prober` confirms them by actually logging 
 
 ## Failures are raised, not swallowed
 
-A service does not turn a failure into `nil` or an empty list. Net::IMAP and socket errors propagate out of `Connection.open` (after it records `last_error`); a message that is no longer there raises the service's own `MessageGone`; `MessageMover` has `FolderNotFound` and `CannotMoveSafely`. The caller decides what the person or the model sees:
+A service does not turn a failure into `nil` or an empty list. Net::IMAP and socket errors propagate out of `Connection.open` (after it records `last_error`); a message that is no longer there raises the service's own `MessageGone`; a usage limit (Gmail's "Too many simultaneous connections", "exceeded command or bandwidth limits") leaves `Connection.open` as `Imap::ServiceLimited`, even when a service had already turned the refusal into its own error; `MessageMover` has `FolderNotFound` and `CannotMoveSafely`. The caller decides what the person or the model sees:
 
 - the new-mailbox form shows the autodetect `reason` through `ConnectionProblem`, and the `ConnectionTester` outcome;
 - a tool rescues into `Hitch::MCP::Result.error` with the next step spelled out;
-- `MailAccountSyncJob` lets the error fail the job; connection errors (`Timeout::Error`, `ECONNRESET`, `IOError`, ...) are retried and resume from the committed cursors. `MessageSync` only records and skips a single folder the server refuses or that reports no UIDVALIDITY (`MailFolder#last_error`), because the other folders are still worth syncing.
+- `MailAccountSyncJob` lets the error fail the job; connection errors (`Timeout::Error`, `ECONNRESET`, `IOError`, ...) are retried and resume from the committed cursors, and `Imap::ServiceLimited` is retried every 15 minutes. `McpTools::ApplicationTool` turns `ServiceLimited` into the one "try again later" error for every tool. `MessageSync` only records and skips a single folder the server refuses or that reports no UIDVALIDITY (`MailFolder#last_error`), because the other folders are still worth syncing.
 
 ## Tests fake the server, never `Net::IMAP`
 

@@ -24,7 +24,7 @@ class AttachmentDownloadsController < ApplicationController
       type: attachment.content_type.presence || attachment_meta["content_type"], disposition: "attachment"
   rescue Imap::MessageAttachment::MessageGone
     head :gone
-  rescue Net::IMAP::Error, IOError, Timeout::Error, SocketError, SystemCallError
+  rescue Imap::ServiceLimited, Net::IMAP::Error, IOError, Timeout::Error, SocketError, SystemCallError
     head :service_unavailable
   end
 

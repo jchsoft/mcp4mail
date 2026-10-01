@@ -42,6 +42,7 @@ Every failure is produced locally, never by reaching the network:
 - TLS against a plaintext endpoint: `FakeImapServer.tls_trap` answers in plaintext while the client expects TLS, so the handshake raises `OpenSSL::SSL::SSLError`.
 - A crash mid-sync: `drop_on_fetch_of: <uid>` closes the connection when that UID is fetched.
 - A server that refuses writes or folder creation: `refuse_store: true`, `namespace_prefix: "INBOX."`.
+- Gmail over its usage limits: `over_limit: :connections` (LOGIN answers `NO [ALERT] Too many simultaneous connections`), `:bandwidth` (UID FETCH answers `NO ... exceeded command or bandwidth limits`), `:bye` (the same text as a BYE).
 
 ## System tests
 

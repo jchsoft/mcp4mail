@@ -17,6 +17,11 @@
 # a label folder only removes that label (the message stays in All Mail), and a MOVE into
 # `[Gmail]/Trash` takes the message out of every other folder. Use #add_gmail_message to file one
 # message under several labels at once: each copy shares its Message-ID and X-GM-MSGID.
+#
+# `over_limit:` answers the way Gmail does over its usage limits: `:connections` refuses LOGIN
+# with "[ALERT] Too many simultaneous connections", `:bandwidth` answers every UID FETCH with a
+# NO "Account exceeded command or bandwidth limits", and `:bye` sends that text as a BYE on the
+# first UID FETCH and hangs up.
 class FakeImapServer
   GMAIL_CAPABILITIES = "IMAP4rev1 UIDPLUS MOVE X-GM-EXT-1 XLIST"
   GMAIL_ALL_MAIL = "[Gmail]/All Mail"
@@ -33,7 +38,7 @@ class FakeImapServer
 
   attr_reader :port, :fetched_uid_sets, :commands
 
-  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false, gmail: false)
+  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false, gmail: false, over_limit: nil)
     @server = TCPServer.new("127.0.0.1", 0)
     @port = @server.addr[1]
     @gmail = gmail
@@ -48,7 +53,7 @@ class FakeImapServer
     @commands = []
     @namespace_prefix = namespace_prefix
     @refuse_store = refuse_store
-    @refuse_store = refuse_store
+    @over_limit = over_limit
     @thread = nil
   end
 
@@ -159,7 +164,9 @@ class FakeImapServer
         socket.write("* CAPABILITY #{@capabilities}\r\n")
         socket.write("#{tag} OK CAPABILITY completed\r\n")
       when "LOGIN"
-        if @login_ok
+        if @over_limit == :connections
+          socket.write("#{tag} NO [ALERT] Too many simultaneous connections. (Failure)\r\n")
+        elsif @login_ok
           socket.write("#{tag} OK LOGIN completed\r\n")
         else
           socket.write("#{tag} NO LOGIN failed\r\n")
@@ -237,6 +244,14 @@ class FakeImapServer
           matched = matching_uids(mailbox, set)
           @fetched_uid_sets << matched
           break if @drop_on_fetch_of && matched.include?(@drop_on_fetch_of)
+
+          if @over_limit == :bandwidth
+            socket.write("#{tag} NO [ALERT] Account exceeded command or bandwidth limits. (Failure)\r\n")
+            next
+          elsif @over_limit == :bye
+            socket.write("* BYE [ALERT] Account exceeded command or bandwidth limits.\r\n")
+            break
+          end
 
           uids = mailbox_uids(mailbox)
           mailbox[:messages].select { |m| matched.include?(m[:uid]) }.each do |message|

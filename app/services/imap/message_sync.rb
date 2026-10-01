@@ -56,6 +56,9 @@ module Imap
       folder.update!(last_synced_at: Time.current, last_error: nil)
       result.folders_synced += 1
     rescue Net::IMAP::NoResponseError, Net::IMAP::BadResponseError, MissingUidvalidity => e
+      # A usage limit refuses every folder alike, so it ends the whole sync.
+      raise if ServiceLimited.limit?(e)
+
       # The folder is gone or cannot be opened; the other folders are still worth syncing.
       folder&.update_columns(last_error: e.message)
       result.folders_failed << remote_folder.name
