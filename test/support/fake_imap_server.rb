@@ -10,17 +10,39 @@
 # command, so a test can mutate it between syncs. `drop_on_fetch_of` closes the connection when
 # a UID FETCH asks for that UID, simulating a crash mid-folder. `uidnext: false` on a mailbox
 # leaves out the optional UIDNEXT response.
+#
+# `gmail: true` makes it behave like Gmail: it advertises X-GM-EXT-1 and XLIST, lists INBOX plus
+# the `[Gmail]/...` system folders (All Mail, Sent Mail, Trash, Spam, Important, Starred) next to
+# whatever `folders:` adds, answers FETCH with X-GM-MSGID, and moves the Gmail way: a MOVE out of
+# a label folder only removes that label (the message stays in All Mail), and a MOVE into
+# `[Gmail]/Trash` takes the message out of every other folder. Use #add_gmail_message to file one
+# message under several labels at once: each copy shares its Message-ID and X-GM-MSGID.
 class FakeImapServer
+  GMAIL_CAPABILITIES = "IMAP4rev1 UIDPLUS MOVE X-GM-EXT-1 XLIST"
+  GMAIL_ALL_MAIL = "[Gmail]/All Mail"
+  GMAIL_TRASH = "[Gmail]/Trash"
+  GMAIL_SYSTEM_FOLDERS = {
+    "INBOX" => nil,
+    "[Gmail]/All Mail" => "AllMail",
+    "[Gmail]/Sent Mail" => "Sent",
+    "[Gmail]/Trash" => "Trash",
+    "[Gmail]/Spam" => "Spam",
+    "[Gmail]/Important" => "Important",
+    "[Gmail]/Starred" => "Starred"
+  }.freeze
+
   attr_reader :port, :fetched_uid_sets, :commands
 
-  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false)
+  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false, gmail: false)
     @server = TCPServer.new("127.0.0.1", 0)
     @port = @server.addr[1]
-    @capabilities = capabilities
+    @gmail = gmail
+    @capabilities = gmail && capabilities == "IMAP4rev1" ? GMAIL_CAPABILITIES : capabilities
     @login_ok = login_ok
     @folders = folders
-    @list_command = use_xlist ? "XLIST" : "LIST"
+    @list_command = use_xlist || gmail ? "XLIST" : "LIST"
     @mailboxes = mailboxes
+    setup_gmail_folders if gmail
     @drop_on_fetch_of = drop_on_fetch_of
     @fetched_uid_sets = []
     @commands = []
@@ -31,6 +53,19 @@ class FakeImapServer
   end
 
   attr_accessor :drop_on_fetch_of
+
+  # Gmail only: files one message under each of `labels` (folder names, INBOX included) and in
+  # All Mail, all with the same Message-ID and X-GM-MSGID. Returns the shared X-GM-MSGID.
+  def add_gmail_message(labels:, message_id:, **message)
+    gm_msgid = message.delete(:gm_msgid) || gmail_msgid_for(message_id)
+    envelope = (message.delete(:envelope) || {}).merge(message_id:)
+    (Array(labels) | [ GMAIL_ALL_MAIL ]).each do |name|
+      mailbox = @mailboxes[name] or raise ArgumentError, "unknown Gmail folder #{name}"
+      uid = (mailbox_uids(mailbox).max || 0) + 1
+      mailbox[:messages] << message.merge(uid:, envelope:, gm_msgid:)
+    end
+    gm_msgid
+  end
 
   def start
     @thread = Thread.new { loop { serve_one_connection } }
@@ -63,6 +98,53 @@ class FakeImapServer
   end
 
   private
+
+  def setup_gmail_folders
+    GMAIL_SYSTEM_FOLDERS.each_with_index do |(name, xlist), index|
+      @folders << { name:, attrs: [ xlist, "HasNoChildren" ].compact } unless @folders.any? { |f| f[:name] == name }
+      @mailboxes[name] ||= { uidvalidity: 700 + index, messages: [] }
+    end
+    @mailboxes.each_key do |name|
+      @folders << { name:, attrs: [ "HasNoChildren" ] } unless @folders.any? { |f| f[:name] == name }
+    end
+    @folders.sort_by!.with_index { |f, i| [ GMAIL_SYSTEM_FOLDERS.keys.index(f[:name]) || GMAIL_SYSTEM_FOLDERS.size, i ] }
+  end
+
+  # One stable, Gmail-looking 64-bit id per Message-ID.
+  def gmail_msgid_for(message_id)
+    1_700_000_000_000_000_000 + message_id.to_s.bytes.each_with_index.sum { |byte, i| byte * (i + 1) * 7919 }
+  end
+
+  def gmail_msgid(message)
+    message[:gm_msgid] || gmail_msgid_for(message.dig(:envelope, :message_id) || message[:uid])
+  end
+
+  def gmail_label_folder?(name)
+    !GMAIL_SYSTEM_FOLDERS.key?(name) || name == "INBOX"
+  end
+
+  # Gmail's MOVE/COPY: labels are folders, All Mail holds the one real copy. Returns the new UIDs.
+  def gmail_transfer(command, source_name, destination_name, matched)
+    source = @mailboxes[source_name]
+    destination = @mailboxes[destination_name]
+    matched.map do |uid|
+      message = source[:messages].find { |m| m[:uid] == uid }
+      id = gmail_msgid(message)
+      if destination_name == GMAIL_TRASH && command == "MOVE"
+        @mailboxes.each do |name, mailbox|
+          mailbox[:messages].reject! { |m| name != GMAIL_TRASH && gmail_msgid(m) == id }
+        end
+      elsif command == "MOVE" && gmail_label_folder?(source_name)
+        source[:messages].delete(message)
+      end
+      existing = destination[:messages].find { |m| gmail_msgid(m) == id }
+      next existing[:uid] if existing
+
+      new_uid = (mailbox_uids(destination).max || 0) + 1
+      destination[:messages] << message.merge(uid: new_uid, gm_msgid: id)
+      new_uid
+    end
+  end
 
   def serve_one_connection
     socket = @server.accept
@@ -170,12 +252,16 @@ class FakeImapServer
           if destination.nil?
             socket.write("#{tag} NO [TRYCREATE] no such mailbox\r\n")
           else
-            assigned = matched.map do |uid|
-              message = mailbox[:messages].find { |m| m[:uid] == uid }
-              mailbox[:messages].delete(message) if subcommand.upcase == "MOVE"
-              new_uid = (mailbox_uids(destination).max || 0) + 1
-              destination[:messages] << message.merge(uid: new_uid)
-              new_uid
+            assigned = if @gmail
+              gmail_transfer(subcommand.upcase, selected, unquote(target), matched)
+            else
+              matched.map do |uid|
+                message = mailbox[:messages].find { |m| m[:uid] == uid }
+                mailbox[:messages].delete(message) if subcommand.upcase == "MOVE"
+                new_uid = (mailbox_uids(destination).max || 0) + 1
+                destination[:messages] << message.merge(uid: new_uid)
+                new_uid
+              end
             end
             code = "[COPYUID #{destination[:uidvalidity]} #{matched.join(",")} #{assigned.join(",")}]"
             if subcommand.upcase == "MOVE"
@@ -245,6 +331,7 @@ class FakeImapServer
   def fetch_items(message)
     [
       "UID #{message[:uid]}",
+      *(@gmail ? [ "X-GM-MSGID #{gmail_msgid(message)}" ] : []),
       "FLAGS (#{Array(message[:flags]).join(" ")})",
       %(INTERNALDATE "#{message[:internaldate] || "17-Sep-2026 10:00:00 +0200"}"),
       "RFC822.SIZE #{message[:size] || 1024}",
