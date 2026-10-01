@@ -9,6 +9,12 @@ class MailAccountSyncJob < ApplicationJob
   discard_on ActiveJob::DeserializationError
   retry_on Timeout::Error, Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, IOError,
     wait: :polynomially_longer, attempts: 5
+  # Gmail's connection and bandwidth limits clear by themselves, but not within seconds. Once
+  # the retries are spent the next MailIndexRefreshJob picks the account up again, so the job
+  # ends quietly rather than as a failure.
+  retry_on Imap::ServiceLimited, wait: 15.minutes, attempts: 4 do |job, error|
+    Rails.logger.warn("[MailAccountSyncJob] mail_account_id=#{job.arguments.first&.id} still limited: #{error.message}")
+  end
 
   def perform(mail_account)
     Imap::MessageSync.call(mail_account)
