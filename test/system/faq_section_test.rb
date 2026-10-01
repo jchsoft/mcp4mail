@@ -123,26 +123,10 @@ class FaqSectionTest < ApplicationSystemTestCase
     # cos/sin of 45° on both axes.
     assert_match(/matrix\(0\.7071/, settled_marker_transform)
 
-    assert_equal "0.2s", marker_transition_duration
-
-    # The opt-out is a media query, which the driver cannot toggle mid-session,
-    # so assert the rule itself is in the stylesheet the page loaded.
-    assert page.evaluate_script(<<~JS), "expected a prefers-reduced-motion rule turning the marker transition off"
-      (() => {
-        // The rule sits inside the base cascade layer, so walk nested rules
-        // rather than only the stylesheet's top level.
-        const search = (rules, reduced) =>
-          Array.from(rules).some((rule) => {
-            const here = reduced ||
-              (rule.media && rule.media.mediaText.includes("prefers-reduced-motion"));
-            if (here && rule.selectorText === ".faq-mark") {
-              return rule.style.transition === "none";
-            }
-            return rule.cssRules ? search(rule.cssRules, here) : false;
-          });
-        return Array.from(document.styleSheets).some((sheet) => search(sheet.cssRules, false));
-      })()
-    JS
+    # The suite's browser asks for reduced motion (ApplicationSystemTestCase),
+    # so this is the opt-out measured, not read out of the stylesheet.
+    # FaqMarkerMotionTest below checks the transition a visitor otherwise gets.
+    assert_equal "0s", marker_transition_duration
   end
 
   test "the header link jumps to the FAQ" do
@@ -186,4 +170,14 @@ class FaqSectionTest < ApplicationSystemTestCase
     def marker_transition_duration
       page.evaluate_script(%(getComputedStyle(document.querySelector("#faq .faq-mark")).transitionDuration))
     end
+end
+
+class FaqMarkerMotionTest < ApplicationSystemTestCase
+  driven_with_motion
+
+  test "the marker rotation is animated when the visitor allows motion" do
+    visit root_url
+
+    assert_equal "0.2s", page.evaluate_script(%(getComputedStyle(document.querySelector("#faq .faq-mark")).transitionDuration))
+  end
 end

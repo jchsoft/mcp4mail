@@ -74,6 +74,16 @@ class HomeTest < ApplicationSystemTestCase
     screenshot!("landing-hero-cs")
   end
 
+  test "a visitor who asked for less motion keeps the finished conversation" do
+    visit root_url
+
+    within "figure[data-controller=hero-demo]" do
+      assert_text "Read from your mailbox · 4 messages"
+      assert_no_selector ".hero-demo-pending", visible: :all
+      assert_selector "[data-hero-demo-target=composer]", text: "Ask about your mail…", visible: :all
+    end
+  end
+
   test "switching to Czech and back changes the page and survives a reload" do
     visit root_url
     assert_selector "html[lang=en]"

@@ -43,4 +43,4 @@ Every user-facing string comes from a locale file, in both `cs` and `en` (`confi
 
 ## Stimulus
 
-Behaviour comes from Stimulus controllers in `app/javascript/controllers`: `clipboard`, `tabs`, `auto_submit`. If a restyle moves markup, check the controller's `data-*-target` and value attributes still sit inside the element carrying `data-controller`.
+Behaviour comes from Stimulus controllers in `app/javascript/controllers`: `clipboard`, `tabs`, `auto_submit`, `hero_demo`. If a restyle moves markup, check the controller's `data-*-target` and value attributes still sit inside the element carrying `data-controller`.

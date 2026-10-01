@@ -109,7 +109,23 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   Capybara.default_max_wait_time = 5
 
   # Pages follow Accept-Language, so pin the browser to English instead of the machine's locale.
+  #
+  # And ask for reduced motion: the hero's chat mock then stays the finished
+  # conversation the server rendered (task #13334), so the screenshots, axe and
+  # layout measurements see the same page every run instead of whichever frame
+  # of the animation they caught. A test about an animation itself calls
+  # `driven_with_motion` for a browser without it.
   driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400] do |options|
     options.add_preference("intl.accept_languages", "en")
+    options.add_preference("ui.prefersReducedMotion", 1)
+  end
+
+  # Firefox reads prefers-reduced-motion from a profile preference a running
+  # session cannot flip, so motion needs a browser of its own. The name keeps
+  # Capybara from handing back the reduced-motion driver registered above.
+  def self.driven_with_motion
+    driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400], options: { name: :headless_firefox_with_motion } do |options|
+      options.add_preference("intl.accept_languages", "en")
+    end
   end
 end
