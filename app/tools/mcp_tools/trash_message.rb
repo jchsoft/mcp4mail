@@ -11,7 +11,7 @@ module McpTools
       Delete a message the way a mail client does: move it to the Trash folder, where it can
       still be recovered. Nothing is ever permanently deleted or expunged. Give the message id
       from search_messages. The message gets a new id in Trash. A message already in Trash is
-      left as it is.
+      left as it is. On Gmail the message leaves every label, All Mail included.
     TEXT
 
     input_schema(

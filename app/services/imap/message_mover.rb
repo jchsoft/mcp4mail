@@ -93,13 +93,31 @@ module Imap
 
       # With the new UID the row follows the message; without it the row is dropped and the
       # next sync of the destination imports the message again.
+      #
+      # On Gmail folders are labels and one message has a row per label (see MessageSync): a move
+      # out of a label only drops that label, a move to Trash removes every label, and a row
+      # never lands where the message is already indexed (the destination holds it, or it goes
+      # to All Mail while another label still does - All Mail only indexes unlabelled mail).
       def reindex(target, assigned)
         folder = message.mail_account.mail_folders.find_by(name: target.name)
+        siblings = gmail_siblings
+        if @trash
+          siblings.delete_all
+        elsif siblings.where(mail_folder: folder).exists? || (target.special_use == :all && siblings.exists?)
+          return message.destroy!
+        end
         if assigned && folder && folder.uidvalidity == assigned.first
           message.update!(mail_folder: folder, uid: assigned.last, uidvalidity: folder.uidvalidity)
         else
           message.destroy!
         end
+      end
+
+      # The other index rows of the same Gmail message, none elsewhere.
+      def gmail_siblings
+        return MailMessage.none unless message.gm_msgid
+
+        message.mail_account.mail_messages.where(gm_msgid: message.gm_msgid).where.not(id: message.id)
       end
   end
 end

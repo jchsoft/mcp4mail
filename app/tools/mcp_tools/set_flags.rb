@@ -10,7 +10,8 @@ module McpTools
     description <<~TEXT.squish
       Flag or unflag a message, and mark it read or unread. Give the message id from
       search_messages and at least one of "flagged" and "seen" (true to set, false to clear).
-      Returns the message's flags afterwards.
+      Returns the message's flags afterwards. On Gmail flagged is the star, and it applies to
+      the message under every label.
     TEXT
 
     input_schema(

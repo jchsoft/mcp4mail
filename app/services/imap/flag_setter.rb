@@ -22,6 +22,7 @@ module Imap
         changes.each { |key, on| imap.uid_store(message.uid, on ? "+FLAGS.SILENT" : "-FLAGS.SILENT", [ FLAG_NAMES.fetch(key).to_sym ]) }
       end
       message.update!(flags: updated_flags)
+      mirror_to_gmail_copies
       message.flags
     end
 
@@ -32,6 +33,14 @@ module Imap
         imap.select(message.mail_folder.name)
         raise MessageGone unless imap.responses("UIDVALIDITY", &:last) == message.uidvalidity
         raise MessageGone if imap.uid_fetch(message.uid, "UID").blank?
+      end
+
+      # Gmail keeps one set of flags per message, so every label copy changes with it; \Flagged is
+      # the star. Without this, a search in another label would show the old flags.
+      def mirror_to_gmail_copies
+        return unless message.gm_msgid
+
+        message.mail_account.mail_messages.where(gm_msgid: message.gm_msgid).where.not(id: message.id).update_all(flags: message.flags)
       end
 
       def updated_flags
