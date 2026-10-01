@@ -99,4 +99,20 @@ class LandingPageTest < ActionDispatch::IntegrationTest
     assert_select "footer.landing-shell", count: 0
     assert_select "nav a[href=?]", connect_ai_path
   end
+
+  test "the hero mock shows the AI searching the mailboxes before it answers, as scenery" do
+    get root_url(locale: :en)
+
+    assert_select "figure [data-hero-demo-target=working][aria-hidden=true]", count: 1 do
+      assert_select "[data-hero-demo-target=step]", count: 5
+      assert_select "[data-hero-demo-target=step]", text: "Searching 2 mail accounts…"
+      assert_select "[data-hero-demo-target=step]", text: "work@example.com · Archive/2026"
+      assert_select "[data-hero-demo-target=spinner]", count: 5
+      assert_select "[data-hero-demo-target=check]", count: 5
+    end
+    assert_select "figure [data-hero-demo-target=answer]:not([aria-hidden])", text: /January/
+
+    get root_url(locale: :cs)
+    assert_select "[data-hero-demo-target=step]", text: "Nalezeny 4 zprávy od pojišťovny"
+  end
 end

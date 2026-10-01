@@ -40,7 +40,7 @@ class HomeTest < ApplicationSystemTestCase
 
     within "[aria-label='Example question and answer']" do
       assert_text "Read from your mailbox · 4 messages"
-      assert_selector "li", count: 3
+      assert_selector "[data-hero-demo-target=answer] li", count: 3
       assert_selector "li strong", text: "January"
       assert_text "Illustrative. Nothing in the mailbox changed"
     end
@@ -48,7 +48,7 @@ class HomeTest < ApplicationSystemTestCase
     visit root_url(locale: :cs)
 
     within "[aria-label='Ukázka otázky a odpovědi']" do
-      assert_selector "li", count: 3
+      assert_selector "[data-hero-demo-target=answer] li", count: 3
       assert_selector "li strong", text: "Srpen"
       assert_text "Ilustrační ukázka."
     end
