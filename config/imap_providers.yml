@@ -43,8 +43,8 @@ proton:
 gmail:
   name: Gmail
   domains: [gmail.com, googlemail.com]
-  messages: { any: native_connector }
-  guide:
+  messages: { auth_failed: app_password, imap_disabled: gmail_imap_off }
+  guide: gmail
 outlook:
   name: Outlook
   domains: [outlook.com, hotmail.com, live.com, msn.com]

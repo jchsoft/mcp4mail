@@ -91,6 +91,18 @@ cs:
         username: "Uživatelské jméno"
         password: "Heslo"
 
+  imap_problems:
+    app_password: "%{provider} tady nepřijme vaše běžné heslo. V nastavení účtu %{provider} si vytvořte heslo pro aplikaci a použijte to."
+    app_password_generic: "Váš poskytovatel tady nepřijme běžné heslo. V nastavení účtu si vytvořte heslo pro aplikaci a použijte to."
+    seznam_imap_off: "Seznam má IMAP ve výchozím stavu vypnutý. Zapněte ho v Nastavení, v části Poštovní programy, a zkuste to znovu."
+    gmail_imap_off: "Gmail pro tento účet odmítl IMAP. Přihlaste se heslem pro aplikaci; u pracovního nebo školního účtu (Google Workspace) mohl IMAP nebo hesla pro aplikace vypnout správce a zapnout je může zase jen on."
+    bridge_required: "ProtonMail potřebuje Proton Bridge spuštěný na vašem počítači; hostované mcp4mail se k němu nedostane. Provozujte mcp4mail sami vedle Bridge, nebo použijte jinou schránku."
+    native_connector: "%{provider} už má v Claude i ChatGPT vlastní konektor; mcp4mail k tomu nepotřebujete."
+    wrong_password: "Server jsme našli, ale tento e‑mail a heslo odmítl. Zkontrolujte obojí a zkuste to znovu."
+    imap_disabled: "Server hlásí, že má tato schránka vypnutý přístup přes IMAP. Zapněte IMAP v nastavení pošty a zkuste to znovu."
+    unknown_host: "Pro tuto adresu jsme nenašli poštovní server. Zkontrolujte adresu, nebo zadejte IMAP server ručně."
+    timeout: "Poštovní server neodpověděl včas. Zkuste to za minutu znovu, nebo zadejte IMAP server ručně."
+
   guides:
     index:
       title: "Návody k nastavení schránky · mcp4mail"
