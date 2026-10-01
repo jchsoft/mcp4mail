@@ -102,6 +102,12 @@ en:
           earlier_answer: "Yes — it left on Tuesday; the tracking email says Thursday."
           composer: "Ask about your mail…"
           question: "What did my insurer write this year? A few bullet points."
+          steps:
+            - "Searching 2 mail accounts…"
+            - "home@example.com · INBOX"
+            - "work@example.com · Archive/2026"
+            - "Found 4 messages from your insurer"
+            - "Reading message 4 of 4…"
           source: "Read from your mailbox · 4 messages"
           items:
             - label: "January"

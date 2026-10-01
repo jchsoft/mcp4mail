@@ -159,6 +159,12 @@ cs:
           earlier_answer: "Ano — odešel v úterý, podle sledovacího e‑mailu dorazí ve čtvrtek."
           composer: "Zeptejte se na svou poštu…"
           question: "Co mi letos psali z pojišťovny? Shrň to do pár bodů."
+          steps:
+            - "Prohledávám 2 poštovní účty…"
+            - "domov@example.com · INBOX"
+            - "prace@example.com · Archiv/2026"
+            - "Nalezeny 4 zprávy od pojišťovny"
+            - "Čtu zprávu 4 ze 4…"
           source: "Přečteno ze schránky · 4 zprávy"
           items:
             - label: "Leden"

@@ -94,7 +94,28 @@
           <%= render "pages/hero_avatar", speaker: :you, size: "size-8" %>
         </div>
 
-        <div class="flex items-end gap-2.5">
+        <%# The "working" bubble, task #13333: the tool calls the AI makes before
+            it answers, so the mock shows mcp4mail doing the searching. Scenery
+            like the earlier exchange — the answer below is the accessible
+            content. Without JavaScript every step shows as done; the hero-demo
+            controller (#13334) plays them one by one, swapping a step's check
+            for its spinner while it runs. %>
+        <div aria-hidden="true" data-hero-demo-target="working" class="flex select-none items-end gap-2.5">
+          <%= render "pages/hero_avatar", speaker: :ai, size: "size-8" %>
+          <ul class="flex min-w-0 flex-col gap-1.5 rounded-[20px_20px_20px_6px] border border-line bg-paper px-4 py-3 text-[13px] leading-[1.45] text-ink-muted">
+            <% t(".hero.demo.steps").each do |step| %>
+              <li data-hero-demo-target="step" class="flex min-w-0 items-center gap-2">
+                <span class="flex size-3.5 flex-none items-center justify-center">
+                  <span data-hero-demo-target="spinner" class="hidden size-3 rounded-full border-2 border-line border-t-green motion-safe:animate-spin"></span>
+                  <svg data-hero-demo-target="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 text-green"><path d="M5 12l5 5L20 7"/></svg>
+                </span>
+                <span class="truncate"><%= step %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div data-hero-demo-target="answer" class="flex items-end gap-2.5">
           <%= render "pages/hero_avatar", speaker: :ai, size: "size-8" %>
           <div class="flex min-w-0 flex-col gap-1">
             <span class="pl-1 text-xs font-semibold text-ink-muted"><%= t(".hero.demo.assistant") %></span>
