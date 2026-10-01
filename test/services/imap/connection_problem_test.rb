@@ -5,7 +5,7 @@ class Imap::ConnectionProblemTest < ActiveSupport::TestCase
     Imap::ConnectionProblem.call(reason: reason, email: email, raw_response: raw_response)
   end
 
-  %w[icloud.com me.com mac.com fastmail.com zoho.com yahoo.com yandex.com].each do |domain|
+  %w[icloud.com me.com mac.com fastmail.com zoho.com yahoo.com yandex.com gmail.com googlemail.com].each do |domain|
     test "asks #{domain} users for an app-specific password when login is refused" do
       result = problem(:auth_failed, "bob@#{domain}", raw_response: "NO [AUTHENTICATIONFAILED] Invalid credentials")
 
@@ -36,8 +36,29 @@ class Imap::ConnectionProblemTest < ActiveSupport::TestCase
     end
   end
 
-  test "points Gmail and Outlook at the native connector whatever went wrong" do
-    %w[gmail.com outlook.com hotmail.com].each do |domain|
+  test "tells Gmail users to sign in with an app password, not to use another connector" do
+    result = problem(:auth_failed, "bob@gmail.com", raw_response: "NO [AUTHENTICATIONFAILED] Invalid credentials (Failure)")
+
+    assert_equal :app_password, result.key
+    assert_match(/\AGmail does not accept your normal password here/, result.message)
+    assert_equal "gmail", result.guide
+  end
+
+  test "blames IMAP or app passwords switched off, possibly by a Workspace admin, when Gmail refuses IMAP" do
+    result = problem(:imap_disabled, "bob@gmail.com", raw_response: "NO [ALERT] Your account is not enabled for IMAP use.")
+
+    assert_equal :gmail_imap_off, result.key
+    assert_match(/app password/, result.message)
+    assert_match(/Google Workspace/, result.message)
+  end
+
+  test "keeps Gmail timeouts and missing servers on the generic messages" do
+    assert_equal :timeout, problem(:timeout, "bob@gmail.com").key
+    assert_equal :unknown_host, problem(:no_server_found, "bob@gmail.com").key
+  end
+
+  test "points Outlook at the native connector whatever went wrong" do
+    %w[outlook.com hotmail.com].each do |domain|
       %i[auth_failed timeout no_server_found].each do |reason|
         result = problem(reason, "bob@#{domain}")
 
@@ -98,9 +119,11 @@ class Imap::ConnectionProblemTest < ActiveSupport::TestCase
     slugs.each { |slug| assert Guide.find(slug), slug }
   end
 
-  test "every message key used by the providers file exists in the locale" do
-    Imap::ConnectionProblem::PROVIDERS.each_value do |entry|
-      entry["messages"].each_value { |key| assert I18n.exists?("imap_problems.#{key}"), key }
+  test "every message key used by the providers file exists in every locale" do
+    I18n.available_locales.each do |locale|
+      Imap::ConnectionProblem::PROVIDERS.each_value do |entry|
+        entry["messages"].each_value { |key| assert I18n.exists?("imap_problems.#{key}", locale), "#{locale}: #{key}" }
+      end
     end
   end
 end

@@ -38,6 +38,7 @@ en:
     app_password: "%{provider} does not accept your normal password here. Create an app-specific password in your %{provider} account settings and use that."
     app_password_generic: "Your provider does not accept your normal password here. Create an app-specific password in your account settings and use that."
     seznam_imap_off: "IMAP is switched off by default in Seznam. Turn it on under Settings, Email clients, then try again."
+    gmail_imap_off: "Gmail refused IMAP for this account. Sign in with an app password; on a work or school (Google Workspace) account your administrator may have switched off IMAP or app passwords, and only they can turn them back on."
     bridge_required: "ProtonMail needs Proton Bridge running on your own computer; the hosted mcp4mail cannot reach it. Self-host mcp4mail next to Bridge, or use another mailbox."
     native_connector: "%{provider} already has a native connector in Claude and ChatGPT; you do not need mcp4mail for it."
     wrong_password: "The server was found but refused that email and password. Check both and try again."
