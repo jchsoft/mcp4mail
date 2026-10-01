@@ -3,9 +3,7 @@ require "application_system_test_case"
 # The one system test that lets the hero mock play: the rest of the suite asks
 # the browser for reduced motion and sees the finished conversation.
 class HeroDemoTest < ApplicationSystemTestCase
-  driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400] do |options|
-    options.add_preference("intl.accept_languages", "en")
-  end
+  driven_with_motion
 
   test "the hero mock rewinds on connect and plays through to the server-rendered answer" do
     visit root_url
