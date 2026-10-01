@@ -115,4 +115,16 @@ class LandingPageTest < ActionDispatch::IntegrationTest
     get root_url(locale: :cs)
     assert_select "[data-hero-demo-target=step]", text: "Nalezeny 4 zprávy od pojišťovny"
   end
+
+  test "the hero mock hands every beat of its sequence to the hero-demo controller" do
+    get root_url(locale: :en)
+
+    assert_select "figure[data-controller=hero-demo]", count: 1 do
+      %w[composer send question questionText working answer source].each do |target|
+        assert_select "[data-hero-demo-target=#{target}]", count: 1
+      end
+      assert_select "[data-hero-demo-target=questionText]", text: /What did my insurer write this year/
+      assert_select "[data-hero-demo-target=answer] [data-hero-demo-target=item]", count: 3
+    end
+  end
 end

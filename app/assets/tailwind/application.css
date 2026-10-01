@@ -358,3 +358,60 @@
     font-weight: 600;
   }
 }
+
+/* The hero chat mock's playback, driven by hero_demo_controller.js. Outside any
+   layer on purpose: the controller lays these classes over elements that
+   already carry utilities (the composer's text-ink-muted, the bubbles' own
+   opacity), and an unlayered rule wins over every layer. A pending element
+   keeps its box and only loses its opacity, so the hero never shifts. */
+.hero-demo-reveal {
+  transition:
+    opacity 0.4s ease,
+    translate 0.4s ease;
+}
+
+.hero-demo-pending {
+  opacity: 0;
+  translate: 0 6px;
+}
+
+.hero-demo-caret {
+  color: var(--color-ink);
+
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 1.1em;
+    margin-left: 1px;
+    vertical-align: -0.2em;
+    background-color: currentColor;
+    animation: hero-demo-blink 1s steps(1) infinite;
+  }
+}
+
+.hero-demo-pulse {
+  animation: hero-demo-pulse 0.5s ease-out;
+}
+
+@keyframes hero-demo-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-demo-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brand) 55%, transparent);
+    scale: 1;
+  }
+
+  40% {
+    scale: 0.9;
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+    scale: 1;
+  }
+}
