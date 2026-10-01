@@ -10,7 +10,8 @@ module McpTools
       Move one message to another folder of the same mailbox. Give the message id from
       search_messages and the destination as a folder path or name from list_folders, or a
       special-use name such as Archive. The message gets a new id in its new folder: search
-      again before touching it further.
+      again before touching it further. On Gmail folders are labels: moving a message out of a
+      label removes that label only, and it stays in All Mail and in its other labels.
     TEXT
 
     input_schema(

@@ -296,6 +296,8 @@ class FakeImapServer
               message = mailbox[:messages].find { |m| m[:uid] == uid }
               current = Array(message[:flags])
               message[:flags] = mode.upcase.start_with?("-") ? current - names : (current | names)
+              # Gmail keeps one set of flags per message, whatever label it is read through.
+              @mailboxes.each_value { |box| box[:messages].each { |m| m[:flags] = message[:flags] if m != message && gmail_msgid(m) == gmail_msgid(message) } } if @gmail
             end
             socket.write("#{tag} OK STORE completed\r\n")
           end
