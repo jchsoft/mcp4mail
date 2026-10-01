@@ -59,24 +59,45 @@ class SessionsTest < ApplicationSystemTestCase
     counts = Hash.new(0)
     real_increment(counts) do
       visit new_session_url
-      11.times do
-        fill_in placeholder: "Enter your email address", with: users(:one).email_address
-        fill_in placeholder: "Enter your password", with: "wrong-password"
-        click_button "Sign in"
-        # The alert stays on screen across iterations (every attempt shows one),
-        # so asserting on it doesn't wait for anything past the first attempt.
-        # Turbo disables the submit button for the duration of the request and
-        # only re-enables it once the redirect's page has rendered, so wait for
-        # that instead, or a fast loop can fill and click a page Turbo is about
-        # to replace, and the submission never reaches the server.
-        assert_button "Sign in"
-      end
+      11.times { submit_counted_sign_in(counts) }
     end
 
+    assert_operator counts.values.sum, :>, 10
     assert_selector "#alert", text: "Try again later."
   end
 
   private
+    # The alert stays on screen across attempts (every attempt shows one), so it
+    # can't tell one attempt from the next. Waiting for Turbo to re-enable the
+    # button wasn't enough either: under parallel workers a click now and then
+    # never became a request, fewer than 11 reached the server and the limiter
+    # never tripped (task #13337). So each attempt waits until the controller
+    # has counted it, and a click that never arrived is made again. Turbo keeps
+    # the button disabled from submit until the redirect's page renders, so once
+    # the count moved, waiting for an enabled button waits for that page.
+    def submit_counted_sign_in(counts)
+      before = counts.values.sum
+      2.times do
+        fill_in placeholder: "Enter your email address", with: users(:one).email_address
+        fill_in placeholder: "Enter your password", with: "wrong-password"
+        click_button "Sign in"
+        next unless counted?(counts, before)
+
+        assert_button "Sign in"
+        return
+      end
+      flunk "the sign-in form was submitted twice and neither submission reached the server"
+    end
+
+    def counted?(counts, before)
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + Capybara.default_max_wait_time
+      until counts.values.sum > before
+        return false if Process.clock_gettime(Process::CLOCK_MONOTONIC) > deadline
+        sleep 0.05
+      end
+      true
+    end
+
     # Rails.cache is a NullStore in test, so `rate_limit`'s cache.increment is a
     # no-op and the limiter never trips (SessionsController#cache_store is that
     # very NullStore instance, captured once when the class loaded). Minitest 6
