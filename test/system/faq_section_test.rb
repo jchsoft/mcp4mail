@@ -39,6 +39,18 @@ class FaqSectionTest < ApplicationSystemTestCase
     assert_no_text answer
   end
 
+  test "the Gmail question sends Gmail users here for attachments, with an app password" do
+    visit root_url
+    find("#faq summary", text: "Do I need this for Gmail or Outlook?").click
+    assert_text "Use mcp4mail with Gmail when you need what it cannot do: fetch attachments"
+    assert_text "Gmail needs two-step verification and an app password."
+
+    visit root_url(locale: :cs)
+    find("#faq summary", text: "Potřebuji to pro Gmail nebo Outlook?").click
+    assert_text "mcp4mail s Gmailem použijte, když potřebujete, co vestavěný konektor neumí: stáhnout přílohy"
+    assert_text "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace."
+  end
+
   test "the keyboard opens a question with Enter and with Space" do
     visit root_url
 

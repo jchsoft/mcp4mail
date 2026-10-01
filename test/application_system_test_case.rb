@@ -58,13 +58,21 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # fetch was sometimes never made or never landed, and the placeholder was
   # still there after the full 15s (task #13034). So the frame is asked once
   # more, the same way Turbo reloads a frame, before the test gives up on it.
+  #
+  # A lazy frame only fetches once it scrolls into the viewport. On GitHub's
+  # runner the Czech mailboxes page left the opened disclosure at the very
+  # bottom of the window, its frame below the fold, so neither the first fetch
+  # nor the reload ever started (pull request #120, task #13329). The frame is
+  # scrolled to the middle of the window before the wait.
   def open_activity_disclosure(label)
     summary = find("summary", text: label, match: :first)
     summary.click
     details = summary.ancestor("details")
+    frame = details.find("turbo-frame", match: :first)
+    scroll_to frame, align: :center
     return if details.has_no_selector?("turbo-frame [role='status']", wait: 15)
 
-    details.find("turbo-frame", match: :first).execute_script("this.reload()")
+    frame.execute_script("this.reload()")
     details.assert_no_selector "turbo-frame [role='status']", wait: 15
   end
 

@@ -124,6 +124,8 @@ calling `OutgoingMessage#approve!` right after `send_message` stores one); no su
   connection, and is never shown in the UI, returned by an MCP tool, written to the audit log or logged.
 - **Use an app-specific password.** Gmail, iCloud, Fastmail, Outlook.com, Yahoo and others offer them. It can
   be revoked on its own, without changing your main password, and it does not unlock the rest of your account.
+  Gmail is supported this way: it needs two-step verification and an app password, and on a Google Workspace
+  account the administrator can switch off IMAP or app passwords for everyone.
 - **Read-only by default.** Until its owner switches on "Allow the AI to make changes to this mailbox", the
   MCP endpoint can only list, search and read a mailbox; any tool that would change it is refused. Sending
   always waits for the owner's approval (see above). See the README.

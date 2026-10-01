@@ -9,7 +9,7 @@ class HomeTest < ApplicationSystemTestCase
     within_hero do
       assert_text "Open source · MIT · free to self‑host"
       assert_text "Works with Claude Desktop and Cowork"
-      assert_text "Your mail is not on Gmail?"
+      assert_text "Gmail works too"
       assert_link "Connect a mailbox", href: new_registration_path
       assert_link "Source on GitHub", href: "https://github.com/jchsoft/mcp4mail"
     end

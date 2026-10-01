@@ -97,6 +97,9 @@ variables. Development and test derive throwaway keys from the per-machine `tmp/
 mcp4mail connects to your mailbox over plain IMAP with a username and password. **Use an app-specific
 password wherever your provider offers one** (Gmail, iCloud, Fastmail, Outlook.com, Yahoo and others do), so
 that what is stored in the database can be revoked on its own and is not the key to your whole account.
+Gmail is supported the same way: turn on two-step verification and sign in with an app password. On a
+Google Workspace account the administrator can switch off IMAP or app passwords, and only they can turn
+them back on.
 How the password is stored and who can decrypt it is described in the
 [security notes of the self-hosting guide](docs/self-hosting.md#security-notes).
 

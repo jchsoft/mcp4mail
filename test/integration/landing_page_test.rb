@@ -35,14 +35,15 @@ class LandingPageTest < ActionDispatch::IntegrationTest
   test "the page says who it is for and links every provider guide" do
     get root_url
 
-    assert_select "main > section:first-of-type p", text: /Your mail is not on Gmail\?/
+    assert_select "main > section:first-of-type p", text: /Gmail works too .* opens attachments/
+    assert_select "main > section:first-of-type p", text: /For everyone else as well: hosting providers/
     Guide.all.each do |guide|
       assert_select "main a[href=?]", guide_path(guide), text: guide.title
     end
     assert_select "main a[href=?]", guides_path, text: "All setup guides →"
 
     get root_url(locale: :cs)
-    assert_select "main > section:first-of-type p", text: /Nemáte poštu na Gmailu\?/
+    assert_select "main > section:first-of-type p", text: /Gmail funguje taky .* otevře přílohy/
     assert_select "main a[href=?]", guides_path, text: "Všechny návody →"
   end
 

@@ -24,10 +24,11 @@
 
     <p class="mt-6 max-w-[34em] text-[19px] leading-[1.55] text-ink-soft"><%= t(".hero.lede") %></p>
 
-    <%# Who it is for, task #12770. Gmail and Outlook already have native
-        connectors in the AI clients; saying so up front keeps those visitors from
-        signing up for something they do not need, and tells everyone else this
-        page is about them. %>
+    <%# Who it is for, task #12770, reworked in #13329 once Gmail worked well
+        (one copy per message, app-password guidance). Gmail is welcome: the pitch
+        is what its native connector cannot do — attachments, read-only by
+        default, several mailboxes in one connector. Everyone else still reads
+        that this page is about them. %>
     <p class="mt-4 max-w-[34em] text-[17px] leading-[1.55] text-ink"><%= t(".hero.audience") %></p>
 
     <div class="mt-8 flex flex-wrap gap-3">
