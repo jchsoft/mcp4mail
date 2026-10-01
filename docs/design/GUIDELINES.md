@@ -249,6 +249,22 @@ border-danger bg-danger-tint text-danger-deep
 border-line bg-surface-hover text-ink-soft
 ```
 
+**Hero animation** — the `hero-demo` Stimulus controller plays the landing
+hero's chat mock (`pages/home.html.erb`) once it scrolls into view: the question
+typed at 35 ms a character, the send pulse, five tool-call steps at 750 ms each,
+then the answer's source line and its bullets 450 ms apart, about 10 s in all,
+replayed after a 6 s hold only while the figure is in view and the tab visible.
+The server renders the finished conversation, which is what a visitor without
+JavaScript sees. Pieces still to come lose only their opacity (`hero-demo-pending`),
+never their box, so neither hero layout shifts. The motion opt-out is the same
+`prefers-reduced-motion: reduce` as the FAQ marker, in two halves: the controller
+leaves the finished conversation in place (and returns to it if the preference
+changes mid-sequence), and a media block in `application.css` cancels every
+`hero-demo-*` transition and animation. For screen readers the figure's
+`aria-label` and the finished question and answer stay in the tree throughout;
+the composer and the "working" bubble are `aria-hidden`, and the figure holds no
+live region, so nothing is announced as it plays.
+
 **Text link** — `text-green hover:text-green-deep` with an underline in running
 text on paper; `text-highlight` on the dark panel (rule 2.4).
 
