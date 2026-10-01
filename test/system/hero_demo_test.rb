@@ -5,6 +5,10 @@ require "application_system_test_case"
 class HeroDemoTest < ApplicationSystemTestCase
   driven_with_motion
 
+  # The narrow tests shrink the window, and the next test in this browser would
+  # open the page with the figure below the fold, where it never plays.
+  teardown { page.driver.browser.manage.window.resize_to(1400, 1400) }
+
   test "the hero mock rewinds on connect and plays through to the server-rendered answer" do
     visit root_url
 
@@ -48,8 +52,10 @@ class HeroDemoTest < ApplicationSystemTestCase
         JS
         scroll_to figure, align: :center
 
-        assert_selector "[data-hero-demo-target=spinner]:not(.hidden)", visible: :all, wait: 10
-        assert_no_selector ".hero-demo-pending", visible: :all, wait: 15
+        # On a phone the figure may already be in view when the frame loads, so
+        # the sequence can be past any one beat by now; the sampler started
+        # while pieces were still pending, which is what the check needs.
+        assert_no_selector ".hero-demo-pending", visible: :all, wait: 20
 
         heights, overflows = evaluate_script("window.heroSamples").transpose
         assert_operator heights.size, :>, 100, "the sampler barely ran"

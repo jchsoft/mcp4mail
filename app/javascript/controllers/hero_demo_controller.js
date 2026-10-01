@@ -28,18 +28,18 @@ export default class extends Controller {
 
   disconnect() {
     this.motion.removeEventListener("change", this.sync)
-    this.stop()
+    this.unwatch()
   }
 
   // The visitor can ask the OS for less motion while the page is open: the mock
   // then jumps to the finished conversation and stays there, and asking for
   // motion again starts it from the top the next time it is in view.
   sync() {
-    if (this.motion.matches) this.stop()
-    else this.start()
+    if (this.motion.matches) this.unwatch()
+    else this.watch()
   }
 
-  start() {
+  watch() {
     if (this.observer) return
 
     this.due = true
@@ -54,7 +54,7 @@ export default class extends Controller {
     document.addEventListener("visibilitychange", this.resume)
   }
 
-  stop() {
+  unwatch() {
     if (!this.observer) return
 
     this.observer.disconnect()
