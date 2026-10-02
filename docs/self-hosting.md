@@ -127,8 +127,10 @@ calling `OutgoingMessage#approve!` right after `send_message` stores one); no su
   Gmail is supported this way: it needs two-step verification and an app password, and on a Google Workspace
   account the administrator can switch off IMAP or app passwords for everyone.
 - **Read-only by default.** Until its owner switches on "Allow the AI to make changes to this mailbox", the
-  MCP endpoint can only list, search and read a mailbox; any tool that would change it is refused. Sending
-  always waits for the owner's approval (see above). See the README.
+  MCP endpoint can only list, search and read a mailbox; any tool that would change it is refused. Switched on,
+  the owner ticks what the AI may do (mark and flag, move and create folders, write drafts, send and reply,
+  delete to trash; all ticked by default). Sending always waits for the owner's approval (see above). See the
+  README.
 - **Keep secrets out of git.** `.env` is git-ignored. Never commit it, `config/master.key`, a real mailbox host
   or a database dump.
 - **Backups.** A database backup contains the encrypted passwords; keep the encryption keys in a separate place.
