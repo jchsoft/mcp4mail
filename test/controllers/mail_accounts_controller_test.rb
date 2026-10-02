@@ -348,6 +348,36 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert account.ai_can_flag? && account.ai_can_organize? && account.ai_can_draft? && account.ai_can_trash?
   end
 
+  test "update of a permission sent with the unchanged switch reports the permissions" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+    account.update!(writable: true)
+
+    patch mail_account_path(account), params: { mail_account: { writable: "1", ai_can_trash: "0", ai_can_send: "1" } }
+
+    assert_equal "Saved what the AI may do in #{account.label}.", flash[:notice]
+    assert_not account.reload.ai_can_trash?
+  end
+
+  test "index shows the five permission boxes hidden while the switch is off" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+
+    get mail_accounts_path
+
+    assert_select "fieldset#ai_permissions_mail_account_#{account.id}.hidden" do
+      assert_select "legend", "What may the AI do?"
+      assert_select "input[type=checkbox][checked]", 5
+      assert_select "input#ai_can_trash_mail_account_#{account.id}[name='mail_account[ai_can_trash]']"
+    end
+
+    account.update!(writable: true, ai_can_trash: false)
+    get mail_accounts_path
+
+    assert_select "fieldset#ai_permissions_mail_account_#{account.id}:not(.hidden)"
+    assert_select "#ai_can_trash_mail_account_#{account.id}:not([checked])"
+  end
+
   test "update ignores unknown fields sent with a permission" do
     sign_in_as @user
     account = mail_accounts(:work)
