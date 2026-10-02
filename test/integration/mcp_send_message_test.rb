@@ -51,6 +51,19 @@ class McpSendMessageTest < ActionDispatch::IntegrationTest
     assert_equal "denied", McpAuditEvent.sole.outcome
   end
 
+  test "send_message is refused when the owner left sending off, and nothing is stored or emailed" do
+    @account.update!(ai_can_send: false)
+
+    result = call_tool("send_message", account_id: @account.id, to: "bob@example.org", body: "Hi")
+
+    assert result["isError"]
+    assert_equal "This mailbox does not let the AI send email. The owner can allow it in mcp4mail under Mail accounts.",
+      result.dig("content", 0, "text")
+    assert_equal 0, OutgoingMessage.count
+    assert_not_includes enqueued_jobs.map { |job| job["arguments"].first }, "OutgoingMessagesMailer"
+    assert_equal "denied", McpAuditEvent.sole.outcome
+  end
+
   test "send_message refuses more than 20 recipients" do
     recipients = Array.new(21) { |index| "person#{index}@example.org" }
 
