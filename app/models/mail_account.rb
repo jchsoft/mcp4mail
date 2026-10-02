@@ -1,6 +1,8 @@
 # An IMAP mailbox a user has connected. The password is someone else's key to their mail:
 # it is encrypted at rest and kept out of logs, inspect output and serialized forms.
 class MailAccount < ApplicationRecord
+  # The groups of write tools an owner can switch off one by one once the mailbox is writable.
+  AI_PERMISSIONS = { flags: :ai_can_flag, organize: :ai_can_organize, drafts: :ai_can_draft, send: :ai_can_send, trash: :ai_can_trash }.freeze
   PORT_RANGE = 1..65_535
   # How the connection is secured: IMAPS from the first byte, a plaintext connection upgraded
   # with STARTTLS, or - only ever typed in by hand, e.g. for a local bridge - no TLS at all.
@@ -41,6 +43,17 @@ class MailAccount < ApplicationRecord
   # itself; a bare login is completed with the server's host.
   def sender_address
     username.include?("@") ? username : "#{username}@#{host}"
+  end
+
+  # Read-only whatever the checkboxes say while the master switch is off. An unknown key is a
+  # programmer error, so it raises.
+  def allows?(permission)
+    column = AI_PERMISSIONS.fetch(permission)
+    writable? && public_send(column)
+  end
+
+  def ai_permissions
+    AI_PERMISSIONS.keys.select { |permission| allows?(permission) }
   end
 
   def tls_mode

@@ -110,4 +110,25 @@ class MailAccountTest < ActiveSupport::TestCase
 
     assert_equal "[FILTERED]", filter.filter("mail_account" => { "password" => SECRET })["mail_account"]["password"]
   end
+
+  test "grants every AI permission by default but allows none while read-only" do
+    account = build_account
+
+    assert_equal %i[ ai_can_flag ai_can_organize ai_can_draft ai_can_send ai_can_trash ], MailAccount::AI_PERMISSIONS.values
+    assert MailAccount::AI_PERMISSIONS.values.all? { |column| account.public_send(column) }
+    assert_not account.allows?(:trash)
+    assert_empty account.ai_permissions
+  end
+
+  test "a writable account allows every permission except those switched off" do
+    account = build_account(writable: true, ai_can_trash: false)
+
+    assert_not account.allows?(:trash)
+    assert account.allows?(:organize)
+    assert_equal %i[ flags organize drafts send ], account.ai_permissions
+  end
+
+  test "an unknown AI permission raises" do
+    assert_raises(KeyError) { build_account(writable: true).allows?(:nonsense) }
+  end
 end
