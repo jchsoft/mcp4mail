@@ -317,6 +317,48 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "imap.example.com", account.reload.host
   end
 
+  test "update turns one AI permission off and leaves the switch and the others alone" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+    account.update!(writable: true)
+
+    patch mail_account_path(account), params: { mail_account: { ai_can_trash: "0" } }
+
+    assert_redirected_to mail_accounts_path
+    assert_equal "Saved what the AI may do in #{account.label}.", flash[:notice]
+    account.reload
+    assert_not account.ai_can_trash?
+    assert account.writable?
+    assert account.ai_can_flag? && account.ai_can_organize? && account.ai_can_draft? && account.ai_can_send?
+  end
+
+  test "update of the switch alone keeps an unticked permission unticked" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+    account.update!(writable: true, ai_can_send: false)
+
+    patch mail_account_path(account), params: { mail_account: { writable: "0" } }
+    assert_equal "#{account.label} is read-only again: the AI can only read and search it.", flash[:notice]
+    patch mail_account_path(account), params: { mail_account: { writable: "1" } }
+    assert_equal "The AI can now make changes to #{account.label}.", flash[:notice]
+
+    account.reload
+    assert account.writable?
+    assert_not account.ai_can_send?
+    assert account.ai_can_flag? && account.ai_can_organize? && account.ai_can_draft? && account.ai_can_trash?
+  end
+
+  test "update ignores unknown fields sent with a permission" do
+    sign_in_as @user
+    account = mail_accounts(:work)
+
+    patch mail_account_path(account), params: { mail_account: { ai_can_flag: "0", host: "evil.example.com" } }
+
+    account.reload
+    assert_not account.ai_can_flag?
+    assert_equal "imap.example.com", account.host
+  end
+
   test "update refuses another user's mailbox" do
     sign_in_as @user
 
@@ -324,6 +366,15 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
     assert_not mail_accounts(:personal).reload.writable?
+  end
+
+  test "update refuses a permission change on another user's mailbox" do
+    sign_in_as @user
+
+    patch mail_account_path(mail_accounts(:personal)), params: { mail_account: { ai_can_trash: "0" } }
+
+    assert_response :not_found
+    assert mail_accounts(:personal).reload.ai_can_trash?
   end
 
   test "update requires sign-in" do
