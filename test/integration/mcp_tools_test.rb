@@ -65,6 +65,21 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_nil event.mail_account_id
   end
 
+  test "list_mail_accounts lists the AI permissions a writable account grants" do
+    mail_accounts(:work).update!(writable: true, ai_can_trash: false)
+
+    account = JSON.parse(call_tool("list_mail_accounts").dig("content", 0, "text")).sole
+
+    assert_equal %w[flags organize drafts send], account["ai_permissions"]
+    assert account["writable"]
+  end
+
+  test "a read-only account grants no AI permissions" do
+    result = call_tool("get_mail_account", account_id: mail_accounts(:work).id)
+
+    assert_equal [], JSON.parse(result.dig("content", 0, "text"))["ai_permissions"]
+  end
+
   test "get_mail_account answers for the caller's own account" do
     result = call_tool("get_mail_account", account_id: mail_accounts(:work).id)
 

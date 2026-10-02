@@ -4,7 +4,7 @@ module McpTools
   class GetMailAccount < ApplicationTool
     tool_name "get_mail_account"
     title "Show mailbox"
-    description "Show the connection details of one of your mail accounts (never its password)."
+    description "Show the connection details of one of your mail accounts (never its password). ai_permissions lists what the AI may change in this mailbox; tools outside it are refused."
     input_schema(
       type: "object",
       properties: {
