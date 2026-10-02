@@ -167,3 +167,41 @@ pointer.
 The last row is the alert's reasoning again: at 1.16:1 the tint cannot mark the
 control by itself, and it does not have to — the border (5.65:1 on paper) and
 the label (5.65:1, 4.88:1 while the tint is under it) carry it.
+
+## The AI permission boxes (task #13348)
+
+Run by `test/system/mailbox_ai_permissions_accessibility_test.rb` on the
+mailbox index (`/mail_accounts`), with the "Allow the AI to make changes" switch
+off and on, in `en` and `cs`. Same tags, viewport and `BLOCKING_IMPACTS` filter
+as above. Result: **no serious or critical violations** in any of the four runs,
+so the boxes add nothing new to fix.
+
+What was checked, and what changed:
+
+- **Keyboard.** Tab goes from the switch to each of the five boxes in the order
+  `MailAccount::AI_PERMISSIONS` lists them. Space toggles a box and the form saves
+  itself. The save redirects back to the same page, and that redirect used to
+  drop focus to `<body>` and scroll to the top, for the switch as well as for the
+  boxes, so a keyboard user started again from the skip link. Now
+  `auto_submit_controller.js` gives focus back to the control that changed (by
+  its `id`) on the next `turbo:load`, and the index keeps its scroll with
+  `turbo_refreshes_with method: :replace, scroll: :preserve`. The test
+  checks that focus stays on the switch and on the box after the save.
+- **Screen reader.** The group is a `<fieldset>` named by its `<legend>` ("What
+  may the AI do?" / "Co smí AI dělat?"). Each box sits inside a `<label for>`
+  that points at its own `dom_id`. When the switch is off, the fieldset gets the
+  `hidden` class, which is `display: none`, so the boxes leave the accessibility
+  tree and the tab order. The test checks that Tab from the switch skips them. A
+  class is used rather than the attribute so that `noscript:block` can still show
+  the boxes without JavaScript.
+- **Contrast.** The product has no dark mode: the pages set no
+  `prefers-color-scheme` variant or `dark:` utility, so a dark-mode visitor sees
+  the same light card. The values below are the only ones that apply.
+
+| pair | where | ratio |
+|---|---|---|
+| `--color-ink` `#1f2430` on `--color-surface` `#ffffff` | box labels | 15.52 |
+| `--color-ink-muted` `#5c626e` on `--color-surface` | the hint under the switch, the legend | 6.13 |
+| `--color-ink` as `accent-color` on `--color-surface` | a ticked box's fill | 15.52 |
+
+Re-run with `bin/rails test test/system/mailbox_ai_permissions_accessibility_test.rb`.

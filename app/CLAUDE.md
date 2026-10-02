@@ -53,7 +53,7 @@ Two layouts, `layouts/public.html.erb` (marketing + hitch-rails screens) and `la
 Small, single-purpose controllers — no framework creep, no state shared between them:
 
 - `clipboard_controller.js`: copies a target element's text to the clipboard, flashes a "copied" confirmation on the button.
-- `auto_submit_controller.js`: calls `requestSubmit()` on its form as soon as a watched control changes, for settings that save themselves without an explicit button.
+- `auto_submit_controller.js`: calls `requestSubmit()` on its form as soon as a watched control changes, for settings that save themselves without an explicit button. It hands focus back to the changed control (by `id`) after the redirect; the page keeps its scroll with `turbo_refreshes_with scroll: :preserve`.
 - `reveal_controller.js`: shows its content targets while the checkbox that triggered it is ticked, at once on the client, before an auto-submit round-trip comes back (the AI permission boxes under the mailbox switch).
 - `tabs_controller.js`: progressively enhances a stack of always-visible panels into an accessible tab UI (arrow keys, Home/End) once it connects; the content must render correctly with JS off.
 - `hero_demo_controller.js`: plays the landing hero's chat mock (question typed and sent, tool-call steps ticking off, answer bullets) once the figure scrolls into view, replaying after a hold while it stays in view and the tab is visible. The server renders the finished conversation; connecting rewinds it, and a visitor who asked for reduced motion keeps the finished one, and one who asks mid-sequence is put back on it.
