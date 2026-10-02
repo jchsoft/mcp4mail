@@ -4,7 +4,7 @@ The MCP tool contract: what a model connected to someone's mailbox is allowed to
 
 ## Read-only is the default, a write is a product decision
 
-A mailbox is read-only to the AI until its owner turns on "Allow the AI to make changes" (`MailAccount#writable`). A new tool that changes a mailbox is not an implementation detail of some feature: it needs an explicit decision first, and then it says so in code with `write_tool destructive: true|false`.
+A mailbox is read-only to the AI until its owner turns on "Allow the AI to make changes" (`MailAccount#writable`). A new tool that changes a mailbox is not an implementation detail of some feature: it needs an explicit decision first, and then it says so in code with `write_tool destructive: true|false, permission: <group>`. `permission` is required and must be a key of `MailAccount::AI_PERMISSIONS` (`flags`, `organize`, `drafts`, `send`, `trash`): a new write tool picks the group the owner switches on for it, and the registry refuses to boot without one.
 
 - `destructive: false`: the write only adds or is undoable (`create_draft`, `create_folder`, `move_message`, `set_flags`).
 - `destructive: true`: something can be lost or leave the mailbox (`trash_message`, `send_message`).
@@ -17,6 +17,7 @@ A mailbox is read-only to the AI until its owner turns on "Allow the AI to make 
 
 - is not a subclass of `McpTools::ApplicationTool`,
 - is neither read-only and non-destructive nor declared with `write_tool`,
+- is a write tool without a `permission` that exists in `MailAccount::AI_PERMISSIONS`,
 - has no `title`.
 
 Generate with `bin/rails generate hitch:tool NAME`, change the superclass to `ApplicationTool`, add one `register ... scopes: [ "mcp" ]` line (alphabetical).
@@ -54,8 +55,11 @@ Every lookup goes through the caller: `mail_accounts` for accounts, `MailMessage
 | `search_contacts` | Addresses seen in the index | read |
 | `get_attachment` | A signed download URL for one attachment, or with `inline: true` its base64 bytes | read |
 | `get_outgoing_status` | Whether a prepared email was sent | read |
-| `create_draft`, `create_folder`, `move_message`, `set_flags` | | write |
-| `trash_message`, `send_message` | | write, destructive |
+| `set_flags` | | write, permission `flags` |
+| `move_message`, `create_folder` | | write, permission `organize` |
+| `create_draft` | | write, permission `drafts` |
+| `send_message` | | write, destructive, permission `send` |
+| `trash_message` | | write, destructive, permission `trash` |
 
 ## Writing a good tool
 

@@ -34,7 +34,7 @@ The pieces, the failure channel and how tests fake the server: `app/services/CLA
 
 ## `app/tools`
 
-`McpToolRegistry` is the registry: `self.register` refuses to boot with a tool that is not a `McpTools::ApplicationTool`, or one that declares neither read-only nor a write. `McpTools::ApplicationTool` is where that declaration lives — every subclass defaults to read-only; `write_tool destructive: true|false` is the only way to opt a tool into writing, and it is what flips the MCP `read_only_hint`/`destructive_hint` annotations the client sees. The base class also enforces, on every `invoke`, that a write tool only runs against a mailbox with "Allow the AI to make changes" on, applies the per-user call quota, and always records a `McpAuditEvent` — a new tool under `mcp_tools/` gets all three for free by inheriting from it and does not reimplement any of them.
+`McpToolRegistry` is the registry: `self.register` refuses to boot with a tool that is not a `McpTools::ApplicationTool`, or one that declares neither read-only nor a write. `McpTools::ApplicationTool` is where that declaration lives — every subclass defaults to read-only; `write_tool destructive: true|false, permission: <AI_PERMISSIONS key>` is the only way to opt a tool into writing, and it is what flips the MCP `read_only_hint`/`destructive_hint` annotations the client sees. The base class also enforces, on every `invoke`, that a write tool only runs against a mailbox with "Allow the AI to make changes" on, applies the per-user call quota, and always records a `McpAuditEvent` — a new tool under `mcp_tools/` gets all three for free by inheriting from it and does not reimplement any of them.
 
 The guards, the tool list and how to write a description a model reads well: `app/tools/CLAUDE.md`.
 

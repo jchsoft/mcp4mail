@@ -6,7 +6,7 @@ module McpTools
   class SendMessage < ApplicationTool
     tool_name "send_message"
     title "Send email (after approval)"
-    write_tool destructive: true
+    write_tool destructive: true, permission: :send
 
     WAITING = "Waiting for approval: the owner has to confirm this email before it is sent."
 

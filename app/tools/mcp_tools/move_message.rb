@@ -4,7 +4,7 @@ module McpTools
   class MoveMessage < ApplicationTool
     tool_name "move_message"
     title "Move message"
-    write_tool destructive: false
+    write_tool destructive: false, permission: :organize
 
     description <<~TEXT.squish
       Move one message to another folder of the same mailbox. Give the message id from

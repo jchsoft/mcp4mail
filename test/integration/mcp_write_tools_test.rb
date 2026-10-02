@@ -10,7 +10,7 @@ class McpWriteToolsTest < ActionDispatch::IntegrationTest
     tool_name "touch_mailbox"
     title "Touch mailbox"
     description "Test-only write tool."
-    write_tool destructive: false
+    write_tool destructive: false, permission: :flags
     input_schema(
       type: "object",
       properties: { account_id: { type: "integer" } },

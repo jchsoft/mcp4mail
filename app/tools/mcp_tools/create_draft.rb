@@ -4,7 +4,7 @@ module McpTools
   class CreateDraft < ApplicationTool
     tool_name "create_draft"
     title "Save a draft"
-    write_tool destructive: false
+    write_tool destructive: false, permission: :drafts
 
     description <<~TEXT.squish
       Save a new message or a reply into the Drafts folder. It is not sent: the person opens

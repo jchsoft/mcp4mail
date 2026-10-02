@@ -4,7 +4,7 @@ module McpTools
   class TrashMessage < ApplicationTool
     tool_name "trash_message"
     title "Move to Trash"
-    write_tool destructive: true
+    write_tool destructive: true, permission: :trash
     annotations(**annotations, idempotent_hint: true)
 
     description <<~TEXT.squish

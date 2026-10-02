@@ -55,14 +55,19 @@ module McpTools
       end
 
       # Declares a tool that changes the mailbox. Whether it can destroy anything is the
-      # tool's own answer, so it has no default. Annotations set before this call (a title)
-      # are kept.
-      def write_tool(destructive:)
+      # tool's own answer, so it has no default; the same goes for the AI permission group (a key
+      # of MailAccount::AI_PERMISSIONS) the owner has to switch on for it. Annotations set before
+      # this call (a title) are kept.
+      def write_tool(destructive:, permission:)
         raise ArgumentError, "destructive: must be true or false" unless destructive == true || destructive == false
+        raise ArgumentError, "permission: must be one of #{MailAccount::AI_PERMISSIONS.keys.inspect}" unless MailAccount::AI_PERMISSIONS.key?(permission)
 
         @write_tool = true
+        @permission = permission
         annotations(**(annotations || {}), read_only_hint: false, destructive_hint: destructive, idempotent_hint: false)
       end
+
+      attr_reader :permission
 
       def write_tool?
         @write_tool == true

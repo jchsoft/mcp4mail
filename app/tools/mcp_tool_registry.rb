@@ -4,13 +4,18 @@
 # `bin/rails generate hitch:tool NAME`, then make it inherit McpTools::ApplicationTool.
 #
 # A tool is either read-only and non-destructive, or it says it writes with `write_tool`
-# (and then runs only on mailboxes the owner made writable). Registering a tool that is not
+# and the AI permission group it needs (and then runs only on mailboxes the owner made
+# writable and switched that group on for). Registering a tool that is not
 # an ApplicationTool, or one that sets write annotations without declaring write_tool, fails
 # at boot.
 class McpToolRegistry < Hitch::MCP::Registry
   def self.register(tool_class = nil, scopes: nil)
     unless tool_class.is_a?(Class) && tool_class < McpTools::ApplicationTool && (tool_class.read_only? || tool_class.write_tool?)
       raise ArgumentError, "#{tool_class.inspect} must be an McpTools::ApplicationTool that is read-only or declares write_tool"
+    end
+
+    if tool_class.write_tool? && !MailAccount::AI_PERMISSIONS.key?(tool_class.permission)
+      raise ArgumentError, "#{tool_class.name} is a write tool and must declare a permission: one of #{MailAccount::AI_PERMISSIONS.keys.inspect}"
     end
 
     raise ArgumentError, "#{tool_class.name} must declare a human title" if tool_class.title.blank?

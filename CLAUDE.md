@@ -33,7 +33,7 @@ Tailwind v4 is CSS-first: tokens live in `app/assets/tailwind/application.css` (
 Never commit `config/master.key`, `.env*`, `credentials.yml`, real mailbox hosts/usernames or dumps; they are git-ignored. `.env.example` lists the variables (`HITCH_RESOURCE_URI`, `SECRET_KEY_BASE`, database password, the three `ACTIVE_RECORD_ENCRYPTION_*` keys, `MCP4MAIL_PORT`) with empty values. Production secrets come from the environment; dev/test derive throwaway encryption keys from `tmp/local_secret.txt`. Tests use fake servers on `127.0.0.1` and made-up addresses.
 
 ## MCP endpoint is read-only by design
-Every mailbox is read-only unless its owner turns on the per-account "Allow the AI to make changes" switch. A tool that writes to a mailbox is not added without an explicit decision; the tool registry refuses to boot with a tool that is neither read-only and non-destructive nor declared via `write_tool destructive: ...` on `McpTools::ApplicationTool`. Every tool resolves data through the signed-in user's own mail accounts.
+Every mailbox is read-only unless its owner turns on the per-account "Allow the AI to make changes" switch. A tool that writes to a mailbox is not added without an explicit decision; the tool registry refuses to boot with a tool that is neither read-only and non-destructive nor declared via `write_tool destructive: ..., permission: ...` on `McpTools::ApplicationTool`. The `permission` is a key of `MailAccount::AI_PERMISSIONS`; a new write tool picks its group. Every tool resolves data through the signed-in user's own mail accounts.
 
 ## Locales
 `cs` and `en` are both first-class. Every user-facing string goes through I18n and is translated in both (`config/locales/`).
