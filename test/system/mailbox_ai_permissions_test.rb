@@ -38,9 +38,18 @@ class MailboxAiPermissionsTest < ApplicationSystemTestCase
     sign_in(users(:one))
     visit mail_accounts_url(locale: :cs)
 
-    assert_selector "legend", text: "Co smí AI dělat?"
+    assert_selector "legend", text: /\ACo smí AI dělat\?\z/i
     [ "Označovat jako přečtené a hvězdičkou", "Přesouvat zprávy a vytvářet složky", "Psát koncepty",
       "Odesílat a odpovídat - vždy až po vašem schválení", "Mazat do koše" ].each { |label| assert_checked_field label }
     assert_text "Zapnuto: níže vyberte, co smí měnit."
   end
+
+  private
+    def sign_in(user)
+      visit new_session_url
+      fill_in placeholder: "Enter your email address", with: user.email_address
+      fill_in placeholder: "Enter your password", with: "password"
+      click_button "Sign in"
+      assert_current_path root_path
+    end
 end
