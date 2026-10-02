@@ -30,13 +30,13 @@ class MailAccountsController < ApplicationController
     manual_settings? ? create_with_manual_settings : create_with_detection
   end
 
-  # The list's "Allow the AI to make changes" switch and the permission boxes under it, each
-  # form sending only its own field. They are the only things edited here: the
-  # connection settings are proven at create time and not changed afterwards.
+  # The list's "Allow the AI to make changes" switch and the permission boxes under it. They
+  # are the only things edited here: the connection settings are proven at create time and
+  # not changed afterwards. The switch and the boxes share one form, so the notice follows
+  # what actually changed rather than which fields were sent.
   def update
-    settings = ai_settings_params
-    @mail_account.update!(settings)
-    key = if settings.key?(:writable) then @mail_account.writable? ? ".writable" : ".read_only" else ".permissions" end
+    @mail_account.update!(ai_settings_params)
+    key = if @mail_account.saved_change_to_writable? then @mail_account.writable? ? ".writable" : ".read_only" else ".permissions" end
     redirect_to mail_accounts_path, notice: t(key, name: @mail_account.label), status: :see_other
   end
 

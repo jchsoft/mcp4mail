@@ -67,10 +67,23 @@
           </div>
 
           <%= form_with model: mail_account, class: "mt-5 border-t border-line pt-5", id: dom_id(mail_account, :writable),
-                data: { controller: "auto-submit" } do |form| %>
+                data: { controller: "auto-submit reveal" } do |form| %>
             <%= render "shared/switch", form: form, attribute: :writable, label: t(".writable"),
-                  input: { id: dom_id(mail_account, :writable_switch), data: { action: "auto-submit#submit" } } %>
+                  input: { id: dom_id(mail_account, :writable_switch), data: { action: "reveal#toggle auto-submit#submit" } } %>
             <p class="mt-1.5 text-sm text-ink-muted"><%= t(".writable_hint") %></p>
+            <%# One form for the switch and the boxes, so the no-script Save sends them all.
+                Hidden by class rather than the hidden attribute: noscript:block has to win. %>
+            <fieldset class="<%= class_names("mt-4 space-y-2.5 noscript:block", hidden: !mail_account.writable?) %>"
+                      id="<%= dom_id(mail_account, :ai_permissions) %>" data-reveal-target="content">
+              <legend class="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-ink-muted"><%= t(".ai_permissions") %></legend>
+              <% MailAccount::AI_PERMISSIONS.each do |permission, column| %>
+                <label for="<%= dom_id(mail_account, column) %>" class="flex cursor-pointer items-center gap-3 text-sm text-ink max-lg:min-h-11">
+                  <%= form.check_box column, id: dom_id(mail_account, column), class: "size-4 flex-none cursor-pointer accent-ink",
+                        data: { action: "auto-submit#submit" } %>
+                  <span><%= t(".ai_permission.#{permission}") %></span>
+                </label>
+              <% end %>
+            </fieldset>
             <noscript><%= form.submit t(".writable_save"), class: "#{button_classes(:secondary, size: :compact)} mt-3" %></noscript>
           <% end %>
 
