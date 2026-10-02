@@ -194,7 +194,7 @@ module McpTools
       end
 
       def account_summary(account)
-        account.slice(:id, :display_name, :host, :port, :ssl, :username, :default_folder, :writable)
+        account.slice(:id, :display_name, :host, :port, :ssl, :username, :default_folder, :writable).merge(ai_permissions: account.ai_permissions)
       end
   end
 end
