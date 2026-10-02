@@ -30,6 +30,7 @@ Inheriting is the whole integration. Do not reimplement any of this in a tool:
 - `authorize!`: an `account_id` argument that is not one of the caller's `MailAccount`s is refused, and recorded as `denied`, before any tool code runs.
 - `invoke`, wrapped around your private `#call`:
   - a write tool against a mailbox that is not writable returns `READ_ONLY_MAILBOX` and never reaches `#call`;
+  - a write tool whose AI permission group is off for that mailbox returns a message naming what the owner must allow (`PERMISSION_ACTIONS`), audited `denied`, before the rate limiter and `#call`;
   - `USER_CALLS` (an `McpQuota`, 240 calls a minute per user across all their clients);
   - `McpSearchGuard::Exhausted` turned into a tool error;
   - an `McpAuditEvent` in `ensure`, whatever the outcome, and an `McpClientSighting`.

@@ -372,6 +372,23 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
     assert_equal @inbox.id, @message.reload.mail_folder_id
   end
 
+  test "trash_message is refused when the owner left deleting off, while move_message still works" do
+    start_trash_server(folders: [ { name: "INBOX" }, { name: "Trash", attrs: [ "Trash" ] } ], trash: "Trash")
+    @account.update!(ai_can_trash: false)
+
+    result = call_tool("trash_message", account_id: @account.id, message_id: @message.id)
+
+    assert result["isError"]
+    assert_equal "This mailbox does not let the AI delete messages. The owner can allow it in mcp4mail under Mail accounts.",
+      result.dig("content", 0, "text")
+    assert_equal "denied", McpAuditEvent.sole.outcome
+    assert_empty @server.commands.grep(/\AUID (MOVE|COPY|STORE)/)
+    assert_equal @inbox.id, @message.reload.mail_folder_id
+
+    moved = tool_json("move_message", account_id: @account.id, message_id: @message.id, folder: "Trash")
+    assert_equal [ true, "Trash" ], moved.values_at("moved", "folder")
+  end
+
   private
     def start_draft_server(folders: nil, mailboxes: nil)
       @mailboxes = mailboxes || { "INBOX" => { uidvalidity: 100, messages: [] }, "Koncepty" => { uidvalidity: 300, messages: [] } }

@@ -20,6 +20,15 @@ module McpTools
     # person has to do, not an error code.
     READ_ONLY_MAILBOX = "This mailbox is read-only. The owner can allow changes in mcp4mail under Mail accounts."
 
+    # What a writable mailbox says when the owner left one group of changes off, per permission.
+    PERMISSION_ACTIONS = {
+      flags: "mark or flag messages",
+      organize: "move messages or create folders",
+      drafts: "write drafts",
+      send: "send email",
+      trash: "delete messages"
+    }.freeze
+
     # Imap::ServiceLimited is not a Net::IMAP::Error, so it passes every tool's own rescue and
     # lands here: the mail server (Gmail, in practice) is limiting access, nothing is broken.
     SERVICE_LIMITED = "Gmail temporarily limited access to this mailbox (too many simultaneous connections, " \
@@ -108,6 +117,11 @@ module McpTools
         return Hitch::MCP::Result.error(READ_ONLY_MAILBOX)
       end
 
+      if self.class.write_tool? && !mail_account.allows?(self.class.permission)
+        outcome = "denied"
+        return Hitch::MCP::Result.error(permission_denied_message)
+      end
+
       unless USER_CALLS.admit?(current_user)
         outcome = "rate_limited"
         return Hitch::MCP::Result.error("Rate limit exceeded; slow down and retry in a minute.")
@@ -135,6 +149,11 @@ module McpTools
     end
 
     private
+      def permission_denied_message
+        "This mailbox does not let the AI #{PERMISSION_ACTIONS.fetch(self.class.permission)}. " \
+          "The owner can allow it in mcp4mail under Mail accounts."
+      end
+
       def call
         raise NotImplementedError, "#{self.class.name} must implement #call"
       end
