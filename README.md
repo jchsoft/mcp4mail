@@ -53,9 +53,10 @@ here, not something free or unlimited.
 | `create_draft` | Saves a draft. *Write.* |
 | `send_message` | Prepares an email; it is sent only after you approve it. *Write.* |
 
-Write tools work only on a mailbox whose owner switched on "Allow the AI to make changes to this mailbox";
-everywhere else they are refused, see [below](#mcp-endpoint-read-only-by-design). `send_message` never sends
-on its own: you get an email with a link and the message leaves only when you press Send.
+Write tools work only on a mailbox whose owner switched on "Allow the AI to make changes to this mailbox"
+and ticked what the tool does; everywhere else they are refused, see
+[below](#mcp-endpoint-read-only-by-design). `send_message` never sends on its own: you get an email with a
+link and the message leaves only when you press Send.
 
 ## Self-hosting
 
@@ -106,23 +107,26 @@ How the password is stored and who can decrypt it is described in the
 ## MCP endpoint: read-only by design
 
 Every mailbox is read-only until you say otherwise. Each mailbox on the Mail accounts page has one switch,
-"Allow the AI to make changes to this mailbox", and it is off by default. No scopes, no per-tool
-permissions: that switch is the whole opt-in.
+"Allow the AI to make changes to this mailbox", and it is off by default.
 
 - **Off** (the default): the AI can only read and search. Any tool that would change the mailbox is refused
   with a message telling the model the mailbox is read-only, and the refusal is written to the audit log as
   `denied`.
-- **On**: tools that change mail (flag, move, draft and, with your approval, send) may act on that mailbox.
+- **On**: checkboxes unfold under the switch and you tick what the AI may do in that mailbox: mark as read
+  and flag (`set_flags`), move messages and create folders (`move_message`, `create_folder`), write drafts
+  (`create_draft`), send and reply, always after your approval (`send_message`), delete to trash
+  (`trash_message`). All are ticked when you switch it on. A tool whose box is unticked is refused the same
+  way as on a read-only mailbox. `list_mail_accounts` and `get_mail_account` tell the model what it may do.
 
 The tool registry refuses to boot with a tool that is neither read-only and non-destructive nor explicitly
-declared as a write tool (`write_tool destructive: ...` on `McpTools::ApplicationTool`), so nothing can
-slip in as a write tool by accident. Write tools announce `readOnlyHint: false` and declare their own
-`destructiveHint`.
+declared as a write tool (`write_tool destructive: ..., permission: ...` on `McpTools::ApplicationTool`,
+where `permission` is one of the checkboxes above), so nothing can slip in as a write tool by accident.
+Write tools announce `readOnlyHint: false` and declare their own `destructiveHint`.
 
 What read-only does and does not mean, plainly:
 
-- Nothing can change a mailbox without its switch. Folders are opened with IMAP `EXAMINE`, so even reading
-  does not mark messages as seen.
+- Nothing can change a mailbox without its switch and the matching checkbox. Folders are opened with IMAP
+  `EXAMINE`, so even reading does not mark messages as seen.
 - It does read your mail, whenever an AI client you connected asks. Connect only clients you trust with that.
 - It keeps a copy of message headers (sender, recipients, subject, date, flags, size) in its own database,
   refreshed every 15 minutes, so searches do not hit your mail server each time.

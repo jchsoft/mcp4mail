@@ -211,7 +211,7 @@ cs:
         lede: "Do schránky se dostane jen to, co jí dovolíte. Každá schránka začíná jen pro čtení a nic se neodešle bez vašeho schválení. A když nechcete, aby vaše heslo leželo na cizím serveru, spustíte si mcp4mail sami."
         points:
           - title: "Ve výchozím stavu jen čtení"
-            body_html: "Dokud nezapnete „Povolit AI měnit tuto schránku“, AI ji může jen procházet, prohledávat a číst — nic se neodešle, nepřesune, nesmaže ani neoznačí jako přečtené. Po zapnutí může také označovat, přesouvat, psát koncepty a mazat do koše; e‑mail, který chce odeslat, počká, až stisknete Odeslat ve zprávě, kterou vám pošleme."
+            body_html: "Dokud nezapnete „Povolit AI měnit tuto schránku“, AI ji může jen procházet, prohledávat a číst — nic se neodešle, nepřesune, nesmaže ani neoznačí jako přečtené. Po zapnutí zaškrtnete, co smí: označovat a dávat hvězdičku, přesouvat zprávy a vytvářet složky, psát koncepty, odesílat a odpovídat, mazat do koše — na začátku je zaškrtnuté vše. E‑mail, který chce odeslat, počká, až stisknete Odeslat ve zprávě, kterou vám pošleme."
           - title: "Heslo aplikace, šifrované"
             body_html: "Zadáváte heslo aplikace, ne heslo k účtu — kdykoli ho zrušíte. V databázi leží šifrované a AI klient ho nikdy neuvidí; přístup dostává přes OAuth 2.1."
           - title: "Nebo úplně u vás"
@@ -498,7 +498,7 @@ cs:
         title: "Připojit %{client}"
         request_html: "<strong>%{client}</strong> (<code>%{host}</code>) žádá o přístup k vašemu účtu %{brand}. Bude jednat vaším jménem."
         localhost_warning_html: "<strong>Tato aplikace běží na vašem vlastním počítači.</strong> Přístup dostane na adrese <code>%{host}</code>, schvalte ji tedy jen tehdy, když jste ji sami spustili a poznáváte ji."
-        read_only: "Každá schránka zůstává jen ke čtení, dokud u ní v mcp4mail nezapnete „Povolit AI měnit tuto schránku“."
+        read_only: "Každá schránka zůstává jen ke čtení, dokud u ní v mcp4mail nezapnete „Povolit AI měnit tuto schránku“ a nezaškrtnete, co AI smí."
         resource: "Zdroj:"
         approve: "Schválit přístup"
         deny: "Zamítnout přístup"

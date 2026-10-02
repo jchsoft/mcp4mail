@@ -154,7 +154,7 @@ en:
         lede: "It only reaches what you allow. Every mailbox starts read-only, and nothing is sent without your approval. And if you don't want your password on someone else's server, run mcp4mail yourself."
         points:
           - title: "Read‑only by default"
-            body_html: "Until you switch on “Allow the AI to make changes to this mailbox”, the AI can only list, search and read it — nothing is sent, moved, deleted or marked as read. Switched on, it can also flag, move, draft and trash; an email it wants to send waits until you press Send in the message we email you."
+            body_html: "Until you switch on “Allow the AI to make changes to this mailbox”, the AI can only list, search and read it — nothing is sent, moved, deleted or marked as read. Switched on, you tick what it may do: mark and flag, move messages and create folders, write drafts, send and reply, delete to trash — all ticked to start with. An email it wants to send waits until you press Send in the message we email you."
           - title: "App password, encrypted"
             body_html: "You enter an app password, not your account password — revoke it any time. It's stored encrypted and your AI client never sees it: access goes through OAuth 2.1."
           - title: "Or entirely on your machine"
@@ -441,7 +441,7 @@ en:
         title: "Connect %{client}"
         request_html: "<strong>%{client}</strong> (<code>%{host}</code>) is asking for access to your %{brand} account. It will act as you."
         localhost_warning_html: "<strong>This application runs on your own computer.</strong> It will receive access at <code>%{host}</code>, so approve it only if you started it yourself and recognise it."
-        read_only: "Every mailbox stays read-only unless you switch on “Allow the AI to make changes to this mailbox” for it in mcp4mail."
+        read_only: "Every mailbox stays read-only unless you switch on “Allow the AI to make changes to this mailbox” for it in mcp4mail and tick what the AI may do."
         resource: "Resource:"
         approve: "Approve access"
         deny: "Deny access"
