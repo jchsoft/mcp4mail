@@ -4,7 +4,7 @@ module McpTools
   class CreateFolder < ApplicationTool
     tool_name "create_folder"
     title "Create folder"
-    write_tool destructive: false
+    write_tool destructive: false, permission: :organize
     annotations(**annotations, idempotent_hint: true)
 
     description <<~TEXT.squish

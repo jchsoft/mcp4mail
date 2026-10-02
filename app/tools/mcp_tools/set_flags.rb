@@ -4,7 +4,7 @@ module McpTools
   class SetFlags < ApplicationTool
     tool_name "set_flags"
     title "Flag or mark read"
-    write_tool destructive: false
+    write_tool destructive: false, permission: :flags
     annotations(**annotations, idempotent_hint: true)
 
     description <<~TEXT.squish

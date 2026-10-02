@@ -27,7 +27,7 @@ class McpToolRegistryTest < ActiveSupport::TestCase
     writer = Class.new(McpTools::ApplicationTool) do
       def self.name = "FlagMessage"
       title "Flag message"
-      write_tool destructive: false
+      write_tool destructive: false, permission: :flags
     end
 
     registry = Class.new(McpToolRegistry)
@@ -41,7 +41,36 @@ class McpToolRegistryTest < ActiveSupport::TestCase
   end
 
   test "write_tool insists on an answer for destructive" do
-    assert_raises(ArgumentError) { Class.new(McpTools::ApplicationTool) { write_tool destructive: nil } }
+    assert_raises(ArgumentError) { Class.new(McpTools::ApplicationTool) { write_tool destructive: nil, permission: :flags } }
+  end
+
+  test "write_tool requires a permission" do
+    assert_raises(ArgumentError) { Class.new(McpTools::ApplicationTool) { write_tool destructive: true } }
+  end
+
+  test "write_tool refuses an unknown permission" do
+    assert_raises(ArgumentError) { Class.new(McpTools::ApplicationTool) { write_tool destructive: true, permission: :everything } }
+    assert_raises(ArgumentError) { Class.new(McpTools::ApplicationTool) { write_tool destructive: true, permission: nil } }
+  end
+
+  test "every registered write tool has a permission that exists" do
+    McpToolRegistry.declarations.map { |declaration| declaration.class_name.constantize }.select(&:write_tool?).each do |tool|
+      assert_includes MailAccount::AI_PERMISSIONS.keys, tool.permission, tool.name
+    end
+  end
+
+  test "each write tool maps to its permission group" do
+    expected = {
+      "McpTools::SetFlags" => :flags,
+      "McpTools::MoveMessage" => :organize,
+      "McpTools::CreateFolder" => :organize,
+      "McpTools::CreateDraft" => :drafts,
+      "McpTools::SendMessage" => :send,
+      "McpTools::TrashMessage" => :trash
+    }
+    actual = McpToolRegistry.declarations.map { |declaration| declaration.class_name.constantize }.select(&:write_tool?).to_h { |tool| [ tool.name, tool.permission ] }
+
+    assert_equal expected, actual
   end
 
   test "refuses to register a tool that sets write annotations without declaring write_tool" do
