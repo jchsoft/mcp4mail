@@ -331,6 +331,7 @@ en:
     update:
       writable: "The AI can now make changes to %{name}."
       read_only: "%{name} is read-only again: the AI can only read and search it."
+      permissions: "Saved what the AI may do in %{name}."
     providers:
       seznam: "Switch on IMAP access in Seznam Email settings (Settings → POP3/IMAP). With two-step verification, create an app password."
       gmail: "Gmail requires two-step verification and an app password (Google Account → Security → App passwords). Your regular Google password will not work."
