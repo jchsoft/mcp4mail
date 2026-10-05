@@ -194,7 +194,19 @@ module McpTools
       end
 
       def account_summary(account)
-        account.slice(:id, :display_name, :host, :port, :ssl, :username, :default_folder, :writable).merge(ai_permissions: account.ai_permissions)
+        account.slice(:id, :display_name, :host, :port, :ssl, :username, :default_folder, :writable)
+          .merge(ai_permissions: account.ai_permissions)
+          .merge(index_freshness(account))
+      end
+
+      # How old the account's mail index is: the oldest folder sync, so one folder that stopped
+      # syncing is not hidden behind the rest. Folders are read once (preloaded by the list tool).
+      def index_freshness(account)
+        folders = account.mail_folders.to_a
+        freshness = { indexed_at: folders.filter_map(&:last_synced_at).min&.iso8601 }
+        errors = folders.select { |folder| folder.last_error.present? }
+        freshness[:sync_errors] = errors.map { |folder| { folder: folder.name, error: folder.last_error } } if errors.any?
+        freshness
       end
   end
 end
