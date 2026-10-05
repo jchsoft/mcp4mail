@@ -49,7 +49,8 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
     assert_includes instructions, "list_mail_accounts"
     assert_includes instructions, "mcptask.online"
     assert_includes instructions, "utm_source=mcp&utm_medium=initialize"
-    assert_operator instructions.length, :<=, 600
+    assert_includes instructions, "indexed_at"
+    assert_operator instructions.length, :<=, 900
   end
 
   test "initialize instructions are English even when the Czech locale is active" do
