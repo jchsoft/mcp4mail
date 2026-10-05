@@ -9,7 +9,10 @@ module McpTools
     tool_name "search_messages"
     title "Search messages"
     description <<~TEXT.squish
-      Search the headers of your own indexed mail. Returns one compact row per message - id,
+      Search the headers of your own indexed mail. This is a local index that mcp4mail refreshes
+      about every 15 minutes, not the live mailbox, so mail that arrived in the last few minutes
+      may not be there yet. The query matches subject, sender and recipients only, never the
+      message body; to look inside a message, call get_message. Returns one compact row per message - id,
       account, folder, date, sender, subject, and the names and sizes of any attachments - and
       never returns message bodies. To read the text of one message, call get_message with the
       id from a row here. The number of rows is capped: when the answer says "truncated": true
@@ -22,7 +25,7 @@ module McpTools
       properties: {
         query: {
           type: "string",
-          description: "Words to look for in the subject, the sender and the recipients. Case and diacritics are ignored; every word has to match."
+          description: "Words to look for in the subject, the sender and the recipients (not the body). Case and diacritics are ignored; every word has to match."
         },
         account_id: {
           type: "integer",
@@ -35,12 +38,12 @@ module McpTools
         since: {
           type: "string",
           format: "date",
-          description: "Only messages sent on or after this date (YYYY-MM-DD)."
+          description: "Only messages whose Date header (when sent, not when it arrived) is on or after this date (YYYY-MM-DD)."
         },
         until: {
           type: "string",
           format: "date",
-          description: "Only messages sent on or before this date (YYYY-MM-DD)."
+          description: "Only messages whose Date header (when sent, not when it arrived) is on or before this date (YYYY-MM-DD)."
         },
         limit: {
           type: "integer",
