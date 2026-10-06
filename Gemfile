@@ -81,6 +81,10 @@ group :test do
   # landing page's a11y check is part of the suite rather than a one-off audit
   # someone remembers to repeat [https://github.com/dequelabs/axe-core-gems]
   gem "axe-core-capybara"
+
+  # Line and branch coverage, only when COVERAGE=1 (see test/test_helper.rb), so
+  # the regular suite and bin/ci stay as fast as before [https://github.com/simplecov-ruby/simplecov]
+  gem "simplecov", require: false
 end
 
 gem "redcarpet", "~> 3.6"

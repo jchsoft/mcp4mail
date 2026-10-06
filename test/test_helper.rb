@@ -9,6 +9,13 @@ module ActiveSupport
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
+    # Each forked worker reports under its own name and SimpleCov merges them;
+    # with one shared name the last worker to finish would overwrite the rest.
+    if ENV["COVERAGE"]
+      parallelize_setup { |worker| SimpleCov.command_name "#{SimpleCov.command_name}-#{worker}" }
+      parallelize_teardown { |_worker| SimpleCov.result }
+    end
+
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
