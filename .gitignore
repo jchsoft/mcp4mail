@@ -58,3 +58,6 @@
 /.mcp.json
 /.claude/test_durations.json
 /.claude/scheduled_tasks.lock
+
+# SimpleCov report (COVERAGE=1)
+/coverage

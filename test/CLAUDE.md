@@ -61,6 +61,7 @@ Every failure is produced locally, never by reaching the network:
 ## Running them
 
 - Through the `test-runner` skill: unit (`bin/rails test`), system (`bin/rails test:system`), or one file.
+- Coverage: `COVERAGE=1 bin/rails test:all` (through the `test-runner` skill as `env COVERAGE=1 bin/rails test:all`) writes `coverage/index.html` with line and branch coverage. SimpleCov starts in `config/boot.rb`, not here, because `bin/rails test` loads the app before this helper; its config is in `.simplecov`. Without `COVERAGE` nothing is measured, so CI is as fast as before.
 - `bin/ci` before any PR (`config/ci.rb`): RuboCop, audits, Brakeman, `bin/rails test`, `bin/rails test:system`, seeds. Run it through the `ci-runner` skill. It posts the signoff only when it exits 0.
 - On GitHub, `test` and `system-test` are two of the five required checks (with `scan_ruby`, `scan_js`, `lint`). A red system test blocks the merge like any other.
 
