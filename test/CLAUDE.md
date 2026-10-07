@@ -61,7 +61,7 @@ Every failure is produced locally, never by reaching the network:
 ## Running them
 
 - Through the `test-runner` skill: unit (`bin/rails test`), system (`bin/rails test:system`), or one file.
-- Coverage: `COVERAGE=1 bin/rails test:all` (through the `test-runner` skill as `env COVERAGE=1 bin/rails test:all`) writes `coverage/index.html` with line and branch coverage. SimpleCov starts in `config/boot.rb`, not here, because `bin/rails test` loads the app before this helper; its config is in `.simplecov`. Without `COVERAGE` nothing is measured, so CI is as fast as before.
+- Coverage: `COVERAGE=1 bin/rails test:all` (through the `test-runner` skill as `env COVERAGE=1 bin/rails test:all`) writes `coverage/index.html` with line and branch coverage. SimpleCov starts in `config/boot.rb`, not here, because `bin/rails test` loads the app before this helper; its config is in `.simplecov`. Without `COVERAGE` nothing is measured. Ratchet: `bin/ci` runs the whole suite as one coverage run with `COVERAGE_MINIMUM=1`, and `.simplecov` then fails it below the minimum (line 99.0, branch 89.3; achieved 99.51 / 89.86). Raise the minimum when coverage rises, never lower it to land a PR. The GitHub `test` job collects the unit-test report as an artifact but does not enforce the minimum, since unit tests alone cover less than the whole suite.
 - `bin/ci` before any PR (`config/ci.rb`): RuboCop, audits, Brakeman, `bin/rails test`, `bin/rails test:system`, seeds. Run it through the `ci-runner` skill. It posts the signoff only when it exits 0.
 - On GitHub, `test` and `system-test` are two of the five required checks (with `scan_ruby`, `scan_js`, `lint`). A red system test blocks the merge like any other.
 
