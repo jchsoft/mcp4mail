@@ -28,6 +28,13 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
     assert_includes response.headers["Access-Control-Expose-Headers"], "Mcp-Session-Id"
   end
 
+  test "a body that is not JSON is left to Hitch to refuse, not translated and not a server error" do
+    post_malformed_legacy
+
+    assert_response :bad_request
+    assert_nil response.headers["Mcp-Session-Id"]
+  end
+
   test "initialize says what mcp4mail is, how to start and where it is built" do
     post_legacy(
       {
@@ -118,6 +125,12 @@ class McpLegacyHandshakeTest < ActionDispatch::IntegrationTest
   end
 
   private
+    def post_malformed_legacy
+      post "/mcp",
+        params: "{not json",
+        headers: { "Content-Type" => "application/json", "Accept" => "application/json, text/event-stream", "Authorization" => "Bearer #{@token}" }
+    end
+
     def post_legacy(body, accept: "application/json, text/event-stream")
       post "/mcp",
         params: JSON.generate(body),

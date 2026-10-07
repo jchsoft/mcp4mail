@@ -82,6 +82,25 @@ class McpToolRegistryTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { Class.new(McpToolRegistry).register(writer, scopes: [ "mcp" ]) }
   end
 
+  test "refuses to register a write tool whose permission is not an AI permission" do
+    writer = Class.new(McpTools::ApplicationTool) do
+      def self.name = "Shady"
+      title "Shady"
+      write_tool destructive: false, permission: :flags
+      def self.permission = :everything
+    end
+
+    error = assert_raises(ArgumentError) { Class.new(McpToolRegistry).register(writer, scopes: [ "mcp" ]) }
+    assert_includes error.message, "must declare a permission"
+  end
+
+  test "ApplicationTool#call raises until a tool implements it" do
+    tool = Class.new(McpTools::ApplicationTool) { def self.name = "Lazy" }.new(nil, {})
+
+    error = assert_raises(NotImplementedError) { tool.send(:call) }
+    assert_equal "Lazy must implement #call", error.message
+  end
+
   test "refuses to register a tool without a title" do
     untitled = Class.new(McpTools::ApplicationTool) { def self.name = "Untitled" }
 
