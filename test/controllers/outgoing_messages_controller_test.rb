@@ -52,4 +52,40 @@ class OutgoingMessagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert @outgoing.reload.pending?
   end
+
+  test "Send redirects with the error when the outgoing server cannot be reached" do
+    Smtp::Sender.delivery_override = nil
+    @account.update!(smtp_host: "127.0.0.1", smtp_port: closed_port, smtp_tls: "starttls")
+
+    post approve_outgoing_message_path(@outgoing)
+
+    assert_redirected_to mail_accounts_path
+    assert_match(/\AThe email was not sent: .+/, flash[:alert])
+    assert @outgoing.reload.pending?
+  end
+
+  test "Send on a message that is no longer pending says so" do
+    @outgoing.update!(state: "discarded")
+
+    post approve_outgoing_message_path(@outgoing)
+
+    assert_redirected_to mail_accounts_path
+    assert_equal "This email is no longer waiting for approval.", flash[:alert]
+    assert_empty Mail::TestMailer.deliveries
+  end
+
+  test "Discard on a message that is no longer pending says so" do
+    @outgoing.update!(state: "sent")
+
+    post discard_outgoing_message_path(@outgoing)
+
+    assert_redirected_to mail_accounts_path
+    assert_equal "This email is no longer waiting for approval.", flash[:alert]
+    assert @outgoing.reload.sent?
+  end
+
+  private
+    def closed_port
+      TCPServer.open("127.0.0.1", 0) { |server| server.addr[1] }
+    end
 end

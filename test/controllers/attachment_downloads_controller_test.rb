@@ -51,6 +51,20 @@ class AttachmentDownloadsControllerTest < ActionDispatch::IntegrationTest
     server&.stop
   end
 
+  test "reports service unavailable when the mail server is unreachable" do
+    server, account = start_fake_account
+    message = index_body_message(account, uid: 1, body: multipart_body(content: "pdf-bytes", filename: "faktura.pdf"),
+      attachments: [ { "filename" => "faktura.pdf", "content_type" => "application/pdf", "size" => 9 } ])
+    token = AttachmentDownloadToken.generate(user: @user, message:, attachment_index: 0)
+    server.stop
+
+    get attachment_download_url(token:)
+
+    assert_response :service_unavailable
+  ensure
+    server&.stop
+  end
+
   private
     def start_fake_account
       @fake_mailboxes = { "INBOX" => { uidvalidity: 1, messages: [] } }
