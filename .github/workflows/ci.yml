@@ -99,10 +99,20 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
+          COVERAGE: 1
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test
+
+      - name: Keep coverage report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ github.workspace }}/coverage
+          retention-days: 14
+          if-no-files-found: ignore
 
   system-test:
     runs-on: ubuntu-latest

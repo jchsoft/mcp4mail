@@ -16,9 +16,7 @@ CI.run do
 
   step "Precompile test assets", "bin/rails assets:precompile RAILS_ENV=test"
 
-  step "Tests: Rails", "bin/rails test"
-
-  step "Tests: System", "CI=true bin/rails test:system"
+  step "Tests: Rails and System (coverage ratchet)", "env COVERAGE=1 COVERAGE_MINIMUM=1 CI=true bin/rails test:all"
 
   step "Tests: Seeds", "env RAILS_ENV=test bin/rails db:seed:replant"
 
