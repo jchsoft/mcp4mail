@@ -103,4 +103,11 @@ class Imap::MessageBodyTest < ActiveSupport::TestCase
 
     assert_raises(Imap::MessageBody::MessageGone) { fetch(uid: 404) }
   end
+
+test "falls back to the raw source when the transfer encoding is unknown" do
+  put_message(uid: 1, body: "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: x-mystery\r\n\r\nraw text")
+  start_server
+
+  assert_equal "raw text", fetch(uid: 1).text.strip
+end
 end
