@@ -107,4 +107,11 @@ class OutgoingMessageTest < ActiveSupport::TestCase
         max_recipients: OutgoingMessage::MAX_RECIPIENTS).validate!
       OutgoingMessage.prepare!(mail_account: @account, client_id: "claude", composer:)
     end
+
+  test "recipients lists to, cc and bcc in that order" do
+    outgoing = OutgoingMessage.new(to_addresses: [ "a@example.org" ], cc_addresses: [ "b@example.org" ], bcc_addresses: [ "c@example.org" ])
+
+    assert_equal %w[a@example.org b@example.org c@example.org], outgoing.recipients
+    assert_equal "a@example.org", outgoing.first_recipient
+  end
 end
