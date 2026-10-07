@@ -70,4 +70,25 @@ class OutgoingApprovalsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "Send redirects with the error when the outgoing server cannot be reached" do
+    Smtp::Sender.delivery_override = nil
+    port = TCPServer.open("127.0.0.1", 0) { |server| server.addr[1] }
+    @account.update!(smtp_host: "127.0.0.1", smtp_port: port, smtp_tls: "starttls")
+
+    post outgoing_approval_path(@outgoing.raw_token)
+
+    assert_redirected_to outgoing_approval_path(@outgoing.raw_token)
+    assert_match(/\AThe email was not sent: .+/, flash[:alert])
+    assert @outgoing.reload.pending?
+  end
+
+  test "Discard on a message that was already sent leaves it sent" do
+    @outgoing.update!(state: "sent")
+
+    post outgoing_discard_path(@outgoing.raw_token)
+
+    assert_redirected_to outgoing_approval_path(@outgoing.raw_token)
+    assert @outgoing.reload.sent?
+  end
 end
