@@ -13,7 +13,7 @@ class AccountExportsMailerTest < ActionMailer::TestCase
 
     [ mail.html_part, mail.text_part ].each do |part|
       body = part.body.to_s
-      assert_includes body, "http://example.com/account/export/#{@export.raw_token}"
+      assert_includes body, "http://example.com/account-exports/#{@export.raw_token}"
       assert_includes body, "1 day"
     end
   end
