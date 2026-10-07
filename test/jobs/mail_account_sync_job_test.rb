@@ -31,4 +31,21 @@ class MailAccountSyncJobTest < ActiveJob::TestCase
       MailIndexRefreshJob.perform_now
     end
   end
+
+  test "logs once the limit retries are spent" do
+    server = FakeImapServer.new(over_limit: :connections).start
+    account = users(:one).mail_accounts.create!(host: "127.0.0.1", port: server.port, ssl: false, username: "bob", password: "x")
+    logged = StringIO.new
+    original = Rails.logger
+    Rails.logger = ActiveSupport::Logger.new(logged)
+
+    perform_enqueued_jobs(only: MailAccountSyncJob) do
+      MailAccountSyncJob.perform_later(account)
+    end
+    # executions climb until the 4th attempt, which runs the block instead of re-enqueuing
+    assert_match(/\[MailAccountSyncJob\] mail_account_id=#{account.id} still limited/, logged.string)
+  ensure
+    Rails.logger = original if original
+    server&.stop
+  end
 end
