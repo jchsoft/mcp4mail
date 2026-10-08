@@ -7,7 +7,7 @@ gem "propshaft"
 # Use postgresql as the database for Active Record
 # The production server (CentOS 8) has glibc 2.28; precompiled native gems need 2.29+.
 # The deploy sets FORCE_RUBY_PLATFORM=1 to compile them from source; dev and CI use the native gems.
-gem "pg", "~> 1.1", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
+gem "pg", "~> 1.7", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
 gem "nokogiri", force_ruby_platform: ENV.has_key?("FORCE_RUBY_PLATFORM")
 
 # json 3.0 made JSON.parse options keyword-only; Rails 8.1.3 still calls JSON.parse(json, options), which breaks
