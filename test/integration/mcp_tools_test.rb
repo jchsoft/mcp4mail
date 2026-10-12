@@ -586,7 +586,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
       folder = account.mail_folders.find_or_create_by!(name: "INBOX") { |new_folder| new_folder.uidvalidity = uidvalidity }
       message = account.mail_messages.create!(
         mail_folder: folder, uidvalidity:, uid:, subject:, from_address:, to_addresses:, cc_addresses: [],
-        has_attachments: attachments.any?, attachments:, flags:,
+        has_attachments: attachments.any?, attachments:,
         search_text: MailMessage.build_search_text(subject:, from_name: nil, from_address:, to_addresses:, cc_addresses: [])
       )
       @fake_mailboxes["INBOX"][:messages] << { uid:, body: }
