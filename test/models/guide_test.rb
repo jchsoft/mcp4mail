@@ -36,6 +36,18 @@ class GuideTest < ActiveSupport::TestCase
     assert_operator html.index("signinoptions/twosv"), :<, html.index("apppasswords")
   end
 
+  test "the Gmail guide quotes Google's error screens and walks a Workspace admin through 2SV and IMAP" do
+    html = Guide.find("gmail").html
+
+    assert_includes html, "The setting you are looking for is not available for your account"
+    assert_includes html, "Nastavení, které hledáte, pro váš účet není k dispozici."
+    assert_includes html, "2-Step Verification is not allowed for this account"
+    assert_includes html, "Dvoufázové ověření pro tento účet není povoleno"
+    assert_includes html, 'href="https://admin.google.com/ac/security/2sv"'
+    assert_includes html, "Allow users to turn on 2-Step Verification"
+    assert_includes html, "POP and IMAP access"
+  end
+
   test "an unknown provider raises RecordNotFound" do
     assert_raises(ActiveRecord::RecordNotFound) { Guide.find("nope") }
   end
