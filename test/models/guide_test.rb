@@ -28,6 +28,14 @@ class GuideTest < ActiveSupport::TestCase
     assert_equal orders.sort, orders
   end
 
+  test "the Gmail guide leads with the direct 2-Step Verification and app password links" do
+    html = Guide.find("gmail").html
+
+    assert_includes html, 'href="https://myaccount.google.com/signinoptions/twosv"'
+    assert_includes html, 'href="https://myaccount.google.com/apppasswords"'
+    assert_operator html.index("signinoptions/twosv"), :<, html.index("apppasswords")
+  end
+
   test "an unknown provider raises RecordNotFound" do
     assert_raises(ActiveRecord::RecordNotFound) { Guide.find("nope") }
   end

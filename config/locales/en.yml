@@ -341,7 +341,7 @@ en:
       permissions: "Saved what the AI may do in %{name}."
     providers:
       seznam: "Switch on IMAP access in Seznam Email settings (Settings → POP3/IMAP). With two-step verification, create an app password."
-      gmail: "Gmail requires two-step verification and an app password (Google Account → Security → App passwords). Your regular Google password will not work."
+      gmail: "Gmail requires two-step verification and an app password (create it at myaccount.google.com/apppasswords). Your regular Google password will not work."
       outlook: "Use your full Outlook address. If your account has two-step verification, create an app password. Some Microsoft 365 organisations disable password sign-in for IMAP."
       icloud: "Use your iCloud address and an app-specific password from account.apple.com."
       yahoo: "Create an app password in Yahoo Account Security; your regular password will not work."
