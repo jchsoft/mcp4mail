@@ -9,10 +9,10 @@ module McpTools
     tool_name "search_messages"
     title "Search messages"
     description <<~TEXT.squish
-      Search the headers of your own indexed mail. This is a local index that mcp4mail refreshes
+      Search the headers of your own indexed mail, or list it by date or folder alone. This is a local index that mcp4mail refreshes
       about every 15 minutes, not the live mailbox, so mail that arrived in the last few minutes
       may not be there yet. The query matches subject, sender and recipients only, never the
-      message body; to look inside a message, call get_message. Returns one compact row per message - id,
+      message body. Leave the query out to list mail by since, until or folder alone, newest first (for example "what came in today"); a call with no query and no since, until or folder is refused. To look inside a message, call get_message. Returns one compact row per message - id,
       account, folder, date, sender, subject, whether it is unread, and the names and sizes of any attachments - and
       never returns message bodies. To read the text of one message, call get_message with the
       id from a row here. The number of rows is capped: when the answer says "truncated": true
@@ -25,7 +25,7 @@ module McpTools
       properties: {
         query: {
           type: "string",
-          description: "Words to look for in the subject, the sender and the recipients (not the body). Case and diacritics are ignored; every word has to match."
+          description: "Words to look for in the subject, the sender and the recipients (not the body). May be blank when since, until or folder is given. Case and diacritics are ignored; every word has to match."
         },
         account_id: {
           type: "integer",
@@ -54,13 +54,13 @@ module McpTools
           description: "How many rows to return. Defaults to #{McpSearchGuard::DEFAULT_PAGE_SIZE}, never more than #{McpSearchGuard::MAX_PAGE_SIZE}."
         }
       },
-      required: [ "query" ],
+      required: [],
       additionalProperties: false
     )
 
     private
       def call
-        return Hitch::MCP::Result.error("Give search_messages something to look for.") if query.blank?
+        return Hitch::MCP::Result.error("Give search_messages something to look for, or a since, until or folder to list by.") if query.blank? && !narrowed?
 
         search_guard.admit!
         limit = McpSearchGuard.page_size(arguments["limit"])
@@ -128,6 +128,10 @@ module McpTools
       def date_argument(name)
         value = arguments[name]
         Date.parse(value.to_s).in_time_zone if value.present?
+      end
+
+      def narrowed?
+        date_range.present? || folder.present?
       end
 
       def query

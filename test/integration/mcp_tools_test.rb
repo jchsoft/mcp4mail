@@ -216,6 +216,19 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_includes result.dig("content", 0, "text"), "something to look for"
   end
 
+  test "search_messages lists mail by date or folder alone, newest first" do
+    account = mail_accounts(:work)
+    old = index_message(account, uid: 1, subject: "Old", date: Time.zone.parse("2026-10-01 09:00"))
+    morning = index_message(account, uid: 2, subject: "Morning", date: Time.zone.parse("2026-10-12 09:00"))
+    afternoon = index_message(account, uid: 3, subject: "Afternoon", date: Time.zone.parse("2026-10-12 15:00"))
+    archived = index_message(account, uid: 4, subject: "Archive", folder: "Archive", date: Time.zone.parse("2026-10-02 09:00"))
+
+    assert_equal [ afternoon.id, morning.id ], search(query: "", since: "2026-10-12")["messages"].map { |row| row["id"] }
+    assert_equal [ afternoon.id, morning.id ], search(since: "2026-10-12")["messages"].map { |row| row["id"] }
+    assert_equal [ old.id ], search(query: " ", until: "2026-10-01")["messages"].map { |row| row["id"] }
+    assert_equal [ archived.id ], search(folder: "archive")["messages"].map { |row| row["id"] }
+  end
+
   test "the search row budget stops a walk through the whole mailbox and is audited" do
     index_message(mail_accounts(:work), uid: 1, subject: "Faktura")
     McpSearchGuard::ROWS.consume(@user, McpSearchGuard::ROWS.to)
