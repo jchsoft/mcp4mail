@@ -398,7 +398,7 @@ cs:
       permissions: "Uloženo, co AI smí v %{name} dělat."
     providers:
       seznam: "V nastavení Seznam Emailu zapněte přístup přes IMAP (Nastavení → POP3/IMAP). Máte-li dvoufázové ověření, vytvořte heslo pro aplikace."
-      gmail: "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace (Účet Google → Zabezpečení → Hesla aplikací). Běžné heslo k Googlu nebude fungovat."
+      gmail: "Gmail vyžaduje dvoufázové ověření a heslo pro aplikace (vytvoříte ho na myaccount.google.com/apppasswords). Běžné heslo k Googlu nebude fungovat."
       outlook: "Použijte celou adresu Outlooku. Máte-li dvoufázové ověření, vytvořte heslo pro aplikace. Některé organizace v Microsoft 365 přihlášení heslem přes IMAP vypínají."
       icloud: "Použijte adresu iCloudu a heslo pro konkrétní aplikaci z account.apple.com."
       yahoo: "V zabezpečení účtu Yahoo vytvořte heslo pro aplikace; běžné heslo nebude fungovat."

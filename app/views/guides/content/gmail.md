@@ -13,22 +13,22 @@ once **2-Step Verification** is on.
 
 ## 1. Turn on 2-Step Verification
 
-1. Sign in at [myaccount.google.com](https://myaccount.google.com).
-2. Open **Security**.
-3. Under **How you sign in to Google**, open **2-Step Verification** and
-   follow the steps to switch it on.
+Open
+[myaccount.google.com/signinoptions/twosv](https://myaccount.google.com/signinoptions/twosv),
+sign in if Google asks, and follow the steps to switch 2-Step Verification on.
 
 Skip this if it is already on.
 
 ## 2. Create an app password
 
-1. Still in **Google Account → Security**, open **App passwords**. If you do
-   not see it, search for "App passwords" at the top of the page, or go
-   straight to
+1. Open
    [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
 2. Name it `mcp4mail` and choose **Create**.
 3. Copy the 16-letter password it shows. Google shows it only once; the
    spaces do not matter.
+
+Use these two links rather than the menus: Google renames its account pages
+often, and the "App passwords" entry is no longer listed on the Security page.
 
 ## 3. The settings to use
 
