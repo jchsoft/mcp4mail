@@ -13,7 +13,7 @@ module McpTools
       about every 15 minutes, not the live mailbox, so mail that arrived in the last few minutes
       may not be there yet. The query matches subject, sender and recipients only, never the
       message body. Leave the query out to list mail by since, until or folder alone, newest first (for example "what came in today"); a call with no query and no since, until or folder is refused. To look inside a message, call get_message. Returns one compact row per message - id,
-      account, folder, date, sender, subject, and the names and sizes of any attachments - and
+      account, folder, date, sender, subject, whether it is unread, and the names and sizes of any attachments - and
       never returns message bodies. To read the text of one message, call get_message with the
       id from a row here. The number of rows is capped: when the answer says "truncated": true
       there are more matches, so narrow the query, the date range or the folder rather than
@@ -44,6 +44,10 @@ module McpTools
           type: "string",
           format: "date",
           description: "Only messages whose Date header (when sent, not when it arrived) is on or before this date (YYYY-MM-DD)."
+        },
+        unread: {
+          type: "boolean",
+          description: "true: only messages not yet read (no \\Seen flag). Omit to get read and unread mail. Combine with since for \"unread since Monday\"."
         },
         limit: {
           type: "integer",
@@ -88,6 +92,7 @@ module McpTools
           date: message.date&.iso8601,
           from: message.from_display,
           subject: message.subject,
+          unread: message.flags.exclude?("Seen"),
           has_attachments: message.has_attachments
         }.tap do |row|
           row[:attachments] = attachments(message) if message.has_attachments
@@ -103,6 +108,7 @@ module McpTools
         relation = relation.where(mail_account_id: mail_account.id) if account_scoped?
         relation = relation.joins(:mail_folder).where("lower(mail_folders.name) = lower(?)", folder) if folder.present?
         relation = relation.where(date: date_range) if date_range
+        relation = relation.where.not("? = ANY (mail_messages.flags)", "Seen") if arguments["unread"] == true
 
         relation.preload(:mail_folder).order(Arel.sql("mail_messages.date DESC NULLS LAST, mail_messages.id DESC"))
       end
