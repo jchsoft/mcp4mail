@@ -133,11 +133,24 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_equal [ 1, false ], payload.values_at("returned", "truncated")
     row = payload["messages"].sole
-    assert_equal %w[account_id attachments date folder from has_attachments id subject], row.keys.sort
+    assert_equal %w[account_id attachments date folder from has_attachments id subject unread], row.keys.sort
     assert_equal [ message.id, mail_accounts(:work).id, "INBOX", "Žlutý Kůň <billing@example.com>", true ],
       row.values_at("id", "account_id", "folder", "from", "has_attachments")
     assert_equal [ { "filename" => "faktura.pdf", "size" => 12_345 } ], row["attachments"]
     assert_equal [ "search_messages", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
+  end
+
+  test "search_messages marks each row unread and filters on unread" do
+    read = index_message(mail_accounts(:work), uid: 1, subject: "Faktura read", flags: %w[Seen Flagged])
+    unread = index_message(mail_accounts(:work), uid: 2, subject: "Faktura unread")
+
+    both = search(query: "faktura")["messages"]
+    assert_equal({ read.id => false, unread.id => true }, both.to_h { |row| [ row["id"], row["unread"] ] })
+
+    only_unread = search(query: "faktura", unread: true)["messages"]
+    assert_equal [ unread.id ], only_unread.map { |row| row["id"] }
+
+    assert_equal 2, search(query: "faktura", unread: false)["messages"].size
   end
 
   test "search_messages never reaches another user's mail" do
@@ -522,11 +535,11 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     end
 
     def index_message(account, uid:, subject:, folder: "INBOX", date: Time.current, from_name: nil,
-      from_address: "sender@example.com", attachments: [])
+      from_address: "sender@example.com", attachments: [], flags: [])
       mail_folder = account.mail_folders.find_or_create_by!(name: folder) { |new_folder| new_folder.uidvalidity = 1 }
       account.mail_messages.create!(
         mail_folder:, uidvalidity: mail_folder.uidvalidity, uid:, subject:, date:, from_name:, from_address:,
-        has_attachments: attachments.any?, attachments:,
+        has_attachments: attachments.any?, attachments:, flags:,
         search_text: MailMessage.build_search_text(
           subject:, from_name:, from_address:, to_addresses: [], cc_addresses: []
         )
@@ -573,7 +586,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
       folder = account.mail_folders.find_or_create_by!(name: "INBOX") { |new_folder| new_folder.uidvalidity = uidvalidity }
       message = account.mail_messages.create!(
         mail_folder: folder, uidvalidity:, uid:, subject:, from_address:, to_addresses:, cc_addresses: [],
-        has_attachments: attachments.any?, attachments:,
+        has_attachments: attachments.any?, attachments:, flags:,
         search_text: MailMessage.build_search_text(subject:, from_name: nil, from_address:, to_addresses:, cc_addresses: [])
       )
       @fake_mailboxes["INBOX"][:messages] << { uid:, body: }
