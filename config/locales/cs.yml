@@ -363,6 +363,10 @@ cs:
       provider_hint: "Máte adresu na vlastní doméně, ale schránku u Googlu, Microsoftu nebo jiného poskytovatele? Vyberte ho tady."
       provider_detect: "Zjistit podle adresy"
       show_me_how: "Ukázat jak na to"
+      gmail:
+        app_password_html: "Gmail tady nepřijme heslo ke Googlu. Vytvořte si heslo pro aplikace na %{link} a použijte to."
+        not_available_html: "Vidíte „Nastavení, které hledáte, pro váš účet není k dispozici“? Nejdřív zapněte dvoufázové ověření; u účtu Google Workspace %{link}."
+        admin_link: "ho musí povolit správce"
       connection_details: "Podrobnosti připojení"
       connection_details_hint: "Vyplníme je za vás, jakmile server najdeme. Zadejte je sami, jen pokud vám poskytovatel dal jiné."
       tls_modes:
