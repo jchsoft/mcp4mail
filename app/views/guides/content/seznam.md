@@ -46,3 +46,17 @@ The username is the whole address, including `@seznam.cz` (or `@email.cz`,
   verification since; create an app password as in step 2.
 - **You use your own domain on Seznam** — the server is still
   `imap.seznam.cz`, and the username is still your full address on your domain.
+
+## Tested status
+
+**Not yet tested against a live Seznam mailbox.** Seznam runs standard IMAP, so
+reading, searching and attachments are expected to work as with any other
+server. What mcp4mail does where Seznam may differ:
+
+- **Folder names in Czech.** If Seznam does not mark its folders as Trash or
+  Drafts, mcp4mail finds them by name, Czech included (*Koš*, *Koncepty*).
+- **No MOVE support.** If the server lacks it, a moved or trashed message is
+  copied and then deleted from where it was.
+
+If something does not work with your Seznam mailbox, tell us on
+[GitHub](https://github.com/jchsoft/mcp4mail/issues).
