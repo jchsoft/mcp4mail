@@ -9,16 +9,27 @@
         target: "_blank", rel: "noopener",
         class: "inline-flex items-center font-semibold underline max-lg:min-h-11" %>
 
+  <%# A refused Gmail login is nearly always the Google password instead of an app password,
+      and the app-password page then often says the setting is not available. %>
+  <% gmail_refused = @guide == "gmail" && [ @detection_failure, @connection_outcome ].include?(:auth_failed)
+     link_class = "font-semibold underline" %>
+  <% gmail_hint = safe_join([
+       t(".gmail.app_password_html", link: link_to("myaccount.google.com/apppasswords", "https://myaccount.google.com/apppasswords",
+                                                   target: "_blank", rel: "noopener", class: link_class)),
+       t(".gmail.not_available_html", link: link_to(t(".gmail.admin_link"), guide_path(:gmail, anchor: "for-the-google-workspace-administrator"),
+                                                    target: "_blank", rel: "noopener", class: link_class))
+     ], " ") if gmail_refused %>
+
   <% if @detection_failure %>
     <%= render "shared/alert", variant: :warning, id: "detection-error", class: "mb-5",
           title: t(".detection.#{@detection_failure}", domain: @mail_account.email_address.to_s.split("@").last),
-          body: safe_join([ t(".detection.hint"), " ", show_me_how ]) %>
+          body: safe_join([ gmail_hint || t(".detection.hint"), " ", show_me_how ]) %>
   <% end %>
 
   <% if @connection_outcome %>
     <%= render "shared/alert", variant: :danger, id: "connection-error", class: "mb-5",
           title: t(".outcomes.#{@connection_outcome}.title"),
-          body: safe_join([ t(".outcomes.#{@connection_outcome}.hint"), " ", show_me_how ]) %>
+          body: safe_join([ gmail_hint || t(".outcomes.#{@connection_outcome}.hint"), " ", show_me_how ]) %>
   <% end %>
 
   <%= form_with model: @mail_account, class: "contents" do |form| %>
