@@ -57,6 +57,9 @@ group :development, :test do
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
+  # Finds missing and unused I18n keys (config/i18n-tasks.yml)
+  gem "i18n-tasks", require: false
+
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 

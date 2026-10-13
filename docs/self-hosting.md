@@ -117,6 +117,36 @@ On the hosted instance this approval is mandatory and will stay that way. A self
 of their instance could later add an environment flag that approves messages automatically (for example by
 calling `OutgoingMessage#approve!` right after `send_message` stores one); no such flag exists today.
 
+## IMAP server compatibility
+
+mcp4mail speaks plain IMAP4rev1 with a few optional extensions and falls back when a server lacks them, so
+any standards-following server works. Dovecot, the server behind most self-hosted mailboxes, is covered by
+the fake IMAP server in `test/support/fake_imap_server.rb`; how it behaves with each extension:
+
+- **Namespace prefix.** Dovecot's default `Maildir` layout often uses `INBOX.` as the prefix and `.` as
+  the separator (`INBOX.Archive`), while other setups use an empty prefix and `/`. The server's NAMESPACE
+  answer is honoured when creating folders, so a new folder lands under the prefix. Test: `namespace_prefix:
+  "INBOX."`.
+- **SPECIAL-USE.** Dovecot advertises it, but only folders mapped with `special_use = \Trash` (and so on)
+  in its config carry a role. Unmapped Drafts/Sent/Trash folders are found by their usual names instead.
+- **MOVE and UIDPLUS.** Both are supported by Dovecot 2.2+; without MOVE the app copies and deletes.
+- **No Gmail extensions.** Dovecot has no X-GM-EXT-1, so mail is synced folder by folder. Its virtual `\All`
+  folder (if enabled) is just another folder and shows messages that also live elsewhere.
+
+This list comes from Dovecot's documented behaviour and the fake server's tests. It has not been checked
+against a live Dovecot instance, so report anything that differs.
+
+Seznam (`imap.seznam.cz`), the largest Czech consumer provider, has a setup guide but has not been tested against a live
+mailbox either: status **untested**. Its folders may carry Czech names without SPECIAL-USE; Trash is then found by name
+(`Koš`, sent in modified UTF-7; test: "trash finds a Czech Koš folder" in `test/services/imap/message_mover_test.rb`) and
+Drafts by `Koncepty`. Sync, search, get_message, get_attachment, set_flags, move_message and trash_message still need a
+run against a real Seznam mailbox.
+
+iCloud (`imap.mail.me.com`) has a setup guide but has not been tested against a live mailbox either: status **untested**.
+Its Trash folder is called `Deleted Messages`; without SPECIAL-USE it is found by name (test: "trash finds an iCloud Deleted Messages
+folder" in `test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
+trash_message still need a run against a real iCloud mailbox with an app-specific password.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)

@@ -67,7 +67,6 @@ en:
   pages:
     home:
       title: "mcp4mail - your mail, readable by your AI"
-      meta_description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read-only by default — changes only where you allow them, and nothing is sent without your approval. Nothing to install."
       nav:
         label: "Page sections"
         brand: "mcp4mail"

@@ -133,11 +133,32 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert_equal [ 1, false ], payload.values_at("returned", "truncated")
     row = payload["messages"].sole
-    assert_equal %w[account_id attachments date folder from has_attachments id subject], row.keys.sort
+    assert_equal %w[account_id attachments date folder from has_attachments id subject unread], row.keys.sort
     assert_equal [ message.id, mail_accounts(:work).id, "INBOX", "Žlutý Kůň <billing@example.com>", true ],
       row.values_at("id", "account_id", "folder", "from", "has_attachments")
     assert_equal [ { "filename" => "faktura.pdf", "size" => 12_345 } ], row["attachments"]
     assert_equal [ "search_messages", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
+  end
+
+test "search_messages finds mail by attachment file name" do
+  index_message(mail_accounts(:work), uid: 1, subject: "Documents",
+    attachments: [ { "filename" => "2026-591.pdf", "content_type" => "application/pdf", "size" => 10 } ])
+  index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+
+  assert_equal [ 1 ], search(query: "pdf")["messages"].map { |row| row["id"] && MailMessage.find(row["id"]).uid }
+end
+
+  test "search_messages marks each row unread and filters on unread" do
+    read = index_message(mail_accounts(:work), uid: 1, subject: "Faktura read", flags: %w[Seen Flagged])
+    unread = index_message(mail_accounts(:work), uid: 2, subject: "Faktura unread")
+
+    both = search(query: "faktura")["messages"]
+    assert_equal({ read.id => false, unread.id => true }, both.to_h { |row| [ row["id"], row["unread"] ] })
+
+    only_unread = search(query: "faktura", unread: true)["messages"]
+    assert_equal [ unread.id ], only_unread.map { |row| row["id"] }
+
+    assert_equal 2, search(query: "faktura", unread: false)["messages"].size
   end
 
   test "search_messages never reaches another user's mail" do
@@ -201,6 +222,19 @@ class McpToolsTest < ActionDispatch::IntegrationTest
 
     assert result["isError"]
     assert_includes result.dig("content", 0, "text"), "something to look for"
+  end
+
+  test "search_messages lists mail by date or folder alone, newest first" do
+    account = mail_accounts(:work)
+    old = index_message(account, uid: 1, subject: "Old", date: Time.zone.parse("2026-10-01 09:00"))
+    morning = index_message(account, uid: 2, subject: "Morning", date: Time.zone.parse("2026-10-12 09:00"))
+    afternoon = index_message(account, uid: 3, subject: "Afternoon", date: Time.zone.parse("2026-10-12 15:00"))
+    archived = index_message(account, uid: 4, subject: "Archive", folder: "Archive", date: Time.zone.parse("2026-10-02 09:00"))
+
+    assert_equal [ afternoon.id, morning.id ], search(query: "", since: "2026-10-12")["messages"].map { |row| row["id"] }
+    assert_equal [ afternoon.id, morning.id ], search(since: "2026-10-12")["messages"].map { |row| row["id"] }
+    assert_equal [ old.id ], search(query: " ", until: "2026-10-01")["messages"].map { |row| row["id"] }
+    assert_equal [ archived.id ], search(folder: "archive")["messages"].map { |row| row["id"] }
   end
 
   test "the search row budget stops a walk through the whole mailbox and is audited" do
@@ -522,13 +556,14 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     end
 
     def index_message(account, uid:, subject:, folder: "INBOX", date: Time.current, from_name: nil,
-      from_address: "sender@example.com", attachments: [])
+      from_address: "sender@example.com", attachments: [], flags: [])
       mail_folder = account.mail_folders.find_or_create_by!(name: folder) { |new_folder| new_folder.uidvalidity = 1 }
       account.mail_messages.create!(
         mail_folder:, uidvalidity: mail_folder.uidvalidity, uid:, subject:, date:, from_name:, from_address:,
-        has_attachments: attachments.any?, attachments:,
+        has_attachments: attachments.any?, attachments:, flags:,
         search_text: MailMessage.build_search_text(
-          subject:, from_name:, from_address:, to_addresses: [], cc_addresses: []
+          subject:, from_name:, from_address:, to_addresses: [], cc_addresses: [],
+          attachment_names: attachments.map { |attachment| attachment["filename"] }
         )
       )
     end

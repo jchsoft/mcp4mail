@@ -23,6 +23,20 @@ class MailMessageTest < ActiveSupport::TestCase
     assert_empty MailMessage.search("faktura dvorak")
   end
 
+test "search finds a message by attachment file name" do
+  folder = mail_accounts(:work).mail_folders.find_or_create_by!(name: "INBOX") { |f| f.uidvalidity = 1 }
+  message = mail_accounts(:work).mail_messages.create!(
+    mail_folder: folder, uidvalidity: folder.uidvalidity, uid: 9, subject: "Documents", from_address: "someone@example.com",
+    search_text: MailMessage.build_search_text(
+      subject: "Documents", from_name: nil, from_address: "someone@example.com", to_addresses: [], cc_addresses: [],
+      attachment_names: [ "Smlouva Č. 2026-591.PDF" ]
+    )
+  )
+
+  assert_equal [ message ], MailMessage.search("pdf").to_a
+  assert_equal [ message ], MailMessage.search("smlouva 591").to_a
+end
+
   test "search treats LIKE wildcards literally" do
     index_message(mail_accounts(:work), uid: 1, subject: "Sleva 50%")
     index_message(mail_accounts(:work), uid: 2, subject: "Sleva 500")
