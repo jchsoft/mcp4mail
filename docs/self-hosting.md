@@ -136,6 +136,12 @@ the fake IMAP server in `test/support/fake_imap_server.rb`; how it behaves with 
 This list comes from Dovecot's documented behaviour and the fake server's tests. It has not been checked
 against a live Dovecot instance, so report anything that differs.
 
+Seznam (`imap.seznam.cz`), the largest Czech consumer provider, has a setup guide but has not been tested against a live
+mailbox either: status **untested**. Its folders may carry Czech names without SPECIAL-USE; Trash is then found by name
+(`Koš`, sent in modified UTF-7; test: "trash finds a Czech Koš folder" in `test/services/imap/message_mover_test.rb`) and
+Drafts by `Koncepty`. Sync, search, get_message, get_attachment, set_flags, move_message and trash_message still need a
+run against a real Seznam mailbox.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)
