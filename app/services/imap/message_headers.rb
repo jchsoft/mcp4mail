@@ -41,7 +41,8 @@ module Imap
         flags: Array(fetch_data.flags).map(&:to_s),
         search_text: MailMessage.build_search_text(
           subject: subject, from_name: from["name"], from_address: from["address"],
-          to_addresses: to, cc_addresses: cc
+          to_addresses: to, cc_addresses: cc,
+          attachment_names: attachments.map { |attachment| attachment["filename"] }
         )
       }
     end

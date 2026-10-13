@@ -11,7 +11,7 @@ module Imap
     class CannotMoveSafely < StandardError; end
 
     # Names servers give a Trash folder that does not advertise \Trash, compared case-insensitively.
-    TRASH_NAMES = %w[Trash Deleted Koš Papierkorb Corbeille].freeze
+    TRASH_NAMES = ["Trash", "Deleted", "Deleted Messages", "Koš", "Papierkorb", "Corbeille"].freeze
 
     def self.call(message, to:)
       new(message, to:).call

@@ -95,6 +95,7 @@ class Imap::MessageHeadersTest < ActiveSupport::TestCase
 
     assert result[:has_attachments]
     assert_equal [ { "filename" => "zpráva.pdf", "content_type" => "application/pdf", "size" => 300 } ], result[:attachments]
+    assert_includes result[:search_text], "zprava.pdf"
   end
 
   test "an RFC 2231 filename in the disposition wins over the content-type name" do
