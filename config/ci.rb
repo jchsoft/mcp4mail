@@ -10,6 +10,9 @@ CI.run do
 
   step "Style: Ruby", "bin/rubocop"
 
+  step "I18n: Missing keys", "bundle exec i18n-tasks missing"
+  step "I18n: Unused keys", "bundle exec i18n-tasks unused"
+
   step "Security: Gem audit", "bin/bundler-audit"
   step "Security: Importmap vulnerability audit", "bin/importmap audit"
   step "Security: Brakeman", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"

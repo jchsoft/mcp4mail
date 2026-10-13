@@ -124,7 +124,6 @@ cs:
   pages:
     home:
       title: "mcp4mail – vaše pošta, srozumitelná pro vaši AI"
-      meta_description: "Propojte svůj e‑mail s Claude, ChatGPT nebo Grokem a ptejte se obyčejnou větou: co mi psali, na co jsem neodpověděl, kdy dorazí balík. Ve výchozím stavu jen čtení — změny jen tam, kde je povolíte, a nic se neodešle bez vašeho schválení. Bez instalace."
       nav:
         label: "Sekce stránky"
         brand: "mcp4mail"

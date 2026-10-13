@@ -1,0 +1,45 @@
+# i18n-tasks: `bin/rails`-free key checks, run by bin/ci (config/ci.rb).
+# Docs: https://github.com/glebm/i18n-tasks
+base_locale: en
+locales: [en, cs]
+
+data:
+  read:
+    - config/locales/%{locale}.yml
+  write:
+    - config/locales/%{locale}.yml
+
+search:
+  paths:
+    - app/
+    - config/initializers/
+    - lib/
+  # Per-folder CLAUDE.md files quote t() examples; they are docs, not code.
+  exclude:
+    - "*.md"
+
+# Keys that exist on purpose without a matching literal t() call.
+ignore_missing:
+  # Czech overrides of Rails' own defaults. English ships them inside Rails
+  # (rails-i18n/activemodel/actionview), so en.yml deliberately has no copy.
+  - errors.format
+  - errors.messages.*
+  - datetime.distance_in_words.*
+  - activerecord.errors.messages.record_invalid
+
+ignore_unused:
+  # Read by Rails itself (validation messages, time_ago_in_words), never by a t() call here.
+  - errors.format
+  - errors.messages.*
+  - datetime.distance_in_words.*
+  - activerecord.errors.messages.record_invalid
+  # Looked up by Rails, not by a literal t() call: model/attribute names and
+  # error messages resolve through human_attribute_name / form builders.
+  - activerecord.attributes.*
+  # Keys built at runtime (t("mail_accounts.providers.#{provider}"),
+  # t("mail_accounts.update.#{outcome}")), which the static scan cannot see.
+  - mail_accounts.providers.*
+  - mail_accounts.update.*
+  # Chosen by a ternary between two relative keys in hitch/activations/confirm.html.erb.
+  - hitch.activations.confirm.request_html
+  - hitch.activations.confirm.request_operator_html
