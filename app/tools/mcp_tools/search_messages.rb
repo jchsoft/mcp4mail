@@ -11,7 +11,7 @@ module McpTools
     description <<~TEXT.squish
       Search the headers of your own indexed mail, or list it by date or folder alone. This is a local index that mcp4mail refreshes
       about every 15 minutes, not the live mailbox, so mail that arrived in the last few minutes
-      may not be there yet. The query matches subject, sender and recipients only, never the
+      may not be there yet. The query matches subject, sender, recipients and attachment file names ("pdf", "invoice.xlsx"), never the
       message body. Leave the query out to list mail by since, until or folder alone, newest first (for example "what came in today"); a call with no query and no since, until or folder is refused. To look inside a message, call get_message. Returns one compact row per message - id,
       account, folder, date, sender, subject, whether it is unread, and the names and sizes of any attachments - and
       never returns message bodies. To read the text of one message, call get_message with the
@@ -25,7 +25,7 @@ module McpTools
       properties: {
         query: {
           type: "string",
-          description: "Words to look for in the subject, the sender and the recipients (not the body). May be blank when since, until or folder is given. Case and diacritics are ignored; every word has to match."
+          description: "Words to look for in the subject, the sender, the recipients and attachment file names (not the body). May be blank when since, until or folder is given. Case and diacritics are ignored; every word has to match."
         },
         account_id: {
           type: "integer",

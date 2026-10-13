@@ -41,7 +41,7 @@ here, not something free or unlimited.
 | `list_mail_accounts` | Lists the mail accounts you connected, with the ids the other tools take. |
 | `get_mail_account` | Shows the connection details of one account (never its password). |
 | `list_folders` | Lists the folders of one account. |
-| `search_messages` | Searches by subject, sender, recipients and date. |
+| `search_messages` | Searches by subject, sender, recipients, attachment names and date. |
 | `get_message` | Reads one message. |
 | `get_attachment` | Downloads an attachment of a message: a short-lived link, or with `inline: true` the file itself (up to 5 MB) inside the MCP answer. |
 | `search_contacts` | Finds addresses you have corresponded with. |
