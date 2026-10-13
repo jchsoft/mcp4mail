@@ -89,6 +89,7 @@ module McpTools
               date: nullable("string", "ISO 8601 date of the message"),
               from: nullable("string", "Sender, name and address"),
               subject: nullable("string", "Subject line"),
+              unread: { type: "boolean", description: "True when the message has no Seen flag" },
               has_attachments: { type: "boolean", description: "Whether the message has attachments" },
               attachments: {
                 type: "array",
@@ -101,7 +102,7 @@ module McpTools
                 )
               }
             },
-            required: %w[id account_id folder date from subject has_attachments]
+            required: %w[id account_id folder date from subject unread has_attachments]
           )
         },
         returned: { type: "integer", description: "Number of messages returned" },
