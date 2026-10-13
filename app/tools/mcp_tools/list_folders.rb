@@ -20,6 +20,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::LIST_FOLDERS
+
     private
       def call
         folders = Imap::Connection.open(mail_account) do |imap|

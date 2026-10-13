@@ -190,7 +190,8 @@ module McpTools
       end
 
       def json_result(value)
-        Hitch::MCP::Result.text(JSON.generate(value))
+        text = JSON.generate(value)
+        Hitch::MCP::Result.structured(JSON.parse(text), text:)
       end
 
       def account_summary(account)

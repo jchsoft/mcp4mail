@@ -25,6 +25,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::MOVE_MESSAGE
+
     private
       def call
         return Hitch::MCP::Result.error("Give move_message a destination folder.") if arguments["folder"].blank?

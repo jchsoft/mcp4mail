@@ -11,11 +11,13 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::LIST_MAIL_ACCOUNTS
+
     private
       def call
         accounts = mail_accounts.includes(:mail_folders).order(:id).map { |account| account_summary(account) }
         rows_returned!(accounts.size)
-        json_result(accounts)
+        json_result(accounts:)
       end
   end
 end

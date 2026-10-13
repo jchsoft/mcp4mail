@@ -48,7 +48,7 @@ class McpTools::IndexFreshnessTest < ActionDispatch::IntegrationTest
   end
 
   private
-    def list_summary = JSON.parse(call_tool("list_mail_accounts").dig("content", 0, "text")).sole
+    def list_summary = JSON.parse(call_tool("list_mail_accounts").dig("content", 0, "text")).fetch("accounts").sole
 
     def get_summary = JSON.parse(call_tool("get_mail_account", account_id: @account.id).dig("content", 0, "text"))
 

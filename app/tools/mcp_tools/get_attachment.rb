@@ -43,6 +43,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::GET_ATTACHMENT
+
     private
       def call
         return Hitch::MCP::Result.error("Give get_attachment a message_id and attachment_index.") if arguments["message_id"].blank? || arguments["attachment_index"].nil?

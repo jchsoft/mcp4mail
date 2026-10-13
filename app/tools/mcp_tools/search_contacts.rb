@@ -41,6 +41,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::SEARCH_CONTACTS
+
     private
       def call
         return Hitch::MCP::Result.error("Give search_contacts a name or an address to look for.") if terms.empty?

@@ -26,6 +26,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::SET_FLAGS
+
     private
       def call
         changes = arguments.slice("flagged", "seen").compact.transform_keys(&:to_sym)

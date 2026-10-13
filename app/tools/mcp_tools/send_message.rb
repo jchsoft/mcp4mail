@@ -36,6 +36,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::SEND_MESSAGE
+
     private
       def call
         fields = draft_fields
