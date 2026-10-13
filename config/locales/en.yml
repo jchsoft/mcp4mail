@@ -306,6 +306,10 @@ en:
       provider_hint: "On your own domain, but the mailbox is at Google, Microsoft or another provider? Pick it here."
       provider_detect: "Detect from my address"
       show_me_how: "Show me how"
+      gmail:
+        app_password_html: "Gmail does not accept your Google password here. Create an app password at %{link} and use that."
+        not_available_html: "Seeing “setting not available”? Turn on 2-Step Verification first; on a Google Workspace account %{link}."
+        admin_link: "your admin must allow it"
       connection_details: "Connection details"
       connection_details_hint: "Filled in for you when we find your server. Enter them yourself only if your provider gave you different ones."
       tls_modes:
@@ -341,7 +345,7 @@ en:
       permissions: "Saved what the AI may do in %{name}."
     providers:
       seznam: "Switch on IMAP access in Seznam Email settings (Settings → POP3/IMAP). With two-step verification, create an app password."
-      gmail: "Gmail requires two-step verification and an app password (Google Account → Security → App passwords). Your regular Google password will not work."
+      gmail: "Gmail requires two-step verification and an app password (create it at myaccount.google.com/apppasswords). Your regular Google password will not work."
       outlook: "Use your full Outlook address. If your account has two-step verification, create an app password. Some Microsoft 365 organisations disable password sign-in for IMAP."
       icloud: "Use your iCloud address and an app-specific password from account.apple.com."
       yahoo: "Create an app password in Yahoo Account Security; your regular password will not work."

@@ -122,6 +122,55 @@ class MailAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#detection-error a[href='#{guide_path(:icloud)}'][target=_blank]", "Show me how"
   end
 
+  test "create sends a refused Gmail login to the app password page and the Workspace section of the guide" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :auth_failed, raw_response: "[AUTHENTICATIONFAILED] Invalid credentials (Failure)")) do
+      post mail_accounts_path, params: detection_params(email_address: "bob@gmail.com")
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#detection-error", /Create an app password at myaccount.google.com\/apppasswords/
+    assert_select "#detection-error a[href='https://myaccount.google.com/apppasswords'][target=_blank]"
+    assert_select "#detection-error", /Seeing “setting not available”\? Turn on 2-Step Verification first/
+    assert_select "#detection-error a[href='#{guide_path(:gmail, anchor: "for-the-google-workspace-administrator")}']", "your admin must allow it"
+    assert_select "#detection-error a[href='#{guide_path(:gmail)}']", "Show me how"
+  end
+
+  test "create gives the Gmail hint in Czech too" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :auth_failed, raw_response: "[AUTHENTICATIONFAILED] nope")) do
+      post mail_accounts_path(locale: :cs), params: detection_params(email_address: "bob@gmail.com")
+    end
+
+    assert_select "#detection-error", /Vytvořte si heslo pro aplikace na myaccount.google.com\/apppasswords/
+    assert_select "#detection-error a[href='#{guide_path(:gmail, anchor: "for-the-google-workspace-administrator")}']", "ho musí povolit správce"
+  end
+
+  test "create gives the Gmail hint when Gmail was picked for an address on another domain" do
+    sign_in_as @user
+
+    connection_test(:auth_failed) do
+      post mail_accounts_path, params: { mail_account: detection_params(email_address: "bob@company.example")[:mail_account].merge(provider: "gmail") }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#connection-error a[href='https://myaccount.google.com/apppasswords']"
+    assert_select "#connection-error a[href='#{guide_path(:gmail, anchor: "for-the-google-workspace-administrator")}']"
+  end
+
+  test "create keeps the generic hint for a Gmail failure that is not a refused password" do
+    sign_in_as @user
+
+    autodetect(detected(reason: :timeout)) do
+      post mail_accounts_path, params: detection_params(email_address: "bob@gmail.com")
+    end
+
+    assert_select "#detection-error", /Check the address and password/
+    assert_select "#detection-error a[href='https://myaccount.google.com/apppasswords']", count: 0
+  end
+
   test "create links the guides index when the detected provider has no guide" do
     sign_in_as @user
 
