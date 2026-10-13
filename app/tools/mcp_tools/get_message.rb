@@ -27,6 +27,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::GET_MESSAGE
+
     private
       def call
         return Hitch::MCP::Result.error("Give get_message the id of a message from search_messages.") if arguments["id"].blank?

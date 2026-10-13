@@ -21,6 +21,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::GET_OUTGOING_STATUS
+
     private
       def call
         outgoing = current_user.outgoing_messages.find_by(id: arguments["outgoing_message_id"])

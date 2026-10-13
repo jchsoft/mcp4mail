@@ -24,6 +24,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::TRASH_MESSAGE
+
     private
       def call
         message = MailMessage.where(mail_account: mail_account).find_by(id: arguments["message_id"])

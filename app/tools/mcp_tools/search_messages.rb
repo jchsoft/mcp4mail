@@ -54,6 +54,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::SEARCH_MESSAGES
+
     private
       def call
         return Hitch::MCP::Result.error("Give search_messages something to look for.") if query.blank?

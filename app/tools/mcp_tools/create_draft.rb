@@ -28,6 +28,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::CREATE_DRAFT
+
     private
       def call
         original = nil

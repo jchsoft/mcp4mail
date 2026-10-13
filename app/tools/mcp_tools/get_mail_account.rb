@@ -14,6 +14,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::GET_MAIL_ACCOUNT
+
     private
       def call
         rows_returned!(1)

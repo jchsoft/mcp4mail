@@ -14,6 +14,20 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     McpQuota.store_override = nil
   end
 
+  test "every listed tool declares an object outputSchema with described properties" do
+    post_mcp(method: "tools/list", token: @token)
+
+    assert_response :success
+    tools = response.parsed_body.dig("result", "tools")
+    assert_equal 14, tools.size
+    tools.each do |tool|
+      schema = tool["outputSchema"]
+      assert_equal "object", schema&.fetch("type"), tool["name"]
+      assert schema["properties"].present?, tool["name"]
+      assert schema["properties"].values.all? { |property| property["description"].present? }, tool["name"]
+    end
+  end
+
   test "every listed tool but the write tools declares itself read-only and non-destructive" do
     post_mcp(method: "tools/list", token: @token)
 
@@ -55,7 +69,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
   test "list_mail_accounts returns only the caller's accounts and audits the row count" do
     result = call_tool("list_mail_accounts")
 
-    accounts = JSON.parse(result.dig("content", 0, "text"))
+    accounts = JSON.parse(result.dig("content", 0, "text")).fetch("accounts")
     assert_equal [ mail_accounts(:work).id ], accounts.map { |account| account["id"] }
     assert_not_includes result.to_json, "fixture-app-password"
 
@@ -68,7 +82,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
   test "list_mail_accounts lists the AI permissions a writable account grants" do
     mail_accounts(:work).update!(writable: true, ai_can_trash: false)
 
-    account = JSON.parse(call_tool("list_mail_accounts").dig("content", 0, "text")).sole
+    account = JSON.parse(call_tool("list_mail_accounts").dig("content", 0, "text")).fetch("accounts").sole
 
     assert_equal %w[flags organize drafts send], account["ai_permissions"]
     assert account["writable"]
@@ -537,7 +551,7 @@ class McpToolsTest < ActionDispatch::IntegrationTest
       post_mcp(method: "tools/call", token:, params: { name:, arguments: })
 
       assert_response :success
-      response.parsed_body.fetch("result")
+      response.parsed_body.fetch("result").tap { |result| assert_structured_matches_text(result) }
     end
 
     def get_message(**arguments)

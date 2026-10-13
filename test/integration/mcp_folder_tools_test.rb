@@ -448,7 +448,7 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
       post_mcp(method: "tools/call", token: @token, params: { name:, arguments: })
 
       assert_response :success
-      response.parsed_body.fetch("result")
+      response.parsed_body.fetch("result").tap { |result| assert_structured_matches_text(result) }
     end
 
     def tool_json(name, **arguments)

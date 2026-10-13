@@ -23,6 +23,8 @@ module McpTools
       additionalProperties: false
     )
 
+    output_schema OutputSchemas::CREATE_FOLDER
+
     private
       def call
         return Hitch::MCP::Result.error("Give create_folder a name.") if arguments["name"].blank?
