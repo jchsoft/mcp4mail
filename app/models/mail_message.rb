@@ -6,7 +6,7 @@ class MailMessage < ApplicationRecord
 
   scope :for_user, ->(user) { where(mail_account_id: user.mail_accounts.select(:id)) }
 
-  # Every word of the query has to appear in the subject or among the participants.
+  # Every word of the query has to appear in the subject, among the participants or in an attachment name.
   # Case and diacritics are ignored ("zluty" finds "Žlutý").
   scope :search, ->(query) {
     normalize_search_text(query).split.uniq.inject(all) do |relation, term|
@@ -18,9 +18,9 @@ class MailMessage < ApplicationRecord
     text.to_s.unicode_normalize(:nfkd).gsub(/\p{Mn}/, "").downcase.squish
   end
 
-  def self.build_search_text(subject:, from_name:, from_address:, to_addresses:, cc_addresses:)
+  def self.build_search_text(subject:, from_name:, from_address:, to_addresses:, cc_addresses:, attachment_names: [])
     participants = [ { "name" => from_name, "address" => from_address }, *to_addresses, *cc_addresses ]
-    parts = [ subject, *participants.flat_map { |p| [ p["name"], p["address"] ] } ]
+    parts = [ subject, *participants.flat_map { |p| [ p["name"], p["address"] ] }, *attachment_names ]
     normalize_search_text(parts.compact_blank.join(" "))
   end
 

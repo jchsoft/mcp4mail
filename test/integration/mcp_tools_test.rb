@@ -140,6 +140,14 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "search_messages", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
   end
 
+test "search_messages finds mail by attachment file name" do
+  index_message(mail_accounts(:work), uid: 1, subject: "Documents",
+    attachments: [ { "filename" => "2026-591.pdf", "content_type" => "application/pdf", "size" => 10 } ])
+  index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+
+  assert_equal [ 1 ], search(query: "pdf")["messages"].map { |row| row["id"] && MailMessage.find(row["id"]).uid }
+end
+
   test "search_messages marks each row unread and filters on unread" do
     read = index_message(mail_accounts(:work), uid: 1, subject: "Faktura read", flags: %w[Seen Flagged])
     unread = index_message(mail_accounts(:work), uid: 2, subject: "Faktura unread")
@@ -554,7 +562,8 @@ class McpToolsTest < ActionDispatch::IntegrationTest
         mail_folder:, uidvalidity: mail_folder.uidvalidity, uid:, subject:, date:, from_name:, from_address:,
         has_attachments: attachments.any?, attachments:, flags:,
         search_text: MailMessage.build_search_text(
-          subject:, from_name:, from_address:, to_addresses: [], cc_addresses: []
+          subject:, from_name:, from_address:, to_addresses: [], cc_addresses: [],
+          attachment_names: attachments.map { |attachment| attachment["filename"] }
         )
       )
     end
