@@ -148,6 +148,17 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
     assert_equal 1, @mailboxes["INBOX"][:messages].size
   end
 
+  # iCloud names Trash "Deleted Messages"; it may be sent without \Trash.
+  test "trash finds an iCloud Deleted Messages folder without special-use" do
+    @mailboxes["Deleted Messages"] = { uidvalidity: 556, messages: [] }
+    @mailboxes.delete("Trash")
+    start_server(capabilities: "IMAP4rev1 UIDPLUS")
+    @server.instance_variable_get(:@folders).replace([ { name: "INBOX" }, { name: "Deleted Messages" } ])
+
+    assert_equal "Deleted Messages", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["Deleted Messages"][:messages].size
+  end
+
   test "trash raises FolderNotFound and moves nothing when there is no Trash folder" do
     @mailboxes.delete("Trash")
     start_server

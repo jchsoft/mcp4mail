@@ -142,6 +142,11 @@ mailbox either: status **untested**. Its folders may carry Czech names without S
 Drafts by `Koncepty`. Sync, search, get_message, get_attachment, set_flags, move_message and trash_message still need a
 run against a real Seznam mailbox.
 
+iCloud (`imap.mail.me.com`) has a setup guide but has not been tested against a live mailbox either: status **untested**.
+Its Trash folder is called `Deleted Messages`; without SPECIAL-USE it is found by name (test: "trash finds an iCloud Deleted Messages
+folder" in `test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
+trash_message still need a run against a real iCloud mailbox with an app-specific password.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)

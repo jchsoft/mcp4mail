@@ -40,3 +40,17 @@ If the full address is refused, try just the part before the `@`
   revokes every app-specific password. Create a new one.
 - **You use a custom domain with iCloud+** — the server is still
   `imap.mail.me.com`; sign in with your `@icloud.com` address.
+
+## Tested status
+
+**Not yet tested against a live iCloud mailbox.** iCloud runs standard IMAP, so
+reading, searching and attachments are expected to work as with any other
+server. What mcp4mail does where iCloud may differ:
+
+- **Trash is called "Deleted Messages".** If iCloud does not mark it as Trash,
+  mcp4mail finds it by that name.
+- **No MOVE support.** If the server lacks it, a moved or trashed message is
+  copied and then deleted from where it was.
+
+If something does not work with your iCloud mailbox, tell us on
+[GitHub](https://github.com/jchsoft/mcp4mail/issues).
