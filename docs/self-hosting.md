@@ -75,6 +75,8 @@ after the OAuth flow, check this variable first.
 Without the variable the app falls back to `https://mcp4mail.online/mcp`, the hosted instance, which is never
 right for a self-hosted one.
 
+How to add the URL in Claude, Claude Code, ChatGPT, Cursor and VS Code: [Connecting an MCP client](mcp-clients.md).
+
 ## Running without Docker
 
 Any host with Ruby (see `.ruby-version`) and PostgreSQL works:
