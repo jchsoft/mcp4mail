@@ -8,7 +8,18 @@ assistant read and search your mail, authorized over OAuth 2.1. Hosted at
 your IMAP password on someone else's server; with mcp4mail you can keep it in your own database instead. One
 `docker compose up` gets you there: see the [self-hosting guide](docs/self-hosting.md).
 
-> Early days: the MCP endpoint lists your connected accounts; reading and searching mail is next.
+mcp4mail is young, and we use it ourselves. Today it exposes the 14 tools listed [below](#mcp-tools): list
+your accounts and folders, search headers, read messages, download attachments and look up contacts. It can
+also change a mailbox (flag, move, trash, create folders, save drafts, send), but only where the mailbox
+owner switched on "Allow the AI to make changes" and ticked that permission; every mailbox is read-only by
+default, and `send_message` only prepares an email that leaves after a human presses Send.
+
+## Try it
+
+- **Hosted:** go to [mcp4mail.online](https://mcp4mail.online), sign up, connect an IMAP account, and add
+  `https://mcp4mail.online/mcp` to your MCP client.
+- **Self-host:** `cp .env.example .env`, fill it in, then `docker compose up -d`. See the
+  [self-hosting guide](docs/self-hosting.md).
 
 This project is primarily developed by AI developers orchestrated through
 [mcptask.online](https://mcptask.online). Watch the development happen live: https://mcptask.online/live
