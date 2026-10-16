@@ -36,6 +36,9 @@ here, not something free or unlimited.
 
 ## MCP tools
 
+Point your AI client at `https://mcp4mail.online/mcp` (or your own instance's `/mcp` URL) and sign in. Steps for
+Claude, Claude Code, ChatGPT, Cursor and VS Code: [docs/mcp-clients.md](docs/mcp-clients.md).
+
 | Tool | What it does |
 | --- | --- |
 | `list_mail_accounts` | Lists the mail accounts you connected, with the ids the other tools take. |
