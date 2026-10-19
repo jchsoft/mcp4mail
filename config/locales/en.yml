@@ -5,7 +5,7 @@ en:
     description: "Connect your email to Claude, ChatGPT or Grok and ask in a plain sentence: who wrote me, what haven't I replied to, when does the parcel arrive. Read-only by default — changes only where you allow them, and nothing is sent without your approval. Nothing to install."
   nav:
     label: "Main"
-    account_for: "Account (%{email})"
+    account_for: "%{email} (account)"
     connect_ai: "Connect AI"
     mailboxes: "Mailboxes"
     mailboxes_count: "Connected mailboxes: %{count}"
