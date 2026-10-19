@@ -174,6 +174,15 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
     assert_empty @mailboxes["Junk Mail"][:messages]
   end
 
+  # Zoho names its system folders in plain English; Trash must be found by name if \Trash is not sent.
+  test "trash finds a Zoho Trash folder without special-use" do
+    start_server(capabilities: "IMAP4rev1 UIDPLUS")
+    @server.instance_variable_get(:@folders).replace([ { name: "Inbox" }, { name: "Sent" }, { name: "Spam" }, { name: "Trash" } ])
+
+    assert_equal "Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["Trash"][:messages].size
+  end
+
   test "trash raises FolderNotFound and moves nothing when there is no Trash folder" do
     @mailboxes.delete("Trash")
     start_server
