@@ -38,7 +38,7 @@ class MarketingHeaderTest < ActionDispatch::IntegrationTest
     [ root_url, guides_url ].each do |url|
       get url
       assert_select "header #account-link[href=?]", account_path, text: user.email_address
-      assert_select "header #account-link[aria-label=?]", "Account (#{user.email_address})"
+      assert_select "header #account-link[aria-label=?]", "#{user.email_address} (account)"
       assert_select "header #account-link svg", count: 1
     end
   end
