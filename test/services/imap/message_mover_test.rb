@@ -159,6 +159,21 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
     assert_equal 1, @mailboxes["Deleted Messages"][:messages].size
   end
 
+  # Fastmail (Cyrus) advertises MOVE and SPECIAL-USE; Trash is flagged \Trash, and a "Junk Mail"
+  # folder sits beside it that must never be mistaken for Trash.
+  test "trash uses the special-use Trash folder on a Fastmail-style layout" do
+    start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE SPECIAL-USE CONDSTORE")
+    @mailboxes["Junk Mail"] = { uidvalidity: 444, messages: [] }
+    @server.instance_variable_get(:@folders).replace([
+      { name: "INBOX" }, { name: "Archive", attrs: %w[Archive] },
+      { name: "Junk Mail", attrs: %w[Junk] }, { name: "Trash", attrs: %w[Trash] }
+    ])
+
+    assert_equal "Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["Trash"][:messages].size
+    assert_empty @mailboxes["Junk Mail"][:messages]
+  end
+
   test "trash raises FolderNotFound and moves nothing when there is no Trash folder" do
     @mailboxes.delete("Trash")
     start_server
