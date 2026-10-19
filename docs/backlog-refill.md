@@ -12,9 +12,9 @@ so the next run knows where "since the last refill" starts and which findings we
 | Test coverage | `COVERAGE=1 CI=true bin/rails test:all`, then per-file line coverage from `coverage/.resultset.json` (minimum in `.simplecov`) |
 | Ruby deps | `bundle outdated --strict --only-explicit`, `bin/bundler-audit`, `bin/brakeman` |
 | JS deps | `bin/importmap audit`, `bin/importmap outdated` |
-| i18n parity | `i18n-tasks missing` / `i18n-tasks unused` (not installed yet, see W42) |
+| i18n parity | `i18n-tasks missing` / `i18n-tasks unused` |
 | Accessibility | the axe system tests listed in [accessibility/axe-report.md](accessibility/axe-report.md), which run in the full suite |
-| Dead code | `bin/rails routes` vs. usage, `debride` |
+| Dead code | `bin/rails routes` vs. usage, `debride --rails app lib` (`gem install debride`; it does not read Slim views, so check each candidate with `grep -rnw` over `app config lib`) |
 | Docs drift | `ENV` reads in `app/`, `config/`, `lib/` vs. `.env.example` and [self-hosting.md](self-hosting.md), README tool table vs. `app/tools/mcp_tools/` |
 | Dogfooding | about 10 realistic queries over MCP against the live server |
 | MCP spec | https://modelcontextprotocol.io/specification/versioning and the current revision's changelog vs. `Hitch::MCP::Protocol::VERSION` |
@@ -33,3 +33,17 @@ Story #13671, ten subtasks #13672–#13681.
   filed as #13675).
 - Dropped by the cap, check again: `imap: cyrus`, `imap: courier`, `imap: zoho`, `imap: fastmail`,
   patch bump `thruster 0.1.27`.
+
+### 2026-W43 (2026-10-19, main @ 99d474f)
+
+Story #13931, ten subtasks #13932–#13941.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.23 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- i18n: `missing` and `unused` both clean. Accessibility: axe system tests green.
+- Dead code: the only real `debride` hit was `AccountExportFile.sweep`, which nothing schedules (#13932).
+- Dogfooding: 12 queries; four issues filed (folder roles, folder names, `from:` operators, Czech
+  inflection).
+- Skipped as duplicates: thruster 0.1.27 (#13890) and the undocumented `JOB_CONCURRENCY`,
+  `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (part of the self-hosting dry run #13885).
+- Nothing dropped by the cap.
