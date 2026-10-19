@@ -149,6 +149,13 @@ Its Trash folder is called `Deleted Messages`; without SPECIAL-USE it is found b
 folder" in `test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
 trash_message still need a run against a real iCloud mailbox with an app-specific password.
 
+Fastmail (`imap.fastmail.com`, Cyrus) has a setup guide but has not been tested against a live mailbox either: status
+**untested**. It only accepts an app password with IMAP access. Per Fastmail's documentation it advertises SPECIAL-USE
+and MOVE, and its Trash, Drafts, Sent, Archive and `Junk Mail` folders carry their special-use flags, so no name
+fallback is needed (test: "trash uses the special-use Trash folder on a Fastmail-style layout" in
+`test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
+trash_message still need a run against a real Fastmail mailbox.
+
 Zoho Mail (`imap.zoho.eu`, `imap.zoho.com`, `imappro.zoho.eu`, `imappro.zoho.com`, depending on region and plan) has a setup
 guide but has not been tested against a live mailbox either: status **untested**. IMAP access must be switched on per mailbox,
 and a two-factor account needs an app password. Its system folders use plain English names (`Inbox`, `Drafts`, `Sent`, `Spam`,
