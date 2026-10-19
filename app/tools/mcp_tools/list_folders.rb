@@ -36,13 +36,19 @@ module McpTools
       def describe(imap, folder)
         counts = folder.selectable ? imap.status(folder.name, %w[MESSAGES UNSEEN]) : {}
         {
-          name: Net::IMAP.decode_utf7(folder.name),
+          name: readable_name(folder),
           path: folder.name,
           delimiter: folder.delimiter,
           message_count: counts["MESSAGES"],
           unseen_count: counts["UNSEEN"],
           special_use: folder.special_use&.to_s
         }
+      end
+
+      # "INBOX.Projects.2026" -> "2026": the namespace prefix and parents live in "path".
+      def readable_name(folder)
+        leaf = folder.delimiter.present? ? folder.name.split(folder.delimiter).last : nil
+        Net::IMAP.decode_utf7(leaf.presence || folder.name)
       end
   end
 end

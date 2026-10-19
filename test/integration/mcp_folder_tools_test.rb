@@ -35,6 +35,23 @@ class McpFolderToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "ok", 3 ], McpAuditEvent.sole.values_at(:outcome, :rows_returned)
   end
 
+  test "list_folders names a folder by its last segment and keeps the full path" do
+    start_server(
+      delimiter: ".",
+      folders: [ { name: "INBOX" }, { name: "INBOX.Sent Items", attrs: [ "Sent" ] }, { name: "INBOX.Projects.2026" } ],
+      mailboxes: {
+        "INBOX" => { uidvalidity: 1, messages: [] },
+        "INBOX.Sent Items" => { uidvalidity: 2, messages: [] },
+        "INBOX.Projects.2026" => { uidvalidity: 3, messages: [] }
+      }
+    )
+
+    folders = tool_json("list_folders", account_id: @account.id)["folders"]
+
+    assert_equal [ "INBOX", "Sent Items", "2026" ], folders.map { |folder| folder["name"] }
+    assert_equal [ "INBOX", "INBOX.Sent Items", "INBOX.Projects.2026" ], folders.map { |folder| folder["path"] }
+  end
+
   test "list_folders needs no write switch" do
     start_server(folders: [ { name: "INBOX" } ], mailboxes: { "INBOX" => { uidvalidity: 1, messages: [] } })
 
