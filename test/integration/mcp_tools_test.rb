@@ -224,6 +224,27 @@ end
     assert_includes search(query: "faktura")["messages"].map { |row| row["id"] }, archived.id
   end
 
+  test "search_messages resolves a folder role to the server-specific path when no folder has that name" do
+    account = mail_accounts(:work)
+    account.mail_folders.create!(name: "INBOX.Sent Items", special_use: "sent", uidvalidity: 1)
+    sent = index_message(account, uid: 1, subject: "Faktura odeslana", folder: "INBOX.Sent Items")
+    inbox = index_message(account, uid: 2, subject: "Faktura prijata")
+
+    assert_equal [ sent.id ], search(folder: "Sent", account_id: account.id)["messages"].map { |row| row["id"] }
+    assert_equal [ sent.id ], search(query: "faktura", folder: "sent")["messages"].map { |row| row["id"] }
+    assert_equal [ inbox.id ], search(folder: "INBOX", account_id: account.id)["messages"].map { |row| row["id"] }
+    assert_equal [ sent.id ], search(folder: "INBOX.sent items")["messages"].map { |row| row["id"] }
+  end
+
+  test "search_messages prefers a folder whose path is exactly the name given" do
+    account = mail_accounts(:work)
+    account.mail_folders.create!(name: "INBOX.Sent Items", special_use: "sent", uidvalidity: 1)
+    index_message(account, uid: 1, subject: "Faktura odeslana", folder: "INBOX.Sent Items")
+    literal = index_message(account, uid: 2, subject: "Faktura literal", folder: "Sent")
+
+    assert_equal [ literal.id ], search(folder: "Sent", account_id: account.id)["messages"].map { |row| row["id"] }
+  end
+
   test "search_messages explains a date it cannot read instead of ignoring it" do
     result = call_tool("search_messages", query: "faktura", since: "not-a-date")
 
