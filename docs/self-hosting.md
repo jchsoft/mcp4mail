@@ -149,6 +149,14 @@ Its Trash folder is called `Deleted Messages`; without SPECIAL-USE it is found b
 folder" in `test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
 trash_message still need a run against a real iCloud mailbox with an app-specific password.
 
+Zoho Mail (`imap.zoho.eu`, `imap.zoho.com`, `imappro.zoho.eu`, `imappro.zoho.com`, depending on region and plan) has a setup
+guide but has not been tested against a live mailbox either: status **untested**. IMAP access must be switched on per mailbox,
+and a two-factor account needs an app password. Its system folders use plain English names (`Inbox`, `Drafts`, `Sent`, `Spam`,
+`Trash`); if a server sends them without SPECIAL-USE, Trash is found by name (test: "trash finds a Zoho Trash folder without
+special-use" in `test/services/imap/message_mover_test.rb`). Whether Zoho advertises IDLE, MOVE and UIDPLUS has not been
+verified here; the app does not depend on them (it falls back to COPY + STORE + EXPUNGE without MOVE). Sync, search,
+get_message, get_attachment, set_flags, move_message and trash_message still need a run against a real Zoho mailbox.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)
