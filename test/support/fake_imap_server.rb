@@ -179,7 +179,7 @@ class FakeImapServer
         end
         socket.write("#{tag} OK #{command.upcase} completed\r\n")
       when "NAMESPACE"
-        socket.write(%(* NAMESPACE ((#{@namespace_prefix ? %("#{@namespace_prefix}" "/") : %("" "/")})) NIL NIL\r\n))
+        socket.write(%(* NAMESPACE ((#{@namespace_prefix ? %("#{@namespace_prefix}" "#{@delimiter}") : %("" "#{@delimiter}")})) NIL NIL\r\n))
         socket.write("#{tag} OK NAMESPACE completed\r\n")
       when "STATUS"
         name = args[/\A"[^"]*"|\A\S+/]

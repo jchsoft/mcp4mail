@@ -164,6 +164,20 @@ special-use" in `test/services/imap/message_mover_test.rb`). Whether Zoho advert
 verified here; the app does not depend on them (it falls back to COPY + STORE + EXPUNGE without MOVE). Sync, search,
 get_message, get_attachment, set_flags, move_message and trash_message still need a run against a real Zoho mailbox.
 
+Cyrus IMAP, the other common self-hosted server (and what Fastmail runs), behaves like this:
+
+- **Namespace prefix and separator.** By default Cyrus uses `INBOX.` as the prefix and `.` as the separator
+  (`INBOX.Archive`); with `unixhierarchysep: yes` it uses an empty prefix and `/` instead. The delimiter is read
+  from LIST and the prefix from NAMESPACE, so a new folder lands under the prefix and nests with the server's
+  own separator. Test: "creates a nested folder with the dot separator on a Cyrus-style INBOX. namespace" in
+  `test/services/imap/folder_creator_test.rb`.
+- **SPECIAL-USE.** Cyrus advertises it, but only folders given a `/vendor/cmu/cyrus-imapd/...` or `specialuse`
+  annotation carry a role. Unmarked Drafts/Sent/Trash folders are found by their usual names instead.
+- **MOVE and UIDPLUS.** Both are supported by Cyrus 2.4+ and 3.x; without MOVE the app copies and deletes.
+
+This list comes from Cyrus's documented behaviour and the fake server's tests. It has not been checked against
+a live Cyrus server (status **untested**), so report anything that differs.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)
