@@ -87,4 +87,17 @@ class Imap::FolderCreatorTest < ActiveSupport::TestCase
 
     assert_raises(Net::IMAP::NoResponseError) { create("Receipts") }
   end
+
+  # Cyrus with its default config: personal folders live under "INBOX." and the separator is ".".
+  test "creates a nested folder with the dot separator on a Cyrus-style INBOX. namespace" do
+    start_server(namespace_prefix: "INBOX.", delimiter: ".")
+
+    top = create("Work")
+    result = create("2026", parent: "Work")
+
+    assert_equal "INBOX.Work", top.path
+    assert_equal "INBOX.Work.2026", result.path
+    assert_equal ".", result.delimiter
+    assert_includes @mailboxes.keys, "INBOX.Work.2026"
+  end
 end

@@ -11,9 +11,9 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
 
   teardown { @server&.stop }
 
-  def start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE")
+  def start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE", delimiter: "/")
     @server = FakeImapServer.new(
-      capabilities:, mailboxes: @mailboxes,
+      capabilities:, mailboxes: @mailboxes, delimiter:,
       folders: [ { name: "INBOX" }, { name: "Archive", attrs: %w[Archive] }, { name: "Trash", attrs: %w[Trash] } ]
     ).start
     @account = users(:one).mail_accounts.create!(host: "127.0.0.1", port: @server.port, ssl: false, username: "bob", password: "fixture-app-password", writable: true)
@@ -157,6 +157,43 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
 
     assert_equal "Deleted Messages", Imap::MessageMover.trash(build_message).folder
     assert_equal 1, @mailboxes["Deleted Messages"][:messages].size
+  end
+
+  # Fastmail (Cyrus) advertises MOVE and SPECIAL-USE; Trash is flagged \Trash, and a "Junk Mail"
+  # folder sits beside it that must never be mistaken for Trash.
+  test "trash uses the special-use Trash folder on a Fastmail-style layout" do
+    start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE SPECIAL-USE CONDSTORE")
+    @mailboxes["Junk Mail"] = { uidvalidity: 444, messages: [] }
+    @server.instance_variable_get(:@folders).replace([
+      { name: "INBOX" }, { name: "Archive", attrs: %w[Archive] },
+      { name: "Junk Mail", attrs: %w[Junk] }, { name: "Trash", attrs: %w[Trash] }
+    ])
+
+    assert_equal "Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["Trash"][:messages].size
+    assert_empty @mailboxes["Junk Mail"][:messages]
+  end
+
+  # Courier-IMAP: every folder under "INBOX." with a dot separator, no SPECIAL-USE and no MOVE, so Trash
+  # is found by name and the move falls back to copy + \\Deleted + expunge.
+  test "trash finds an INBOX.Trash folder on a Courier-style server without special-use or MOVE" do
+    @mailboxes["INBOX.Trash"] = { uidvalidity: 444, messages: [] }
+    @mailboxes.delete("Trash")
+    start_server(capabilities: "IMAP4rev1 UIDPLUS", delimiter: ".")
+    @server.instance_variable_get(:@folders).replace([ { name: "INBOX" }, { name: "INBOX.Sent" }, { name: "INBOX.Trash" } ])
+
+    assert_equal "INBOX.Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["INBOX.Trash"][:messages].size
+    assert_equal [ 2 ], @mailboxes["INBOX"][:messages].map { |m| m[:uid] }
+  end
+
+  # Zoho names its system folders in plain English; Trash must be found by name if \Trash is not sent.
+  test "trash finds a Zoho Trash folder without special-use" do
+    start_server(capabilities: "IMAP4rev1 UIDPLUS")
+    @server.instance_variable_get(:@folders).replace([ { name: "Inbox" }, { name: "Sent" }, { name: "Spam" }, { name: "Trash" } ])
+
+    assert_equal "Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["Trash"][:messages].size
   end
 
   test "trash raises FolderNotFound and moves nothing when there is no Trash folder" do

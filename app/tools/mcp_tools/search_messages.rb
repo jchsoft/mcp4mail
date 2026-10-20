@@ -33,7 +33,7 @@ module McpTools
         },
         folder: {
           type: "string",
-          description: "Folder name, for example INBOX. Omit to search every folder."
+          description: "Folder path, for example INBOX, or a role: Sent, Trash, Drafts, Junk, Archive or Inbox. A role is used when an account has no folder of that exact name, so \"Sent\" finds \"INBOX.Sent Items\". Omit to search every folder."
         },
         since: {
           type: "string",
@@ -59,6 +59,8 @@ module McpTools
     )
 
     output_schema OutputSchemas::SEARCH_MESSAGES
+
+    FOLDER_ROLES = %w[inbox sent trash drafts junk archive].freeze
 
     private
       def call
@@ -108,11 +110,21 @@ module McpTools
       def matches
         relation = MailMessage.for_user(current_user).search(query)
         relation = relation.where(mail_account_id: mail_account.id) if account_scoped?
-        relation = relation.joins(:mail_folder).where("lower(mail_folders.name) = lower(?)", folder) if folder.present?
+        relation = relation.joins(:mail_folder).merge(folder_scope) if folder.present?
         relation = relation.where(date: date_range) if date_range
         relation = relation.where.not("? = ANY (mail_messages.flags)", "Seen") if arguments["unread"] == true
 
         relation.preload(:mail_folder).order(Arel.sql("mail_messages.date DESC NULLS LAST, mail_messages.id DESC"))
+      end
+
+      # An exact folder path wins. Only an account with no folder of that name falls back to the
+      # folder that carries the special-use role the name stands for (Sent, Trash, ...).
+      def folder_scope
+        exact = MailFolder.where("lower(mail_folders.name) = lower(?)", folder)
+        return exact unless FOLDER_ROLES.include?(folder.downcase)
+
+        unnamed = MailFolder.from("mail_folders AS named").where("named.mail_account_id = mail_folders.mail_account_id AND lower(named.name) = lower(?)", folder)
+        exact.or(MailFolder.where(special_use: folder.downcase).where.not(unnamed.arel.exists))
       end
 
       def date_range

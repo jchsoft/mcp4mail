@@ -149,6 +149,51 @@ Its Trash folder is called `Deleted Messages`; without SPECIAL-USE it is found b
 folder" in `test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
 trash_message still need a run against a real iCloud mailbox with an app-specific password.
 
+Fastmail (`imap.fastmail.com`, Cyrus) has a setup guide but has not been tested against a live mailbox either: status
+**untested**. It only accepts an app password with IMAP access. Per Fastmail's documentation it advertises SPECIAL-USE
+and MOVE, and its Trash, Drafts, Sent, Archive and `Junk Mail` folders carry their special-use flags, so no name
+fallback is needed (test: "trash uses the special-use Trash folder on a Fastmail-style layout" in
+`test/services/imap/message_mover_test.rb`). Sync, search, get_message, get_attachment, set_flags, move_message and
+trash_message still need a run against a real Fastmail mailbox.
+
+Zoho Mail (`imap.zoho.eu`, `imap.zoho.com`, `imappro.zoho.eu`, `imappro.zoho.com`, depending on region and plan) has a setup
+guide but has not been tested against a live mailbox either: status **untested**. IMAP access must be switched on per mailbox,
+and a two-factor account needs an app password. Its system folders use plain English names (`Inbox`, `Drafts`, `Sent`, `Spam`,
+`Trash`); if a server sends them without SPECIAL-USE, Trash is found by name (test: "trash finds a Zoho Trash folder without
+special-use" in `test/services/imap/message_mover_test.rb`). Whether Zoho advertises IDLE, MOVE and UIDPLUS has not been
+verified here; the app does not depend on them (it falls back to COPY + STORE + EXPUNGE without MOVE). Sync, search,
+get_message, get_attachment, set_flags, move_message and trash_message still need a run against a real Zoho mailbox.
+
+Cyrus IMAP, the other common self-hosted server (and what Fastmail runs), behaves like this:
+
+- **Namespace prefix and separator.** By default Cyrus uses `INBOX.` as the prefix and `.` as the separator
+  (`INBOX.Archive`); with `unixhierarchysep: yes` it uses an empty prefix and `/` instead. The delimiter is read
+  from LIST and the prefix from NAMESPACE, so a new folder lands under the prefix and nests with the server's
+  own separator. Test: "creates a nested folder with the dot separator on a Cyrus-style INBOX. namespace" in
+  `test/services/imap/folder_creator_test.rb`.
+- **SPECIAL-USE.** Cyrus advertises it, but only folders given a `/vendor/cmu/cyrus-imapd/...` or `specialuse`
+  annotation carry a role. Unmarked Drafts/Sent/Trash folders are found by their usual names instead.
+- **MOVE and UIDPLUS.** Both are supported by Cyrus 2.4+ and 3.x; without MOVE the app copies and deletes.
+
+This list comes from Cyrus's documented behaviour and the fake server's tests. It has not been checked against
+a live Cyrus server (status **untested**), so report anything that differs.
+
+Courier-IMAP, an older self-hosted server, behaves like this:
+
+- **Namespace prefix and separator.** Courier always puts folders under `INBOX.` and separates them with `.`
+  (`INBOX.Archive`, `INBOX.Sent`). The prefix comes from NAMESPACE and the delimiter from LIST, so a new folder
+  lands under `INBOX.`.
+- **No SPECIAL-USE.** Older Courier versions do not advertise it, so no folder carries a role. Trash, Drafts and
+  Sent are found by their usual names, including under the `INBOX.` parent (`INBOX.Trash`). Test: "trash finds
+  an INBOX.Trash folder on a Courier-style server without special-use or MOVE" in
+  `test/services/imap/message_mover_test.rb`.
+- **No MOVE.** Courier has no MOVE, so move_message and trash_message copy the message, flag the original
+  `\Deleted` and expunge just that UID. This needs UIDPLUS; a server with neither refuses the move and changes
+  nothing. Same test.
+
+This list comes from Courier's documented behaviour and the fake server's tests. It has not been checked
+against a live Courier server (status **untested**), so report anything that differs.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)

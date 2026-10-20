@@ -4,12 +4,15 @@ class MailMessage < ApplicationRecord
   belongs_to :mail_account
   belongs_to :mail_folder
 
+  SEARCH_OPERATOR = /\A(?:from|to|cc|bcc|subject):/
+
   scope :for_user, ->(user) { where(mail_account_id: user.mail_accounts.select(:id)) }
 
   # Every word of the query has to appear in the subject, among the participants or in an attachment name.
-  # Case and diacritics are ignored ("zluty" finds "Žlutý").
+  # Case and diacritics are ignored ("zluty" finds "Žlutý"). Models habitually write Gmail operators, so a
+  # leading "from:", "to:", "cc:" or "subject:" is dropped from a word and the word is matched as usual.
   scope :search, ->(query) {
-    normalize_search_text(query).split.uniq.inject(all) do |relation, term|
+    normalize_search_text(query).split.map { |word| word.sub(SEARCH_OPERATOR, "") }.compact_blank.uniq.inject(all) do |relation, term|
       relation.where("mail_messages.search_text LIKE ?", "%#{sanitize_sql_like(term)}%")
     end
   }

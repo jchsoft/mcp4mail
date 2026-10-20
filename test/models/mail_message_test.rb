@@ -12,6 +12,16 @@ class MailMessageTest < ActiveSupport::TestCase
     )
   end
 
+  test "search drops a leading Gmail operator from each word" do
+    invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura", from_name: "Forpsi")
+    other = index_message(mail_accounts(:work), uid: 2, subject: "Lunch", from_name: "Petr")
+
+    assert_equal [ invoice ], MailMessage.search("from:forpsi").to_a
+    assert_equal [ invoice ], MailMessage.search("from:forpsi subject:faktura").to_a
+    assert_equal [ other ], MailMessage.search("FROM:Petr lunch").to_a
+    assert_equal [ invoice, other ].sort_by(&:id), MailMessage.search("from:").to_a.sort_by(&:id)
+  end
+
   test "search ignores case and diacritics and matches subject or participants" do
     invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura za září", from_name: "Žlutý Kůň s.r.o.")
     other = index_message(mail_accounts(:work), uid: 2, subject: "Lunch", to: [ { "name" => "Petr Dvořák", "address" => "petr@example.cz" } ])

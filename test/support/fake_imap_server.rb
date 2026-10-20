@@ -38,7 +38,7 @@ class FakeImapServer
 
   attr_reader :port, :fetched_uid_sets, :commands
 
-  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false, gmail: false, over_limit: nil)
+  def initialize(capabilities: "IMAP4rev1", login_ok: true, folders: [], use_xlist: false, mailboxes: {}, drop_on_fetch_of: nil, namespace_prefix: nil, refuse_store: false, gmail: false, over_limit: nil, delimiter: "/")
     @server = TCPServer.new("127.0.0.1", 0)
     @port = @server.addr[1]
     @gmail = gmail
@@ -52,6 +52,7 @@ class FakeImapServer
     @fetched_uid_sets = []
     @commands = []
     @namespace_prefix = namespace_prefix
+    @delimiter = delimiter
     @refuse_store = refuse_store
     @over_limit = over_limit
     @thread = nil
@@ -174,14 +175,14 @@ class FakeImapServer
       when "LIST", "XLIST"
         @folders.each do |folder|
           attrs = Array(folder[:attrs]).map { |a| "\\#{a}" }.join(" ")
-          socket.write(%(* #{@list_command} (#{attrs}) "/" "#{folder[:name]}"\r\n))
+          socket.write(%(* #{@list_command} (#{attrs}) "#{@delimiter}" "#{folder[:name]}"\r\n))
         end
         socket.write("#{tag} OK #{command.upcase} completed\r\n")
       when "NAMESPACE"
-        socket.write(%(* NAMESPACE ((#{@namespace_prefix ? %("#{@namespace_prefix}" "/") : %("" "/")})) NIL NIL\r\n))
+        socket.write(%(* NAMESPACE ((#{@namespace_prefix ? %("#{@namespace_prefix}" "#{@delimiter}") : %("" "#{@delimiter}")})) NIL NIL\r\n))
         socket.write("#{tag} OK NAMESPACE completed\r\n")
       when "STATUS"
-        name, _items = args.split(" ", 2)
+        name = args[/\A"[^"]*"|\A\S+/]
         mailbox = @mailboxes[unquote(name)]
         if mailbox
           unseen = mailbox[:messages].count { |m| !Array(m[:flags]).include?("\\Seen") }
