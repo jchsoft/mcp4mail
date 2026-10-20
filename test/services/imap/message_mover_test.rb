@@ -11,9 +11,9 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
 
   teardown { @server&.stop }
 
-  def start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE")
+  def start_server(capabilities: "IMAP4rev1 UIDPLUS MOVE", delimiter: "/")
     @server = FakeImapServer.new(
-      capabilities:, mailboxes: @mailboxes,
+      capabilities:, mailboxes: @mailboxes, delimiter:,
       folders: [ { name: "INBOX" }, { name: "Archive", attrs: %w[Archive] }, { name: "Trash", attrs: %w[Trash] } ]
     ).start
     @account = users(:one).mail_accounts.create!(host: "127.0.0.1", port: @server.port, ssl: false, username: "bob", password: "fixture-app-password", writable: true)
@@ -172,6 +172,19 @@ class Imap::MessageMoverTest < ActiveSupport::TestCase
     assert_equal "Trash", Imap::MessageMover.trash(build_message).folder
     assert_equal 1, @mailboxes["Trash"][:messages].size
     assert_empty @mailboxes["Junk Mail"][:messages]
+  end
+
+  # Courier-IMAP: every folder under "INBOX." with a dot separator, no SPECIAL-USE and no MOVE, so Trash
+  # is found by name and the move falls back to copy + \\Deleted + expunge.
+  test "trash finds an INBOX.Trash folder on a Courier-style server without special-use or MOVE" do
+    @mailboxes["INBOX.Trash"] = { uidvalidity: 444, messages: [] }
+    @mailboxes.delete("Trash")
+    start_server(capabilities: "IMAP4rev1 UIDPLUS", delimiter: ".")
+    @server.instance_variable_get(:@folders).replace([ { name: "INBOX" }, { name: "INBOX.Sent" }, { name: "INBOX.Trash" } ])
+
+    assert_equal "INBOX.Trash", Imap::MessageMover.trash(build_message).folder
+    assert_equal 1, @mailboxes["INBOX.Trash"][:messages].size
+    assert_equal [ 2 ], @mailboxes["INBOX"][:messages].map { |m| m[:uid] }
   end
 
   # Zoho names its system folders in plain English; Trash must be found by name if \Trash is not sent.

@@ -178,6 +178,22 @@ Cyrus IMAP, the other common self-hosted server (and what Fastmail runs), behave
 This list comes from Cyrus's documented behaviour and the fake server's tests. It has not been checked against
 a live Cyrus server (status **untested**), so report anything that differs.
 
+Courier-IMAP, an older self-hosted server, behaves like this:
+
+- **Namespace prefix and separator.** Courier always puts folders under `INBOX.` and separates them with `.`
+  (`INBOX.Archive`, `INBOX.Sent`). The prefix comes from NAMESPACE and the delimiter from LIST, so a new folder
+  lands under `INBOX.`.
+- **No SPECIAL-USE.** Older Courier versions do not advertise it, so no folder carries a role. Trash, Drafts and
+  Sent are found by their usual names, including under the `INBOX.` parent (`INBOX.Trash`). Test: "trash finds
+  an INBOX.Trash folder on a Courier-style server without special-use or MOVE" in
+  `test/services/imap/message_mover_test.rb`.
+- **No MOVE.** Courier has no MOVE, so move_message and trash_message copy the message, flag the original
+  `\Deleted` and expunge just that UID. This needs UIDPLUS; a server with neither refuses the move and changes
+  nothing. Same test.
+
+This list comes from Courier's documented behaviour and the fake server's tests. It has not been checked
+against a live Courier server (status **untested**), so report anything that differs.
+
 ## Security notes
 
 - **How credentials are stored.** A mailbox password is encrypted with Active Record Encryption (AES-256-GCM)
