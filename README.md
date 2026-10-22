@@ -154,6 +154,37 @@ What read-only does and does not mean, plainly:
 - **Search guard.** Pages are capped at 50 results, and each account has a budget of searches (60 per
   10 minutes) and returned rows (1,000 an hour), so a runaway loop cannot walk a whole mailbox.
 
+## FAQ
+
+**Why IMAP and not the Gmail or Microsoft Graph API?**
+The target user is on their own IMAP host, where there is no vendor API to call. Plain IMAP with a username
+and an app password works everywhere, so there is no Gmail or Microsoft OAuth. See
+[Mail accounts](#mail-accounts).
+
+**Where is my mail password stored, and who can decrypt it?**
+In PostgreSQL, encrypted with Active Record Encryption (AES-256-GCM). It is decrypted only in memory to open
+the IMAP connection, and never shown, returned by a tool or logged. Whoever holds the encryption keys can
+decrypt it; if you [self-host](docs/self-hosting.md#security-notes), that is you.
+
+**Can the AI send or delete mail on its own?**
+No. Every mailbox is read-only until its owner switches on "Allow the AI to make changes" and ticks what is
+allowed. Even then `send_message` only prepares an email that leaves after you press Send, and deleting
+means `trash_message`, which moves to Trash. See
+[read-only by design](#mcp-endpoint-read-only-by-design).
+
+**Does it store my mail?**
+Only message headers (sender, recipients, subject, date, flags, size), refreshed every 15 minutes so searches
+do not hit your mail server each time. Message bodies are read from your mail server when the AI asks for
+one.
+
+**Does it work with Outlook, Exchange or Gmail?**
+Where the provider offers IMAP with an app password, yes: Gmail, iCloud, Fastmail, Outlook.com and Yahoo do.
+Whether an Exchange server allows IMAP is up to its administrator. See [Mail accounts](#mail-accounts).
+
+**Is it free?**
+Yes. It is MIT-licensed and self-hostable, and the hosted service at [mcp4mail.online](https://mcp4mail.online)
+is run from the same code.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). `bin/ci` must pass.
