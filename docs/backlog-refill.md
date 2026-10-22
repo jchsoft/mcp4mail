@@ -47,3 +47,19 @@ Story #13931, ten subtasks #13932–#13941.
 - Skipped as duplicates: thruster 0.1.27 (#13890) and the undocumented `JOB_CONCURRENCY`,
   `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (part of the self-hosting dry run #13885).
 - Nothing dropped by the cap.
+
+### 2026-W44 (2026-10-22, main @ 459b327)
+
+Story #14076, one subtask #14077. Named W44: the W43 refill had already run, and this one is due 2026-10-26.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby and JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used; `AccountExportFile.sweep` is now in `config/recurring.yml`.
+- Dogfooding: 16 queries. New: the index never refreshes flags (or drops expunged mail) after the first
+  import, so `unread: true` lists mail read elsewhere (#14077). `from:` operators and `folder: "Sent"`
+  still fail live only because `production` (e292e83) predates their fixes on `main`; raised with the
+  owner, not filed.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
