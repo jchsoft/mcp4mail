@@ -52,14 +52,16 @@ class Imap::ConnectionTest < ActiveSupport::TestCase
     server&.stop
   end
 
-  test "raises Errno::ECONNREFUSED for an unreachable host and records last_error" do
+  test "raises a socket error for an unreachable host and records last_error" do
     server = FakeImapServer.new.start
     port = server.port
     server.stop
 
     account = build_account(port: port)
 
-    assert_raises(Errno::ECONNREFUSED) do
+    # On macOS 27 a refused connect made with a connect timeout (net-imap's Socket.tcp)
+    # reports success, and the refusal surfaces as EINVAL from the setsockopt right after.
+    assert_raises(Errno::ECONNREFUSED, Errno::EINVAL) do
       Imap::Connection.open(account) { |imap| imap }
     end
 
