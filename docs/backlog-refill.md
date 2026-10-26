@@ -10,7 +10,7 @@ so the next run knows where "since the last refill" starts and which findings we
 | Source | Command / check |
 | --- | --- |
 | Test coverage | `COVERAGE=1 CI=true bin/rails test:all`, then per-file line coverage from `coverage/.resultset.json` (minimum in `.simplecov`) |
-| Ruby deps | `bundle outdated --strict --only-explicit`, `bin/bundler-audit`, `bin/brakeman` |
+| Ruby deps | `bundle outdated --strict --only-explicit`, `bin/bundler-audit update && bin/bundler-audit`, `bin/brakeman` |
 | JS deps | `bin/importmap audit`, `bin/importmap outdated` |
 | i18n parity | `i18n-tasks missing` / `i18n-tasks unused` |
 | Accessibility | the axe system tests listed in [accessibility/axe-report.md](accessibility/axe-report.md), which run in the full suite |
@@ -62,4 +62,22 @@ Story #14076, one subtask #14077. Named W44: the W43 refill had already run, and
   owner, not filed.
 - Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
   Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
+
+### 2026-W45 (2026-10-26, main @ dcbef75)
+
+Story #14124, no subtasks: the one finding was fixed in the refill PR itself. Named W45: the W44 refill had already run on 2026-10-22.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: `crass 1.0.7` has advisory GHSA-pq4g-8rxf-4g29 (CSS sanitizer bypass, fixed in 1.0.8), published
+  2026-10-23. Local `bin/bundler-audit` missed it because its advisory DB was stale; only the PR's
+  `scan_ruby` check caught it. Bumped to 1.0.8 in the refill PR, since the red check blocked every PR.
+  Run `bin/bundler-audit update` before the audit from now on.
+- JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used.
+- Dogfooding: 11 queries, all correct. `from:` operators and `folder: "Sent"` now work live, so
+  `production` has caught up with the W43 fixes.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  stale unread state (#14077), Gmail compatibility status (live check #13330).
 - Nothing dropped by the cap.
