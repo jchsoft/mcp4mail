@@ -63,3 +63,17 @@ Story #14076, one subtask #14077. Named W44: the W43 refill had already run, and
 - Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
   Gmail compatibility status (live check #13330).
 - Nothing dropped by the cap.
+
+### 2026-W45 (2026-10-26, main @ dcbef75)
+
+Story #14124, no subtasks: nothing passed its threshold. Named W45: the W44 refill had already run on 2026-10-22.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby and JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used.
+- Dogfooding: 11 queries, all correct. `from:` operators and `folder: "Sent"` now work live, so
+  `production` has caught up with the W43 fixes.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  stale unread state (#14077), Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
