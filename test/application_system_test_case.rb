@@ -108,6 +108,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # no longer than it did.
   Capybara.default_max_wait_time = 5
 
+  # Capybara re-asks the browser for the DOM every 0.01s while a matcher waits,
+  # about 100 times a second per worker. With several headless Firefoxes, their
+  # geckodrivers and Pumas running in parallel, that polling competes with the
+  # browsers for CPU, which slows the pages and so adds more polling. 0.1s is
+  # still fast enough for a passing test and leaves the CPU to the browsers.
+  Capybara.default_retry_interval = 0.1
+
   # Pages follow Accept-Language, so pin the browser to English instead of the machine's locale.
   #
   # And ask for reduced motion: the hero's chat mock then stays the finished
