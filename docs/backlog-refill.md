@@ -81,3 +81,21 @@ Story #14124, no subtasks: the one finding was fixed in the refill PR itself. Na
 - Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
   stale unread state (#14077), Gmail compatibility status (live check #13330).
 - Nothing dropped by the cap.
+
+### 2026-W46 (2026-11-02, main @ 257b72d)
+
+Story #14515, four subtasks #14516–#14519. Named W46: a Story `Backlog refill 2026-W45` already exists from 2026-10-26, and this run is due 2026-11-09.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: `addressable 2.9.0` has seven advisories, all fixed in 2.9.1. Bumped to 2.9.2 in the refill PR,
+  since `bundler-audit` fails `bin/ci` and `scan_ruby` for every PR. Filed: `tailwindcss-rails 4.7.0`,
+  `selenium-webdriver 4.52.0`, patch bumps `nokogiri 1.19.5` and `bootsnap 1.26.1`.
+- JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used.
+- Dogfooding: 17 calls. New: "faktura" misses a subject with "fakturu", because the prefix-stem match decided in
+  #13936 ([decisions-czech-search.md](decisions-czech-search.md)) was never implemented or filed (#14519). Stale
+  unread state still shows: a folder listing reports 0 unseen where a search marks the same mail unread.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  stale unread state (#14077), Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
