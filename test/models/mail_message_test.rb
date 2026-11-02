@@ -13,7 +13,7 @@ class MailMessageTest < ActiveSupport::TestCase
   end
 
   test "search tolerates Czech endings on words of five letters or more" do
-    account = mail_accounts(:one)
+    account = mail_accounts(:work)
     domains = index_message(account, uid: 901, subject: "Prodloužení domény")
     invoice = index_message(account, uid: 902, subject: "Proforma fakturu")
     short = index_message(account, uid: 903, subject: "Dům")
