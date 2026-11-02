@@ -25,7 +25,7 @@ module McpTools
       properties: {
         query: {
           type: "string",
-          description: "Words to look for in the subject, the sender, the recipients and attachment file names (not the body). May be blank when since, until or folder is given. Case and diacritics are ignored; every word has to match."
+          description: "Words to look for in the subject, the sender, the recipients and attachment file names (not the body). May be blank when since, until or folder is given. Case and diacritics are ignored, and Czech endings are tolerated (\"faktura\" also finds \"fakturu\"); every word has to match."
         },
         account_id: {
           type: "integer",
