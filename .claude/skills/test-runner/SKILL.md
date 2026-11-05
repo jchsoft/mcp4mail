@@ -45,6 +45,7 @@ Detect the toolchain, and **say which one you recognised and which command you c
 | `manage.py` | `python manage.py test` |
 | `pyproject.toml` | `pytest` |
 | `Package.swift` | `swift test` |
+| a `*.xcworkspace`, else a `*.xcodeproj` | none: `xcodebuild test` needs a scheme and a destination that no file states for certain, so tell the user to run `mcptask_runner init` at a terminal, which asks for them, and STOP |
 
 First match wins, in that order — a project carrying two markers is the earlier one.
 
