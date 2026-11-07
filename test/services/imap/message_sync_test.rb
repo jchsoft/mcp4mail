@@ -132,7 +132,7 @@ class Imap::MessageSyncTest < ActiveSupport::TestCase
     result = Imap::MessageSync.call(account)
 
     assert_equal 1, result.messages_imported
-    assert_equal [ [ 9 ] ], @server.fetched_uid_sets
+    assert_equal [ [ 9 ], [ 1, 2, 5 ], [ 3 ] ], @server.fetched_uid_sets
     assert_equal [ 1, 2, 5, 9 ], uids_in("INBOX")
     assert_equal 9, account.mail_folders.find_by!(name: "INBOX").last_synced_uid
   end
@@ -147,8 +147,35 @@ class Imap::MessageSyncTest < ActiveSupport::TestCase
     result = Imap::MessageSync.call(account)
 
     assert_equal 0, result.messages_imported
-    assert_empty @server.fetched_uid_sets
+    assert_equal [ [ 1, 2, 5 ], [ 3 ] ], @server.fetched_uid_sets, "only the FLAGS refresh, no new messages"
   end
+
+test "follows flag changes made in another client between two syncs" do
+  start_server
+  Imap::MessageSync.call(account)
+  assert_equal [ [ "\Seen" ] ], account.mail_messages.pluck(:flags).uniq
+
+  @mailboxes["INBOX"][:messages].find { |m| m[:uid] == 2 }[:flags] = []
+  @mailboxes["INBOX"][:messages].find { |m| m[:uid] == 5 }[:flags] = [ "\Seen", "\Flagged" ]
+  Imap::MessageSync.call(account)
+
+  inbox = account.mail_folders.find_by!(name: "INBOX").mail_messages
+  assert_equal [ "\Seen" ], inbox.find_by!(uid: 1).flags
+  assert_equal [], inbox.find_by!(uid: 2).flags
+  assert_equal [ "\Seen", "\Flagged" ], inbox.find_by!(uid: 5).flags
+  assert_equal [ 2 ], inbox.where(flags: []).pluck(:uid)
+end
+
+test "drops index rows of messages expunged on the server" do
+  start_server
+  Imap::MessageSync.call(account)
+
+  @mailboxes["INBOX"][:messages].reject! { |m| m[:uid] == 2 }
+  Imap::MessageSync.call(account)
+
+  assert_equal [ 1, 5 ], uids_in("INBOX")
+  assert_equal [ 3 ], uids_in("Sent")
+end
 
   test "re-imports the folder when the server changes UIDVALIDITY" do
     start_server
@@ -183,7 +210,7 @@ class Imap::MessageSyncTest < ActiveSupport::TestCase
     @server.fetched_uid_sets.clear
     Imap::MessageSync.call(account, batch_size: 2)
 
-    assert_equal [ [ 3, 4 ], [ 5 ] ], @server.fetched_uid_sets
+    assert_equal [ [ 3, 4 ], [ 5 ], [ 1, 2 ] ], @server.fetched_uid_sets
     assert_equal [ 1, 2, 3, 4, 5 ], uids_in("INBOX")
     assert_equal 5, inbox.reload.last_synced_uid
   end

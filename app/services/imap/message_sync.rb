@@ -75,7 +75,9 @@ module Imap
 
       imap.examine(folder.name)
       check_uidvalidity(folder, imap.responses("UIDVALIDITY", &:last))
+      indexed_up_to = folder.last_synced_uid
       import_new_messages(imap, folder, imap.responses("UIDNEXT", &:last))
+      refresh_indexed_messages(imap, folder, indexed_up_to)
 
       folder.update!(last_synced_at: Time.current, last_error: nil)
       result.folders_synced += 1
@@ -111,6 +113,22 @@ module Imap
         store_batch(folder, rows, batch.last)
       end
     end
+
+# Mail read, flagged or deleted in the owner's own client after it was indexed: re-read FLAGS of
+# every message indexed before this run, follow the changes and drop rows the server no longer has.
+# Messages imported by this run are skipped, their flags are fresh. A Gmail message under several
+# labels is refreshed through each label's own folder, so all its copies end up with the same flags.
+def refresh_indexed_messages(imap, folder, up_to_uid)
+  stored = folder.mail_messages.where(uidvalidity: folder.uidvalidity, uid: ..up_to_uid).order(:uid).pluck(:uid, :flags).to_h
+  stored.keys.each_slice(batch_size) do |batch|
+    current = Array(imap.uid_fetch(batch, "FLAGS")).to_h { |data| [ data.uid, Array(data.flags).map(&:to_s) ] }
+    gone = batch - current.keys
+    folder.mail_messages.where(uidvalidity: folder.uidvalidity, uid: gone).delete_all if gone.any?
+    current.reject { |uid, flags| stored[uid] == flags }.group_by { |_, flags| flags }.each do |flags, changed|
+      folder.mail_messages.where(uidvalidity: folder.uidvalidity, uid: changed.map(&:first)).update_all(flags: flags)
+    end
+  end
+end
 
     def fetch_attrs
       gmail ? MessageHeaders::FETCH_ATTRS + [ "X-GM-MSGID" ] : MessageHeaders::FETCH_ATTRS
