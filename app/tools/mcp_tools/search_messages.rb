@@ -47,7 +47,7 @@ module McpTools
         },
         unread: {
           type: "boolean",
-          description: "true: only messages not yet read (no \\Seen flag). Omit to get read and unread mail. Combine with since for \"unread since Monday\"."
+          description: "true: only messages not yet read (no \\Seen flag). false: only messages already read (with \\Seen). Omit to get read and unread mail. Combine with since for \"unread since Monday\"."
         },
         limit: {
           type: "integer",
@@ -113,6 +113,7 @@ module McpTools
         relation = relation.joins(:mail_folder).merge(folder_scope) if folder.present?
         relation = relation.where(date: date_range) if date_range
         relation = relation.where.not("? = ANY (mail_messages.flags)", "Seen") if arguments["unread"] == true
+        relation = relation.where("? = ANY (mail_messages.flags)", "Seen") if arguments["unread"] == false
 
         relation.preload(:mail_folder).order(Arel.sql("mail_messages.date DESC NULLS LAST, mail_messages.id DESC"))
       end
