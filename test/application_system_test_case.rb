@@ -127,6 +127,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     options.add_preference("ui.prefersReducedMotion", 1)
   end
 
+  # A worker reuses one browser for every test it runs, and several phone tests
+  # (home_test's open_phone_frame, internal_responsive_test, hitch_screens_phone_test)
+  # shrink the window without growing it back. The next test then saw a ~455px
+  # page with the header links collapsed: LandingWhyTest failed with "Unable to
+  # find link Why" under seed 46562 (backlog refill 2026-W47). Every test starts
+  # at the size driven_by asked for.
+  setup { page.current_window.resize_to(1400, 1400) }
+
   # Firefox reads prefers-reduced-motion from a profile preference a running
   # session cannot flip, so motion needs a browser of its own. The name keeps
   # Capybara from handing back the reduced-motion driver registered above.
