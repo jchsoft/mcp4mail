@@ -172,7 +172,7 @@ end
     only_unread = search(query: "faktura", unread: true)["messages"]
     assert_equal [ unread.id ], only_unread.map { |row| row["id"] }
 
-    assert_equal 2, search(query: "faktura", unread: false)["messages"].size
+    assert_equal [ read.id ], search(query: "faktura", unread: false)["messages"].map { |row| row["id"] }
   end
 
   test "search_messages never reaches another user's mail" do
