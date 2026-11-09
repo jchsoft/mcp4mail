@@ -144,3 +144,37 @@ than the one #14513 followed an hour earlier. Name the next Story after its due 
   - `flagged` in `folder: "Archive"` (#14537)
   - `exception` since a date
   - `list_folders`
+
+### 2026-W47 (2026-11-09, main @ f048ee3)
+
+Story #14875, three subtasks #14876–#14878. Named W47 after its due date, 2026-11-16. Task #14872 is a second copy of this
+refill created the same minute; it should be closed rather than run.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.37 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: no advisories (after `bin/bundler-audit update`), Brakeman clean. Filed: `i18n-tasks 1.2.0` (#14877), patch bumps
+  `nokogiri 1.19.7` and `solid_queue 1.7.2` (#14878).
+- JS deps, i18n `missing` / `unused`: clean. Dead code: same `debride` candidates as W46; `main` only gained the flag refresh
+  in `Imap::MessageSync` since then.
+- Docs drift: no new undocumented env vars.
+- IMAP compatibility: every host has a status or an open task (#14531–#14535).
+- GitHub inbox: no open issues, PRs or Dependabot alerts.
+- Test suite health: under seed 46562 `LandingWhyTest` failed with "Unable to find link Why": phone tests
+  (`home_test`'s `open_phone_frame`, `internal_responsive_test`, `hitch_screens_phone_test`) leave the shared browser at ~455px.
+  Fixed in the refill PR: `ApplicationSystemTestCase` resets the window to 1400×1400 before every test.
+- Production signals: no `sync_errors` on any connected account.
+- Dogfooding: 13 calls, read-only. New: `unread: false` is ignored and returns unread mail (#14876). Stale unread state still
+  shows live (folder listing 0 unseen, search lists the same INBOX mail as unread) because `production` (5dca681) predates the
+  #14077 fix merged in 694b1a1; raised with the owner, not filed. Queries:
+  - `unread` since Monday, one account
+  - `pdf` in one account over a month, and with no dates (empty: that mailbox has no PDFs)
+  - `folder: "Trash"` (role resolves to `INBOX.Trash`)
+  - `github.com` since a date (a sender domain)
+  - `FAKTURY` (upper case, inflection)
+  - `a` (a one-letter query matches nearly everything)
+  - no query, `since` today, every account
+  - contact: `noreply`
+  - `list_folders`
+  - `get_message` of an S/MIME-signed mail with a PDF
+  - `forpsi upozorneni` (sender + word without diacritics) with `unread: false` (#14876)
+- Nothing dropped by the cap.
