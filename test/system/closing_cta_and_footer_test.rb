@@ -13,11 +13,11 @@ class ClosingCtaAndFooterTest < ApplicationSystemTestCase
     [ :en, :cs ].each do |locale|
       visit root_url(locale: locale)
       within("footer") { click_link I18n.t("pages.home.footer.self_hosting", locale: locale) }
-      assert_equal "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md", page.current_url
+      assert_current_path "https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md", url: true, wait: 15
 
       visit root_url(locale: locale)
       within("footer") { click_link I18n.t("pages.home.footer.github", locale: locale) }
-      assert_equal "https://github.com/jchsoft/mcp4mail", page.current_url
+      assert_current_path "https://github.com/jchsoft/mcp4mail", url: true, wait: 15
     end
   ensure
     # Leaves the browser on an external origin otherwise, which keeps the next
