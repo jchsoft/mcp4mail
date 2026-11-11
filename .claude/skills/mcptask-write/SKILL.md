@@ -59,9 +59,14 @@ A practical rule: every checked todo item is a small chunk of effort. Translate 
 
 ## AddAttachmentTool
 
-Required: `account_code`, `piece_relative_id`, `file_path` (absolute path on local disk), `filename`.
+Required: `account_code`, `piece_relative_id`, and exactly one source of the file. The server is remote, so it cannot read a local path:
 
-Typical sources: system-test screenshots, `/run` skill output, exported reports.
+- **A local file** (system-test screenshot, `/run` output, exported report): `CreateUploadUrlTool` with `file_name`, `byte_size` (`stat -f %z FILE`, or `stat -c %s FILE` on Linux) and `checksum` (`openssl md5 -binary FILE | base64`), then `curl -X PUT --data-binary @FILE` to its `upload_url` with exactly the `headers` it returned, then `AddAttachmentTool(signed_blob_id:)`. The file never passes through the model.
+- **An image the user pasted into the chat**: the `attach-pasted-image` skill. The model has only the pixels, not the bytes, so it cannot base64 it.
+- **A public https URL**: `file_url`.
+- `file_content` (base64) only for a tiny file whose bytes you already hold as text.
+
+`AddMessageTool` takes the same `signed_blob_id`, for a comment with the file attached.
 
 ## AddMessageTool
 

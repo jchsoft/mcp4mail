@@ -177,6 +177,30 @@ nothing else counts. A merge the host refused — branch protection, a conflict,
 required check that has not reported — can still leave you with a zero exit and
 a pull request that is still open.
 
+### Behind its base
+
+A base branch can require pull requests to be up to date before they merge. When
+somebody else merged first, `pr merge` refuses yours before asking the host, with
+a non-zero exit starting `merge refused: pull request is behind its base`. Nothing
+is wrong with the work; it has not been checked together with the base yet:
+
+```bash
+mcptask_runner pr merge 1234          # refused: behind its base
+mcptask_runner pr update-branch 1234  # base merged into the branch on the host
+bin/ci                                # again, on the new head
+mcptask_runner pr merge 1234
+```
+
+`update-branch` merges the base in with a merge commit — never a rebase, which
+would rewrite the commits CI already passed — waits for the new head and
+fast-forwards this checkout to it. `.update` in its output says what happened:
+`updated`, `from`, `to`, `round`. It refuses, with nothing changed, when this
+checkout is on another branch, has uncommitted changes (it never stashes) or is
+not at the head the host has; when the base conflicts with the branch; and after
+2 rounds on the same pull request, as `fell behind again during CI`. A conflict
+and the exhausted rounds both leave the pull request open for a person. GitHub
+only: on another host it says so and changes nothing.
+
 ## Checks
 
 ```bash

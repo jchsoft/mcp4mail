@@ -7,9 +7,10 @@
   "test-start": "ba5181e8cda97806b76ce33a4f0328a3",
   "test-wait": "9efa172be59aef806e4edd5bf22dab03",
   "discover": "1bc903b98e6d6b6ab6668aff376df285",
-  "memory-search": "5f2ac3060f4be7d7e70e40f4eadb4391",
+  "memory-search": "75912da09663cb43cb6c8378952b7040",
   "mcptask-read": "47f283827b0752beb420a7df3c597c81",
-  "mcptask-write": "53385dd3abf2372551063b4e4c68a2aa",
-  "pr": "c4601104f8dc95aa7c904c5d41ac7993",
-  "_mcptask_runner_version": "0.3.50"
+  "mcptask-write": "c6eb0624802b572d6ebff7be499730dd",
+  "pr": "a1c4a603a3d7a867fd0de0bf810faf06",
+  "_mcptask_runner_version": "0.3.51",
+  "attach-pasted-image": "27bfa76721ca34d9ebd50b35017281f4"
 }
