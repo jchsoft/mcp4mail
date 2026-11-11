@@ -15,6 +15,16 @@ This skill exists to prevent verbose memory note results from bloating the main 
 1. **You ARE the forked context.** Never return "I'm an agent without MCP access" or delegate the search back to the parent — that defeats the whole point of the fork. Either the search succeeds, or you return the error block at the bottom.
 2. **Search via the REST API with `Bash`/`curl`, not via `ReadMcpResourceTool`.** The llm-memory.com MCP server exposes search only as an MCP *resource*, and the built-in resource reader is **not available inside forked subagents** — only MCP *tools* propagate. `ToolSearch(query: "select:ReadMcpResourceTool")` returns "No matching deferred tools found" here. Don't waste turns on it.
 
+## In a run driven by mcptask_runner
+
+A headless run may not reach this skill: a forked skill is one more thing that has
+to start before the search does, and when it does not, the child is left with an
+instruction it cannot follow. The REST call in Step 1 is what this skill runs
+anyway, and it works from the main session as well. A project that wants its
+agents to search before every task says so in `work_steps.before` of
+`config/mcptask_runner.yml` and names that call there — the runner relays the
+text into every prompt and adds nothing to it.
+
 ## Input
 
 The user message contains:
