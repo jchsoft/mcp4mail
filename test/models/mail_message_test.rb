@@ -34,6 +34,16 @@ class MailMessageTest < ActiveSupport::TestCase
     assert_equal [ invoice, other ].sort_by(&:id), MailMessage.search("from:").to_a.sort_by(&:id)
   end
 
+  test "search drops quotes and sentence punctuation around a word" do
+    invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura 2026", from_address: "billing@example.com")
+    index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+
+    assert_equal %w[faktur 2026], MailMessage.search_terms(%q("faktura" 2026))
+    assert_equal [ invoice ], MailMessage.search("\u201Efaktura\u201C, \u20182026\u2019").to_a
+    assert_equal [ invoice ], MailMessage.search("billing@example.com").to_a
+    assert_equal [], MailMessage.search_terms("\" \u201E\u201C")
+  end
+
   test "search ignores case and diacritics and matches subject or participants" do
     invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura za září", from_name: "Žlutý Kůň s.r.o.")
     other = index_message(mail_accounts(:work), uid: 2, subject: "Lunch", to: [ { "name" => "Petr Dvořák", "address" => "petr@example.cz" } ])
