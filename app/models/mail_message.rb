@@ -5,6 +5,8 @@ class MailMessage < ApplicationRecord
   belongs_to :mail_folder
 
   SEARCH_OPERATOR = /\A(?:from|to|cc|bcc|subject):/
+  # Quotes (straight and typographic) and sentence punctuation around a word; `.` `@` `-` `_` stay for addresses and file names.
+  SEARCH_PUNCTUATION = /["'„“”‚‘’,;:!?()\[\]{}<>]/
 
   scope :for_user, ->(user) { where(mail_account_id: user.mail_accounts.select(:id)) }
 
@@ -22,7 +24,7 @@ class MailMessage < ApplicationRecord
   STEM_MIN_LENGTH = 5
 
   def self.search_terms(query)
-    normalize_search_text(query).split.map { |word| stem(word.sub(SEARCH_OPERATOR, "")) }.compact_blank.uniq
+    normalize_search_text(query).split.map { |word| stem(word.sub(SEARCH_OPERATOR, "").gsub(SEARCH_PUNCTUATION, "")) }.compact_blank.uniq
   end
 
   def self.stem(word)
