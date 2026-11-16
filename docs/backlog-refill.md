@@ -178,3 +178,31 @@ refill created the same minute; it should be closed rather than run.
   - `get_message` of an S/MIME-signed mail with a PDF
   - `forpsi upozorneni` (sender + word without diacritics) with `unread: false` (#14876)
 - Nothing dropped by the cap.
+
+### 2026-W48 (2026-11-16, main @ 76623d5)
+
+Story #15243, three subtasks #15244–#15246. Named W48 after its due date, 2026-11-23. Task #15242 is a second copy of this
+refill created the same minute; it should be closed rather than run.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.40 % branches (minimum 99.0 / 89.3); lowest `app/` file 98.4 %.
+- Ruby deps: two advisories, fixed in the refill PR since `bundler-audit` fails `bin/ci` for every PR: `puma` 8.0.2 → 8.0.3
+  (GHSA-xw3h-pgr9-3vg7) and `msgpack` 1.8.5 → 1.8.7 (Dependabot PR #225 can be closed once this merges). Filed: `puma 8.1`
+  (#15245), patch bump `i18n-tasks 1.2.1` (#15246). Brakeman clean.
+- JS deps, i18n `missing` / `unused`, axe system tests: all clean. Dead code: `main` only changed `search_messages.rb` and
+  `config/i18n-tasks.yml` since W47, nothing new.
+- Docs drift: no new undocumented env vars. IMAP compatibility: every host has a status or an open task (#14531–#14535).
+- GitHub inbox: no open issues; the only open PR and Dependabot alert are the msgpack bump above.
+- Dogfooding: 14 calls, read-only. New: a quoted word matches nothing, because `search_terms` keeps the quote (#15244).
+  `unread: false` now works live (#14876). Queries:
+  - `unread: false` since a week ago, one account
+  - `folder: "Sent"` since a date; `roletu` in `folder: "Sent"`
+  - `zip` (attachments by type)
+  - `objednávka` with only `until`
+  - `invoice` in a Czech-only payments mailbox (empty, correct)
+  - `folder: "Drafts"` (empty, correct)
+  - no query, `since` = `until` one day, limit 50, every account
+  - `"faktura" 2026`, `"faktura"`, `faktura` (#15244)
+  - contact: a sender domain, in an account without it and in one with it
+  - `list_folders` of a payments mailbox
+- Nothing dropped by the cap.
