@@ -154,14 +154,14 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "search_messages", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
   end
 
-test "search_messages treats a quoted word like the unquoted one" do
-  index_message(mail_accounts(:work), uid: 1, subject: "Faktura za zari")
-  index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+  test "search_messages treats a quoted word like the unquoted one" do
+    index_message(mail_accounts(:work), uid: 1, subject: "Faktura za zari")
+    index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
 
-  quoted = search(query: %q("faktura"))["messages"].map { |row| row["id"] }
-  assert_equal 1, quoted.size
-  assert_equal quoted, search(query: "faktura")["messages"].map { |row| row["id"] }
-end
+    quoted = search(query: %q("faktura"))["messages"].map { |row| row["id"] }
+    assert_equal 1, quoted.size
+    assert_equal quoted, search(query: "faktura")["messages"].map { |row| row["id"] }
+  end
 
 test "search_messages finds mail by attachment file name" do
   index_message(mail_accounts(:work), uid: 1, subject: "Documents",
