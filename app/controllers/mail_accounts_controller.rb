@@ -49,6 +49,7 @@ class MailAccountsController < ApplicationController
     def create_with_detection
       return render_form unless detectable?
       result = Imap::Autodetect.call(email: @mail_account.email_address, password: @mail_account.password)
+      return refuse_internal_host(result.refusal) if result.reason == :internal_host
       unless result.success?
         @detection_failure = result.reason
         return render_form
@@ -61,11 +62,19 @@ class MailAccountsController < ApplicationController
     def create_with_manual_settings
       return render_form unless @mail_account.valid?
       result = Imap::ConnectionTester.call(@mail_account)
+      return refuse_internal_host(result.refusal) if result.outcome == :internal_host
       unless result.reachable?
         @connection_outcome = result.outcome
         return render_form
       end
       save_and_sync
+    end
+
+    # One message whatever the port would have answered, so the form says nothing about our network.
+    def refuse_internal_host(refusal)
+      MailHost.report(refusal, user_id: current_user.id, request:)
+      @connection_outcome = :internal_host
+      render_form
     end
 
     def save_and_sync

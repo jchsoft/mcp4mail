@@ -37,6 +37,7 @@ Then open your public URL, create an account, connect a mailbox and follow the *
 | `SOLID_QUEUE_IN_PUMA` | no | Run background jobs inside the web process. Compose sets it. |
 | `RAILS_LOG_LEVEL` | no | Default `info`. |
 | `EXCEPTION_NOTIFICATION_RECIPIENTS` | no | Where error emails go. Default `chmel@jchsoft.cz`. See [Email](#email). |
+| `MCP4MAIL_ALLOW_PRIVATE_MAIL_HOSTS` | no | `true` lets a mailbox use a mail server on loopback or a private network (a Dovecot next to mcp4mail). Default off. See [Security notes](#security-notes). |
 
 Generate the three encryption values once, with any Ruby checkout of the app:
 
@@ -208,6 +209,15 @@ against a live Courier server (status **untested**), so report anything that dif
   the owner ticks what the AI may do (mark and flag, move and create folders, write drafts, send and reply,
   delete to trash; all ticked by default). Sending always waits for the owner's approval (see above). See the
   README.
+- **Mail servers inside your network are refused.** Before any IMAP, SMTP or autoconfig connection the host is
+  resolved, and if any address it resolves to is loopback, private (10/8, 172.16/12, 192.168/16, 100.64/10,
+  fc00::/7), link-local (169.254/16, fe80::/10), unspecified, multicast or reserved, nothing is opened: the person
+  sees "This address points inside our network" and the refusal is reported through the error emails, with the
+  user, host, address, port and request. The connection then goes to the address that was checked, so a second
+  DNS answer cannot redirect it. Without this, anyone with an account could use the "add mailbox" form to probe
+  your server's own ports. If your mail server runs on the same host or a private network, set
+  `MCP4MAIL_ALLOW_PRIVATE_MAIL_HOSTS=true`; it allows loopback and private addresses only, never link-local or
+  reserved ones. Only do that on an instance where you trust everyone who can sign up.
 - **Keep secrets out of git.** `.env` is git-ignored. Never commit it, `config/master.key`, a real mailbox host
   or a database dump.
 - **Backups.** A database backup contains the encrypted passwords; keep the encryption keys in a separate place.

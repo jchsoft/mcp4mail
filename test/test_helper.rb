@@ -4,6 +4,7 @@ require "rails/test_help"
 require_relative "test_helpers/session_test_helper"
 require_relative "test_helpers/structured_result_test_helper"
 require_relative "support/fake_imap_server"
+require_relative "support/fake_mail_host"
 
 module ActiveSupport
   class TestCase

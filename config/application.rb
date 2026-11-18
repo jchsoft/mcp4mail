@@ -22,6 +22,10 @@ module Mcp4mail
     config.i18n.available_locales = %i[en cs]
     config.i18n.default_locale = :en
 
+    # Mail hosts on loopback or a private network are refused unless the operator opts in, e.g. for
+    # a Dovecot running next to mcp4mail. See MailHost and docs/self-hosting.md.
+    config.x.allow_private_mail_hosts = ActiveModel::Type::Boolean.new.cast(ENV.fetch("MCP4MAIL_ALLOW_PRIVATE_MAIL_HOSTS", false))
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
