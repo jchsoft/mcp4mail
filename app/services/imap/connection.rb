@@ -26,7 +26,7 @@ module Imap
       imap = nil
 
       result = Timeout.timeout(timeout) do
-        imap = Net::IMAP.new(
+        imap = MailHost.imap(
           mail_account.host,
           port: mail_account.port,
           ssl: mail_account.ssl,
@@ -40,6 +40,10 @@ module Imap
 
       record_success
       result
+    rescue MailAccount::InternalHostRefused => e
+      record_failure(e)
+      MailHost.report(e, user_id: mail_account.user_id) if mail_account.persisted?
+      raise
     rescue StandardError => e
       record_failure(e)
       limited = ServiceLimited.from(e)

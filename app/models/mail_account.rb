@@ -8,6 +8,19 @@ class MailAccount < ApplicationRecord
   # with STARTTLS, or - only ever typed in by hand, e.g. for a local bridge - no TLS at all.
   TLS_MODES = %w[ ssl starttls none ].freeze
 
+  # A host that resolves inside the server's own network (loopback, private, link-local, ...).
+  # MailHost raises it before any socket is opened.
+  class InternalHostRefused < StandardError
+    attr_reader :host, :address, :port
+
+    def initialize(host:, address:, port:)
+      @host = host
+      @address = address
+      @port = port
+      super("#{host} resolves to #{address}, inside the network (port #{port})")
+    end
+  end
+
   belongs_to :user
   has_many :mail_folders, dependent: :delete_all
   has_many :mail_messages, dependent: :delete_all

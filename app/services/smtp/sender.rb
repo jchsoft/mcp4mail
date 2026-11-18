@@ -45,9 +45,12 @@ module Smtp
         if delivery_override
           mail.delivery_method(delivery_override)
         else
-          mail.delivery_method(:smtp, smtp_settings)
+          mail.delivery_method(MailHost::SmtpDelivery, smtp_settings)
         end
         mail.deliver!
+      rescue MailAccount::InternalHostRefused => e
+        MailHost.report(e, user_id: mail_account.user_id)
+        raise Failed, I18n.t("mail_host.internal_host")
       rescue Net::SMTPError, IOError, Timeout::Error, SocketError, SystemCallError, OpenSSL::SSL::SSLError => e
         raise Failed, e.message
       end

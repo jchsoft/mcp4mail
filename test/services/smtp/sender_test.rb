@@ -2,6 +2,8 @@ require "test_helper"
 require_relative "../../support/fake_autodetect_network"
 
 class Smtp::SenderTest < ActiveSupport::TestCase
+  include FakeMailHost
+
   include FakeAutodetectNetwork
 
   class Reports
@@ -124,5 +126,24 @@ class Smtp::SenderTest < ActiveSupport::TestCase
     assert_equal 1, server.instance_variable_get(:@mailboxes).fetch("Sent")[:messages].size
   ensure
     server&.stop
+  end
+
+  test "refuses an outgoing server inside the network without a socket and reports it" do
+    Smtp::Sender.delivery_override = nil
+    @account.update_columns(smtp_host: "10.0.0.5", smtp_port: 25, smtp_tls: "starttls")
+    reports = nil
+
+    sockets = opened_sockets do
+      reports = refusal_reports do
+        private_hosts_refused do
+          error = assert_raises(Smtp::Sender::Failed) { Smtp::Sender.call(@account, build_mail) }
+          assert_equal "This address points inside our network.", error.message
+        end
+      end
+    end
+
+    assert_empty sockets
+    assert_empty @sent[:messages]
+    assert_equal [ "10.0.0.5", 25 ], [ reports.sole.first.address, reports.sole.first.port ]
   end
 end

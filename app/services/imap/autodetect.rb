@@ -20,9 +20,10 @@ module Imap
 
     # A rejected login is a far more useful thing to report than "nothing found", so it wins
     # over any later source that merely fails to turn up a server.
-    REASON_PRIORITY = [ :no_server_found, :timeout, :auth_failed, :imap_disabled ].freeze
+    # A candidate refused for pointing inside our network outranks everything, so it gets reported.
+    REASON_PRIORITY = [ :no_server_found, :timeout, :auth_failed, :imap_disabled, :internal_host ].freeze
 
-    Result = Struct.new(:host, :port, :tls, :username, :source, :reason, :raw_response, keyword_init: true) do
+    Result = Struct.new(:host, :port, :tls, :username, :source, :reason, :raw_response, :refusal, keyword_init: true) do
       def success?
         host.present?
       end

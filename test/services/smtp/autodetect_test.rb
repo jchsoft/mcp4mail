@@ -2,6 +2,8 @@ require "test_helper"
 require_relative "../../support/fake_autodetect_network"
 
 class Smtp::AutodetectTest < ActiveSupport::TestCase
+  include FakeMailHost
+
   include FakeAutodetectNetwork
 
   # The lookups and the EHLO + AUTH check stand in for DNS and real servers: the test decides
@@ -166,5 +168,19 @@ class Smtp::AutodetectTest < ActiveSupport::TestCase
     candidate = Smtp::Autodetect::Settings.new(host: "127.0.0.1", port: port, tls: :starttls)
 
     assert_equal false, Smtp::Autodetect.new(@account).send(:verify, candidate)
+  end
+
+  test "an SRV record pointing inside the network is refused without a socket and reported" do
+    zone = { "_submissions._tcp.example.com" => { Resolv::DNS::Resource::IN::SRV => [ srv("relay.example.com", 25) ] } }
+    reports = nil
+
+    sockets = resolving("relay.example.com" => "127.0.0.1") do
+      opened_sockets do
+        reports = refusal_reports { private_hosts_refused { autoconfig({}) { dns(zone) { assert_nil Smtp::Autodetect.call(@account, budget: 5) } } } }
+      end
+    end
+
+    assert_not_includes sockets.map(&:first), "127.0.0.1"
+    assert_equal [ "relay.example.com", "127.0.0.1", 25 ], reports.map(&:first).map { [ it.host, it.address, it.port ] }.uniq.sole
   end
 end

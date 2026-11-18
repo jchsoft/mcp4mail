@@ -56,8 +56,10 @@ module Imap
       end
 
       def get(uri)
+        # The domain and its redirects are the person's to choose, so they pass the same gate as the mail hosts.
         Net::HTTP.start(
           uri.host, uri.port,
+          ipaddr: MailHost.check!(uri.host, port: uri.port),
           use_ssl: uri.scheme == "https", open_timeout: TIMEOUT, read_timeout: TIMEOUT
         ) { |http| http.get(uri.request_uri, { "User-Agent" => "mcp4mail autoconfig" }) }
       end

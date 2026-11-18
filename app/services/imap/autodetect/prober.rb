@@ -47,15 +47,20 @@ module Imap
             close(imap)
           end
         end
+      # Not a miss: an address inside our network is reported, whatever else was found.
+      rescue MailAccount::InternalHostRefused => e
+        Result.new(reason: :internal_host, refusal: e)
       rescue StandardError
         nil
       end
 
       def connect(candidate)
-        imap = Net::IMAP.new(candidate.host, port: candidate.port, ssl: candidate.ssl?, open_timeout: CONNECT_TIMEOUT)
+        imap = MailHost.imap(candidate.host, port: candidate.port, ssl: candidate.ssl?, open_timeout: CONNECT_TIMEOUT)
         # Plaintext is never an acceptable outcome, so a server that cannot upgrade is a miss.
         imap.starttls if candidate.starttls?
         imap
+      rescue MailAccount::InternalHostRefused
+        raise
       rescue StandardError
         close(imap)
         nil

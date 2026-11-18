@@ -83,12 +83,15 @@ module Smtp
 
       def verify(candidate)
         Timeout.timeout(PROBE_TIMEOUT) do
-          smtp = Net::SMTP.new(candidate.host, candidate.port)
+          smtp = MailHost.smtp(candidate.host, candidate.port)
           smtp.open_timeout = CONNECT_TIMEOUT
           smtp.read_timeout = CONNECT_TIMEOUT
           candidate.tls == :ssl ? smtp.enable_tls : smtp.enable_starttls
           smtp.start(helo: domain, user: mail_account.username, secret: mail_account.password) { true }
         end
+      rescue MailAccount::InternalHostRefused => e
+        MailHost.report(e, user_id: mail_account.user_id)
+        false
       rescue StandardError
         false
       end
