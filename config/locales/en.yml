@@ -34,6 +34,8 @@ en:
         username: "Username"
         password: "Password"
 
+  mail_host:
+    internal_host: "This address points inside our network."
   imap_problems:
     app_password: "%{provider} does not accept your normal password here. Create an app-specific password in your %{provider} account settings and use that."
     app_password_generic: "Your provider does not accept your normal password here. Create an app-specific password in your account settings and use that."
@@ -334,6 +336,9 @@ en:
         unreachable:
           title: "The server could not be reached."
           hint: "Check the server name and port. If your provider runs IMAP on a different host than its website, look it up in their help pages."
+        internal_host:
+          title: "This address points inside our network."
+          hint: "mcp4mail only connects to mail servers on the public internet. Use the server name your provider gives in its help pages."
     create:
       success: "Connected %{address}. Its messages are being indexed in the background."
     destroy:

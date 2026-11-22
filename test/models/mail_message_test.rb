@@ -12,6 +12,18 @@ class MailMessageTest < ActiveSupport::TestCase
     )
   end
 
+  test "search tolerates Czech endings on words of five letters or more" do
+    account = mail_accounts(:work)
+    domains = index_message(account, uid: 901, subject: "Prodloužení domény")
+    invoice = index_message(account, uid: 902, subject: "Proforma fakturu")
+    short = index_message(account, uid: 903, subject: "Dům")
+
+    assert_equal [ domains ], MailMessage.search("doména").to_a
+    assert_equal [ invoice ], MailMessage.search("faktura").to_a
+    assert_empty MailMessage.search("dumy")
+    assert_equal [ short ], MailMessage.search("dum").to_a
+  end
+
   test "search drops a leading Gmail operator from each word" do
     invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura", from_name: "Forpsi")
     other = index_message(mail_accounts(:work), uid: 2, subject: "Lunch", from_name: "Petr")
@@ -20,6 +32,16 @@ class MailMessageTest < ActiveSupport::TestCase
     assert_equal [ invoice ], MailMessage.search("from:forpsi subject:faktura").to_a
     assert_equal [ other ], MailMessage.search("FROM:Petr lunch").to_a
     assert_equal [ invoice, other ].sort_by(&:id), MailMessage.search("from:").to_a.sort_by(&:id)
+  end
+
+  test "search drops quotes and sentence punctuation around a word" do
+    invoice = index_message(mail_accounts(:work), uid: 1, subject: "Faktura 2026", from_address: "billing@example.com")
+    index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+
+    assert_equal %w[faktur 2026], MailMessage.search_terms(%q("faktura" 2026))
+    assert_equal [ invoice ], MailMessage.search("\u201Efaktura\u201C, \u20182026\u2019").to_a
+    assert_equal [ invoice ], MailMessage.search("billing@example.com").to_a
+    assert_equal [], MailMessage.search_terms("\" \u201E\u201C")
   end
 
   test "search ignores case and diacritics and matches subject or participants" do

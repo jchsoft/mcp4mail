@@ -53,4 +53,7 @@ Rails.application.configure do
 
   # Fixtures hold plain passwords; encrypt them on insert like real records.
   config.active_record.encryption.encrypt_fixtures = true
+
+  # The fake IMAP servers listen on 127.0.0.1. Tests of the refusal switch it off.
+  config.x.allow_private_mail_hosts = true
 end

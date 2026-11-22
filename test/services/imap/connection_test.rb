@@ -2,6 +2,8 @@ require "test_helper"
 require "net/imap"
 
 class Imap::ConnectionTest < ActiveSupport::TestCase
+  include FakeMailHost
+
   def build_account(port:, ssl: false, password: "fixture-app-password")
     users(:one).mail_accounts.create!(
       host: "127.0.0.1", port: port, ssl: ssl,
@@ -52,14 +54,16 @@ class Imap::ConnectionTest < ActiveSupport::TestCase
     server&.stop
   end
 
-  test "raises Errno::ECONNREFUSED for an unreachable host and records last_error" do
+  test "raises a socket error for an unreachable host and records last_error" do
     server = FakeImapServer.new.start
     port = server.port
     server.stop
 
     account = build_account(port: port)
 
-    assert_raises(Errno::ECONNREFUSED) do
+    # On macOS 27 a refused connect made with a connect timeout (net-imap's Socket.tcp)
+    # reports success, and the refusal surfaces as EINVAL from the setsockopt right after.
+    assert_raises(Errno::ECONNREFUSED, Errno::EINVAL) do
       Imap::Connection.open(account) { |imap| imap }
     end
 
@@ -75,5 +79,20 @@ class Imap::ConnectionTest < ActiveSupport::TestCase
     end
   ensure
     server&.stop
+  end
+
+  test "refuses a saved mailbox on an internal host, records it and reports it" do
+    account = users(:one).mail_accounts.create!(host: "10.0.0.5", port: 993, username: "bob", password: "app-password", display_name: "Fake")
+    reports = nil
+
+    sockets = opened_sockets do
+      reports = refusal_reports do
+        private_hosts_refused { assert_raises(MailAccount::InternalHostRefused) { Imap::Connection.open(account) { flunk } } }
+      end
+    end
+
+    assert_empty sockets
+    assert_match(/inside the network/, account.reload.last_error)
+    assert_equal({ user_id: account.user_id, host: "10.0.0.5", address: "10.0.0.5", port: 993, remote_ip: nil, user_agent: nil }, reports.sole.last)
   end
 end

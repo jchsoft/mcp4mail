@@ -10,6 +10,9 @@ data:
     - config/locales/%{locale}.yml
 
 search:
+  # Keys built at runtime, e.g. t(".clients.#{client}.title"), are guessed
+  # instead of reported unused (i18n-tasks 1.2 defaults this to true).
+  strict: false
   paths:
     - app/
     - config/initializers/

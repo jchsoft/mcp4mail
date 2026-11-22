@@ -36,6 +36,8 @@ a squash merge is allowed.
 
 Watch it live: https://mcptask.online/live
 
+The full story with the numbers: [An open-source MCP server built by autonomous AI developers: the numbers](https://dev.to/pepan/an-open-source-mcp-server-built-by-autonomous-ai-developers-the-numbers-33b2) (Dev.to, 30 October 2026).
+
 Where to look if you want to verify any of this yourself: the [Pull requests](../../pulls) tab, where each
 PR links its task and shows its CI runs, including the failed ones; [CLAUDE.md](CLAUDE.md) and
 [`.claude/`](.claude), the instructions the runners work from; and the

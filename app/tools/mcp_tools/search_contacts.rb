@@ -30,7 +30,7 @@ module McpTools
         },
         query: {
           type: "string",
-          description: "Part of a name or an address. Every word has to match."
+          description: "Part of a name or an address. Czech endings are tolerated. Every word has to match."
         },
         limit: {
           type: "integer",
@@ -113,7 +113,7 @@ module McpTools
       end
 
       def terms
-        @terms ||= MailMessage.normalize_search_text(query).split.uniq
+        @terms ||= MailMessage.search_terms(query)
       end
 
       def query

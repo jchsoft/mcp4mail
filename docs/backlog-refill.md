@@ -10,7 +10,7 @@ so the next run knows where "since the last refill" starts and which findings we
 | Source | Command / check |
 | --- | --- |
 | Test coverage | `COVERAGE=1 CI=true bin/rails test:all`, then per-file line coverage from `coverage/.resultset.json` (minimum in `.simplecov`) |
-| Ruby deps | `bundle outdated --strict --only-explicit`, `bin/bundler-audit`, `bin/brakeman` |
+| Ruby deps | `bundle outdated --strict --only-explicit`, `bin/bundler-audit update && bin/bundler-audit`, `bin/brakeman` |
 | JS deps | `bin/importmap audit`, `bin/importmap outdated` |
 | i18n parity | `i18n-tasks missing` / `i18n-tasks unused` |
 | Accessibility | the axe system tests listed in [accessibility/axe-report.md](accessibility/axe-report.md), which run in the full suite |
@@ -18,7 +18,12 @@ so the next run knows where "since the last refill" starts and which findings we
 | Docs drift | `ENV` reads in `app/`, `config/`, `lib/` vs. `.env.example` and [self-hosting.md](self-hosting.md), README tool table vs. `app/tools/mcp_tools/` |
 | Dogfooding | about 10 realistic queries over MCP against the live server |
 | MCP spec | https://modelcontextprotocol.io/specification/versioning and the current revision's changelog vs. `Hitch::MCP::Protocol::VERSION` |
-| IMAP compatibility | Dovecot, Cyrus, Courier, Gmail, iCloud, Seznam, Zoho, Fastmail: a guide in `app/views/guides/content/` and a test in `test/` |
+| IMAP compatibility | Dovecot, Cyrus, Courier, Gmail, iCloud, Seznam, Zoho, Fastmail, Centrum, Outlook.com, Proton Bridge, Mailcow, Stalwart: a guide in `app/views/guides/content/` or a status in [self-hosting.md](self-hosting.md), and a test in `test/` |
+| GitHub inbox | `gh issue list`, `mcptask_runner pr list --open`, `gh api repos/jchsoft/mcp4mail/dependabot/alerts?state=open` |
+| Test suite health | `bin/rails test:all -v` three times, then per-test times and results from the logs. Through `/test-runner`, prefix variables with `env` (`env COVERAGE=1 CI=true bin/rails test:all -v`) |
+| Production signals | `sync_errors` in `list_mail_accounts`, exception mails, Solid Queue failed jobs on the server when the solver has access; otherwise ask the owner in the Story message |
+
+Monthly sources run one per refill, in the rotation listed in the refill task. The latest run's **Monthly source** line says which one ran. Each run also lists its dogfooding queries, so the next one does not repeat them. Write them generically: this repo is public, so no real names, addresses or subjects.
 
 ## Runs
 
@@ -62,4 +67,142 @@ Story #14076, one subtask #14077. Named W44: the W43 refill had already run, and
   owner, not filed.
 - Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
   Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
+
+### 2026-W45 (2026-10-26, main @ dcbef75)
+
+Story #14124, no subtasks: the one finding was fixed in the refill PR itself. Named W45: the W44 refill had already run on 2026-10-22.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: `crass 1.0.7` has advisory GHSA-pq4g-8rxf-4g29 (CSS sanitizer bypass, fixed in 1.0.8), published
+  2026-10-23. Local `bin/bundler-audit` missed it because its advisory DB was stale; only the PR's
+  `scan_ruby` check caught it. Bumped to 1.0.8 in the refill PR, since the red check blocked every PR.
+  Run `bin/bundler-audit update` before the audit from now on.
+- JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used.
+- Dogfooding: 11 queries, all correct. `from:` operators and `folder: "Sent"` now work live, so
+  `production` has caught up with the W43 fixes.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  stale unread state (#14077), Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
+
+### 2026-W46 (2026-11-02, main @ 257b72d)
+
+Story #14515, four subtasks #14516–#14519. Named W46: a Story `Backlog refill 2026-W45` already exists from 2026-10-26, and this run is due 2026-11-09.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: `addressable 2.9.0` has seven advisories, all fixed in 2.9.1. Bumped to 2.9.2 in the refill PR,
+  since `bundler-audit` fails `bin/ci` and `scan_ruby` for every PR. Filed: `tailwindcss-rails 4.7.0`,
+  `selenium-webdriver 4.52.0`, patch bumps `nokogiri 1.19.5` and `bootsnap 1.26.1`.
+- JS deps, Brakeman, i18n `missing` / `unused`, axe system tests: all clean.
+- Dead code: every `debride` candidate is used.
+- Dogfooding: 17 calls. New: "faktura" misses a subject with "fakturu", because the prefix-stem match decided in
+  #13936 ([decisions-czech-search.md](decisions-czech-search.md)) was never implemented or filed (#14519). Stale
+  unread state still shows: a folder listing reports 0 unseen where a search marks the same mail unread.
+- Skipped as duplicates: undocumented `JOB_CONCURRENCY`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS` (#13885),
+  stale unread state (#14077), Gmail compatibility status (live check #13330).
+- Nothing dropped by the cap.
+
+### 2026-W46 extended (2026-11-02, main @ 8c8581b)
+
+Story #14528, ten subtasks #14529–#14537 and #14539. A second refill due 2026-11-09, from #14514, whose procedure is newer
+than the one #14513 followed an hour earlier. Name the next Story after its due date's week as usual (W47 for 2026-11-16).
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.30 % branches (minimum 99.0 / 89.3), 0.52 % above the line minimum; lowest `app/` file 98.4 %.
+- Ruby deps: no advisories, Brakeman clean. Already filed: `tailwindcss-rails 4.7.0` (#14516), `selenium-webdriver 4.52.0`
+  (#14517), patch bumps (#14518, PR #206, now `nokogiri 1.19.6`).
+- JS deps, i18n `missing` / `unused`: clean. Dead code: same `debride` candidates as this morning; the only change on `main`
+  since then is the `addressable` bump and the run log, so they were not re-checked by grep.
+- Docs drift: no new undocumented env vars. See the monthly source for what the self-hosting docs get wrong.
+- IMAP compatibility: first run over the wider host list. Filed Outlook.com (#14531, the README and the connect error
+  disagree), Centrum (#14532), Proton Bridge (#14533), Mailcow (#14534), Stalwart (#14535).
+- GitHub inbox: no open issues, no open Dependabot alerts, no PRs from outside contributors. Dependabot PR #203 can be closed
+  once #206 merges.
+- Test suite health: 842 runs green three times, nothing flaky. Seven tests went over 5 s at least once:
+  - `Smtp::AutodetectTest` "an address with no domain", 15.1 s, turned out to be a real bug: filed as #14539.
+  - Dropped by the cap, check again: four `HeroDemoTest` tests at 15–18 s (375px en, 375px cs, 820px cs, "rewinds on connect"),
+    `AccountExportTest` "Download my data" at 7.8 s, `SessionsTest` "rapid sign-in attempts" at 3.4–7.4 s.
+- Production signals: no `sync_errors` on any connected account, and a search for "exception" found nothing, but the exception
+  mails go to an address that is not connected. Solid Queue failed jobs not checked: no server access. Asked the owner.
+- **Monthly source: self-hosting dry run, read only.** Docker is not installed on the audit machine, so nothing was executed.
+  Reading `docs/self-hosting.md` against `docker-compose.yml` found two bugs: #14529 (empty error-mail recipients still mail the
+  hosted operator) and #14530 (Compose requires the encryption keys the docs call optional). The full run stays with #13885.
+  The next run takes the onboarding dry run.
+- Dogfooding: 15 calls, read-only. Not timed: an MCP client call reports no duration, so the 3 s threshold was not measured. Queries:
+  - `since` + `until` over one week, no query
+  - `xlsx`, `ics` (attachments by type)
+  - `Re: Re: Re:` (long threads, #14536)
+  - contact: a surname without its diacritics; contact: name and domain together
+  - `folder: "Junk"` where the server calls it `INBOX.Spam`
+  - `objednavka`, `objednávky` (diacritics, inflection)
+  - `invoice faktura` (mixed language)
+  - `xyzzyqq nonexistent` (empty result)
+  - `until` before `since`
+  - `flagged` in `folder: "Archive"` (#14537)
+  - `exception` since a date
+  - `list_folders`
+
+### 2026-W47 (2026-11-09, main @ f048ee3)
+
+Story #14875, three subtasks #14876–#14878. Named W47 after its due date, 2026-11-16. Task #14872 is a second copy of this
+refill created the same minute; it should be closed rather than run.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.37 % branches (minimum 99.0 / 89.3); no `app/` file below 98 %.
+- Ruby deps: no advisories (after `bin/bundler-audit update`), Brakeman clean. Filed: `i18n-tasks 1.2.0` (#14877), patch bumps
+  `nokogiri 1.19.7` and `solid_queue 1.7.2` (#14878).
+- JS deps, i18n `missing` / `unused`: clean. Dead code: same `debride` candidates as W46; `main` only gained the flag refresh
+  in `Imap::MessageSync` since then.
+- Docs drift: no new undocumented env vars.
+- IMAP compatibility: every host has a status or an open task (#14531–#14535).
+- GitHub inbox: no open issues, PRs or Dependabot alerts.
+- Test suite health: under seed 46562 `LandingWhyTest` failed with "Unable to find link Why": phone tests
+  (`home_test`'s `open_phone_frame`, `internal_responsive_test`, `hitch_screens_phone_test`) leave the shared browser at ~455px.
+  Fixed in the refill PR: `ApplicationSystemTestCase` resets the window to 1400×1400 before every test.
+- Production signals: no `sync_errors` on any connected account.
+- Dogfooding: 13 calls, read-only. New: `unread: false` is ignored and returns unread mail (#14876). Stale unread state still
+  shows live (folder listing 0 unseen, search lists the same INBOX mail as unread) because `production` (5dca681) predates the
+  #14077 fix merged in 694b1a1; raised with the owner, not filed. Queries:
+  - `unread` since Monday, one account
+  - `pdf` in one account over a month, and with no dates (empty: that mailbox has no PDFs)
+  - `folder: "Trash"` (role resolves to `INBOX.Trash`)
+  - `github.com` since a date (a sender domain)
+  - `FAKTURY` (upper case, inflection)
+  - `a` (a one-letter query matches nearly everything)
+  - no query, `since` today, every account
+  - contact: `noreply`
+  - `list_folders`
+  - `get_message` of an S/MIME-signed mail with a PDF
+  - `forpsi upozorneni` (sender + word without diacritics) with `unread: false` (#14876)
+- Nothing dropped by the cap.
+
+### 2026-W48 (2026-11-16, main @ 76623d5)
+
+Story #15243, three subtasks #15244–#15246. Named W48 after its due date, 2026-11-23. Task #15242 is a second copy of this
+refill created the same minute; it should be closed rather than run.
+
+- MCP spec: still revision **2026-07-28**, nothing new to evaluate.
+- Coverage: 99.52 % lines / 90.40 % branches (minimum 99.0 / 89.3); lowest `app/` file 98.4 %.
+- Ruby deps: two advisories, fixed in the refill PR since `bundler-audit` fails `bin/ci` for every PR: `puma` 8.0.2 → 8.0.3
+  (GHSA-xw3h-pgr9-3vg7) and `msgpack` 1.8.5 → 1.8.7 (Dependabot PR #225 can be closed once this merges). Filed: `puma 8.1`
+  (#15245), patch bump `i18n-tasks 1.2.1` (#15246). Brakeman clean.
+- JS deps, i18n `missing` / `unused`, axe system tests: all clean. Dead code: `main` only changed `search_messages.rb` and
+  `config/i18n-tasks.yml` since W47, nothing new.
+- Docs drift: no new undocumented env vars. IMAP compatibility: every host has a status or an open task (#14531–#14535).
+- GitHub inbox: no open issues; the only open PR and Dependabot alert are the msgpack bump above.
+- Dogfooding: 14 calls, read-only. New: a quoted word matches nothing, because `search_terms` keeps the quote (#15244).
+  `unread: false` now works live (#14876). Queries:
+  - `unread: false` since a week ago, one account
+  - `folder: "Sent"` since a date; `roletu` in `folder: "Sent"`
+  - `zip` (attachments by type)
+  - `objednávka` with only `until`
+  - `invoice` in a Czech-only payments mailbox (empty, correct)
+  - `folder: "Drafts"` (empty, correct)
+  - no query, `since` = `until` one day, limit 50, every account
+  - `"faktura" 2026`, `"faktura"`, `faktura` (#15244)
+  - contact: a sender domain, in an account without it and in one with it
+  - `list_folders` of a payments mailbox
 - Nothing dropped by the cap.

@@ -91,6 +91,8 @@ cs:
         username: "Uživatelské jméno"
         password: "Heslo"
 
+  mail_host:
+    internal_host: "Tato adresa vede do naší vnitřní sítě."
   imap_problems:
     app_password: "%{provider} tady nepřijme vaše běžné heslo. V nastavení účtu %{provider} si vytvořte heslo pro aplikaci a použijte to."
     app_password_generic: "Váš poskytovatel tady nepřijme běžné heslo. V nastavení účtu si vytvořte heslo pro aplikaci a použijte to."
@@ -391,6 +393,9 @@ cs:
         unreachable:
           title: "Server se nepodařilo zastihnout."
           hint: "Zkontrolujte název serveru a port. Pokud poskytovatel provozuje IMAP na jiném serveru než web, najdete ho v jeho nápovědě."
+        internal_host:
+          title: "Tato adresa vede do naší vnitřní sítě."
+          hint: "mcp4mail se připojuje jen k poštovním serverům ve veřejném internetu. Použijte název serveru z nápovědy vašeho poskytovatele."
     create:
       success: "Připojeno: %{address}. Zprávy se indexují na pozadí."
     destroy:

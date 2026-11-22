@@ -154,6 +154,15 @@ class McpToolsTest < ActionDispatch::IntegrationTest
     assert_equal [ "search_messages", "ok", 1 ], McpAuditEvent.sole.values_at(:tool_name, :outcome, :rows_returned)
   end
 
+  test "search_messages treats a quoted word like the unquoted one" do
+    index_message(mail_accounts(:work), uid: 1, subject: "Faktura za zari")
+    index_message(mail_accounts(:work), uid: 2, subject: "Lunch")
+
+    quoted = search(query: %q("faktura"))["messages"].map { |row| row["id"] }
+    assert_equal 1, quoted.size
+    assert_equal quoted, search(query: "faktura")["messages"].map { |row| row["id"] }
+  end
+
 test "search_messages finds mail by attachment file name" do
   index_message(mail_accounts(:work), uid: 1, subject: "Documents",
     attachments: [ { "filename" => "2026-591.pdf", "content_type" => "application/pdf", "size" => 10 } ])
@@ -172,7 +181,7 @@ end
     only_unread = search(query: "faktura", unread: true)["messages"]
     assert_equal [ unread.id ], only_unread.map { |row| row["id"] }
 
-    assert_equal 2, search(query: "faktura", unread: false)["messages"].size
+    assert_equal [ read.id ], search(query: "faktura", unread: false)["messages"].map { |row| row["id"] }
   end
 
   test "search_messages never reaches another user's mail" do

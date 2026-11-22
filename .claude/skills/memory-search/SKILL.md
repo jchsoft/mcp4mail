@@ -2,7 +2,7 @@
 name: memory-search
 description: "Search LLM Memory Notes and return compact, filtered summary. Use when CLAUDE.md instructs to search memory notes before coding, or when user says 'search memory', 'hledej v paměti', 'co víme o X'."
 context: fork
-allowed-tools: Bash, ToolSearch, mcp__llmmn-production__RateNoteTool
+allowed-tools: ToolSearch, mcp__llmmn-production__SearchNotesTool, mcp__llmmn-production__RateNoteTool
 ---
 
 # Memory Search Skill
@@ -13,7 +13,16 @@ This skill exists to prevent verbose memory note results from bloating the main 
 ## ⛔ HARD RULES — read first
 
 1. **You ARE the forked context.** Never return "I'm an agent without MCP access" or delegate the search back to the parent — that defeats the whole point of the fork. Either the search succeeds, or you return the error block at the bottom.
-2. **Search via the REST API with `Bash`/`curl`, not via `ReadMcpResourceTool`.** The llm-memory.com MCP server exposes search only as an MCP *resource*, and the built-in resource reader is **not available inside forked subagents** — only MCP *tools* propagate. `ToolSearch(query: "select:ReadMcpResourceTool")` returns "No matching deferred tools found" here. Don't waste turns on it.
+2. **Search with the MCP tool `mcp__llmmn-production__SearchNotesTool`, not with `ReadMcpResourceTool` and not with `curl`.** MCP *tools* propagate into forked subagents (the built-in resource reader does not), and the tool returns the same results as the REST endpoint plus each note's ID. If its schema is only named and not loaded, `ToolSearch(query: "select:mcp__llmmn-production__SearchNotesTool,mcp__llmmn-production__RateNoteTool")` loads it first.
+
+## In a run driven by mcptask_runner
+
+A headless run may not reach this skill: a forked skill is one more thing that has
+to start before the search does, and when it does not, the child is left with an
+instruction it cannot follow. A project that wants its agents to search before
+every task says so in `work_steps.before` of `config/mcptask_runner.yml` and names
+the `SearchNotesTool` call there — the runner relays the text into every prompt
+and adds nothing to it.
 
 ## Input
 
@@ -28,18 +37,14 @@ If memory_identifier is not specified, check the project's CLAUDE.md for the ide
 Run up to 2 searches (task-specific + architecture if needed):
 
 ```
-curl -fsS -X POST https://llm-memory.com/api/v1/search \
-  -H "Authorization: Bearer $LLMMN_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"memory_identifier\":\"MEMORY_ID\",\"query\":\"QUERY\",\"limit\":3}" \
-  --max-time 25
+mcp__llmmn-production__SearchNotesTool(identifier: "MEMORY_ID", query: "QUERY", limit: 3)
 ```
 
-`$LLMMN_TOKEN` is already in the environment — do not print it, do not hardcode it.
-
-**Always use `limit=3`** (not 5) to reduce noise. The query goes in the JSON body, so no URL encoding is needed.
-
-Response shape: `{"results":[{"title":…,"content":…,"score":…}, …]}`. Higher `score` = closer match.
+**Always use `limit: 3`** to reduce noise. Each result has `id`, `title`, `content`,
+`score` (similarity, higher = closer), `rating`, `updated_at`, and when present
+`supersedes` and `rating_reasons` (the latest -1 votes with their reasons). Hidden
+notes (superseded, or rated -3 or lower) are not returned; do not pass
+`include_hidden`.
 
 ## Step 2: Filter and Summarize
 
@@ -48,11 +53,18 @@ For each returned note, evaluate relevance to the query:
 - **Marginally relevant** (medium): same area of codebase but different feature
 - **Irrelevant**: completely unrelated → discard from output
 
-### Rating (only when note IDs are available)
+A note with `rating_reasons` is a warning: weigh the reasons before relying on it.
 
-The REST search response does **not** include note IDs, so rating is not possible on that path — skip it rather than guessing an ID. `mcp__llmmn-production__RateNoteTool(identifier:, note_id:, rating:)` stays available for when a caller hands you a concrete note ID.
+### Rating — after the summary, for the notes you actually used
 
-> Follow-up that would restore rating: llm_memory_notes exposes search only as `NotesSearchResource`. Wrapping it in a `SearchNotesTool` (the pattern projectoid_ii uses in `app/tools/get_piece_tool.rb` via `read_resource`) would make search reachable as an MCP tool inside forks *and* return note IDs.
+Rating is how wrong and superseded notes leave the search, so do it every time:
+
+- A note you **used** for the answer and found right → `mcp__llmmn-production__RateNoteTool(identifier: "MEMORY_ID", note_id: ID, rating: 1)`.
+- A note that is **wrong or outdated** (contradicted by the code, by another note, or by what the caller told you) → `rating: -1` with a short `reason` (required, shown to everyone who reads the note). Add `superseded_by_note_id` only when a better note in the same memory already replaces it.
+- A note you did **not** use (irrelevant, or only marginal and left out) gets **no rating**.
+
+One counted vote per note per day; a second vote the same day replaces the first.
+Never invent an ID: use only an `id` from this search's results.
 
 ## Step 3: Return Compact Output
 
@@ -61,13 +73,17 @@ Return ONLY this structured format:
 ```
 ## Memory Search: "QUERY" (MEMORY_ID)
 
-### [Note Title] (relevance: high/medium)
+### [Note Title] (relevance: high/medium) — note #ID, rating R, updated YYYY-MM-DD
 - **Pattern**: [key pattern or approach used, 1-2 lines]
 - **Files**: [key file paths, max 5]
 - **Gotchas**: [important pitfalls or decisions, 1-2 lines]
 
-### [Next Note Title] (relevance: high/medium)
+### [Next Note Title] (relevance: high/medium) — note #ID, rating R, updated YYYY-MM-DD
 ...
+
+### Rated
+- #ID +1 / #ID -1 (reason) — or "none used"
+
 
 ### No relevant notes found
 (if nothing matched)
@@ -83,12 +99,12 @@ Return ONLY this structured format:
 
 ## Error handling
 
-If `curl` fails (non-zero exit, HTTP error, or empty `results`), return the exact error — do not fabricate notes:
+If the tool is unavailable, errors, or returns empty `results`, return the exact error — do not fall back to another route and do not fabricate notes:
 
 ```
 ## Memory search error
-- Endpoint: POST https://llm-memory.com/api/v1/search
+- Tool: mcp__llmmn-production__SearchNotesTool
 - Memory: MEMORY_ID
 - Query: QUERY
-- Error: <exact curl/HTTP error or response body>
+- Error: <exact tool error or response>
 ```

@@ -38,7 +38,7 @@ A system test that only asserts text a controller test could have asserted is pa
 Every failure is produced locally, never by reaching the network:
 
 - Wrong password: `FakeImapServer.new(login_ok: false).start`: `LOGIN` answers `NO`.
-- Unreachable host: start a server, keep its `port`, `stop` it, then connect to that port: `Errno::ECONNREFUSED` without a timeout.
+- Unreachable host: start a server, keep its `port`, `stop` it, then connect to that port: `Errno::ECONNREFUSED` without a timeout (on macOS 27, `Errno::EINVAL` from net-imap's `setsockopt`, because a timed connect there reports the refusal as success).
 - TLS against a plaintext endpoint: `FakeImapServer.tls_trap` answers in plaintext while the client expects TLS, so the handshake raises `OpenSSL::SSL::SSLError`.
 - A crash mid-sync: `drop_on_fetch_of: <uid>` closes the connection when that UID is fetched.
 - A server that refuses writes or folder creation: `refuse_store: true`, `namespace_prefix: "INBOX."`.

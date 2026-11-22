@@ -4,7 +4,7 @@ module Imap
   # with "certificate problem", so this reports them as three distinct outcomes instead of
   # a single pass/fail.
   class ConnectionTester
-    Result = Struct.new(:outcome, :error_message, :capabilities, keyword_init: true) do
+    Result = Struct.new(:outcome, :error_message, :capabilities, :refusal, keyword_init: true) do
       def reachable?
         outcome == :reachable
       end
@@ -21,6 +21,8 @@ module Imap
     def call
       capabilities = Connection.open(mail_account) { |imap| imap.capability }
       Result.new(outcome: :reachable, capabilities: capabilities)
+    rescue MailAccount::InternalHostRefused => e
+      Result.new(outcome: :internal_host, error_message: e.message, refusal: e)
     rescue Net::IMAP::NoResponseError, Net::IMAP::BadResponseError => e
       Result.new(outcome: :auth_failed, error_message: e.message)
     rescue OpenSSL::SSL::SSLError => e

@@ -108,6 +108,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # no longer than it did.
   Capybara.default_max_wait_time = 5
 
+  # Capybara re-asks the browser for the DOM every 0.01s while a matcher waits,
+  # about 100 times a second per worker. With several headless Firefoxes, their
+  # geckodrivers and Pumas running in parallel, that polling competes with the
+  # browsers for CPU, which slows the pages and so adds more polling. 0.1s is
+  # still fast enough for a passing test and leaves the CPU to the browsers.
+  Capybara.default_retry_interval = 0.1
+
   # Pages follow Accept-Language, so pin the browser to English instead of the machine's locale.
   #
   # And ask for reduced motion: the hero's chat mock then stays the finished
@@ -119,6 +126,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     options.add_preference("intl.accept_languages", "en")
     options.add_preference("ui.prefersReducedMotion", 1)
   end
+
+  # A worker reuses one browser for every test it runs, and several phone tests
+  # (home_test's open_phone_frame, internal_responsive_test, hitch_screens_phone_test)
+  # shrink the window without growing it back. The next test then saw a ~455px
+  # page with the header links collapsed: LandingWhyTest failed with "Unable to
+  # find link Why" under seed 46562 (backlog refill 2026-W47). Every test starts
+  # at the size driven_by asked for.
+  setup { page.current_window.resize_to(1400, 1400) }
 
   # Firefox reads prefers-reduced-motion from a profile preference a running
   # session cannot flip, so motion needs a browser of its own. The name keeps

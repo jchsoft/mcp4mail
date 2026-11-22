@@ -169,12 +169,14 @@ Call `GetAttachmentTool` — it returns the attachment metadata plus a direct do
 
 The PARENT must run this, then Read the file and verify it exists (do NOT assume success):
 
-    curl -fsS "{download_url from GetAttachmentTool}" -o /tmp/piece_{piece_relative_id}_att_{attachment_id}.{ext} && ls -l /tmp/piece_{piece_relative_id}_att_{attachment_id}.{ext}
+    curl -fsS "https://mcptask.online{download_url from GetAttachmentTool}" -o /tmp/piece_{piece_relative_id}_att_{attachment_id}.{ext} && ls -l /tmp/piece_{piece_relative_id}_att_{attachment_id}.{ext}
 
 If `curl` reports an HTTP error or the file is tiny/JSON, the download failed (wrong id or auth) — surface that, do not Read garbage as an image.
 ```
 
-If you must construct the URL yourself, use `relative_id` (not the internal `id`) for the piece. Piece responses carry both: `id` is the internal DB row, `relative_id` is the URL-facing one. Using the wrong one returns a JSON error written into the file as if it were the image. The `-fsS` flags make `curl` fail loudly on HTTP errors instead of writing the error body into the file.
+`download_url` is a path (`/api/…`) with a signature in it, not a whole URL, so put `https://mcptask.online` in front of it as above. If it ever arrives as a full `https://…` URL, use it as it is.
+
+Never construct the URL yourself: it works only with the signature GetAttachmentTool puts in it, and only for 15 minutes, so a parent that needs the file again calls the tool again. A `401` means the signature expired. The `-fsS` flags make `curl` fail loudly on HTTP errors instead of writing the error body into the file.
 
 **Never** emit a "## Attachment downloaded" / "Path: …" success block — you did not download anything, so reporting a path the parent then fails to Read is the exact bug this skill avoids. Return only the command above.
 

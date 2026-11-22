@@ -32,6 +32,26 @@ Tailwind v4 is CSS-first: tokens live in `app/assets/tailwind/application.css` (
 ## Secrets
 Never commit `config/master.key`, `.env*`, `credentials.yml`, real mailbox hosts/usernames or dumps; they are git-ignored. `.env.example` lists the variables (`HITCH_RESOURCE_URI`, `SECRET_KEY_BASE`, database password, the three `ACTIVE_RECORD_ENCRYPTION_*` keys, `MCP4MAIL_PORT`) with empty values. Production secrets come from the environment; dev/test derive throwaway encryption keys from `tmp/local_secret.txt`. Tests use fake servers on `127.0.0.1` and made-up addresses.
 
+## Security
+On 2026-11-18 one attacker probed every JchSoft production app from VPNs and cloud servers in five countries. It started with a secret left in the git history of a public repo, which was read for months before anyone noticed. **This repo is public on GitHub: every commit is read by attackers immediately.**
+
+Commits:
+- Never commit a secret: tokens, passwords, API keys, private keys, `.env` files, `master.key`, credentials, or any `.mcp.json`/config file with literal values. Use `${ENV_VAR}`.
+- Before every commit check the staged diff, e.g. `git diff --cached | grep -nE 'eyJ[A-Za-z0-9_-]{10,}\.|Bearer [^$]|password\s*[:=]|-----BEGIN'`.
+- A secret that was ever committed is compromised: rotate it at once. Deleting it in a later commit does not help, git history keeps it.
+- Never put a secret into a memory note (llm-memory), a task description, a PR body, a log or a test fixture.
+- Whether a repo is public is Josef's decision; assume attackers read it.
+
+The app:
+- No default or known passwords in production. Seed/demo users get `.invalid` e-mail addresses (RFC 2606), never a real domain.
+- Exception-driven, never defensive: do not silence a probe or bad input (no rescue-and-return, no `silent: true`). Raise or report it. A clear 4xx is fine, a swallowed error is not.
+- Authorize every request and validate every input.
+- Secrets live only in env or credentials files readable by the app's user, never in code, unit files, logs or error messages.
+
+mcp4mail specifics:
+- The "add mailbox" IMAP connection test was used for an SSRF scan (440 requests on 2026-11-18). Every outgoing mail connection goes through `MailHost` (`app/services/mail_host.rb`), which refuses internal hosts and reports them (#15447). Never open an IMAP/SMTP socket around it.
+- Users' mail passwords and tokens stay encrypted at rest (Active Record encryption) and are never logged; keep them in `filter_parameters`.
+
 ## MCP endpoint is read-only by design
 Every mailbox is read-only unless its owner turns on the per-account "Allow the AI to make changes" switch. A tool that writes to a mailbox is not added without an explicit decision; the tool registry refuses to boot with a tool that is neither read-only and non-destructive nor declared via `write_tool destructive: ..., permission: ...` on `McpTools::ApplicationTool`. The `permission` is a key of `MailAccount::AI_PERMISSIONS`; a new write tool picks its group. Every tool resolves data through the signed-in user's own mail accounts.
 
