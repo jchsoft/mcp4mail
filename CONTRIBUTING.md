@@ -7,6 +7,8 @@ Thanks for helping. mcp4mail is small on purpose, so issues and pull requests ar
 - For anything bigger than a bug fix, open an issue first so we can agree on the shape.
 - The MCP endpoint is **read-only by design**. Tools that send, move, delete or re-flag mail will not be merged
   as ordinary tools; the tool registry refuses to boot with one. If you want write access, open an issue.
+- Open issues through the forms under "New issue" (bug report, feature request, "my mail provider does not work");
+  they ask for the details we need.
 
 ## Setup
 

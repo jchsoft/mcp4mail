@@ -1,0 +1,45 @@
+name: My mail provider does not work
+description: Connecting or reading a mailbox from a specific provider fails
+labels: ["mail-provider"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [IMAP server compatibility notes](https://github.com/jchsoft/mcp4mail/blob/main/docs/self-hosting.md#imap-server-compatibility) first.
+        **Never paste your password or app password.**
+  - type: input
+    id: provider
+    attributes:
+      label: Provider name
+      placeholder: e.g. Seznam, Fastmail, own server (Dovecot)
+    validations:
+      required: true
+  - type: input
+    id: host
+    attributes:
+      label: IMAP host and port
+      placeholder: e.g. imap.example.com:993
+    validations:
+      required: true
+  - type: dropdown
+    id: app_password
+    attributes:
+      label: Do you use an app password?
+      options:
+        - "Yes"
+        - "No, the regular account password"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message shown in the app
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: IMAP server software if you know it, 2FA enabled, hosted or self-hosted mcp4mail.
