@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in mcp4mail does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Never paste passwords, app passwords, OAuth tokens or full mail content.** Redact them first.
+        Vulnerabilities do not belong here: see [SECURITY.md](https://github.com/jchsoft/mcp4mail/security/policy).
+  - type: dropdown
+    id: hosting
+    attributes:
+      label: Hosted or self-hosted?
+      options:
+        - Hosted at mcp4mail.online
+        - Self-hosted
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: For self-hosted, the release tag or commit SHA you run.
+      placeholder: e.g. 0f3a9c1
+  - type: input
+    id: client
+    attributes:
+      label: MCP client used
+      description: The AI assistant or tool that connects to mcp4mail.
+      placeholder: e.g. Claude Desktop, Claude Code, Cursor
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: Redact passwords, tokens and mail addresses you do not want public.
+      render: text
